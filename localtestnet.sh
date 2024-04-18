@@ -81,24 +81,27 @@ sed -in-place='' 's/stake/ukava/g' $DATA/config/genesis.json
 # Replace the default evm denom of aphoton with ukava
 sed -in-place='' 's/aphoton/akava/g' $DATA/config/genesis.json
 
-jq '.consensus_params.block.max_gas = "25000000"' $DATA/config/genesis.json|sponge $DATA/config/genesis.json
+GENESIS=$DATA/config/genesis.json
+TMP_GENESIS=$DATA/config/tmp_genesis.json
+
+cat $GENESIS | jq '.consensus_params.block.max_gas = "25000000"' >$TMP_GENESIS && mv $TMP_GENESIS $GENESIS
 
 # Zero out the total supply so it gets recalculated during InitGenesis
-jq '.app_state.bank.supply = []' $DATA/config/genesis.json|sponge $DATA/config/genesis.json
+cat $GENESIS | jq '.app_state.bank.supply = []' >$TMP_GENESIS && mv $TMP_GENESIS $GENESIS
 
 # Disable fee market
-jq '.app_state.feemarket.params.no_base_fee = true' $DATA/config/genesis.json|sponge $DATA/config/genesis.json
+cat $GENESIS | jq '.app_state.feemarket.params.no_base_fee = true' >$TMP_GENESIS && mv $TMP_GENESIS $GENESIS
 
 # Disable london fork
-jq '.app_state.evm.params.chain_config.london_block = null' $DATA/config/genesis.json|sponge $DATA/config/genesis.json
-jq '.app_state.evm.params.chain_config.arrow_glacier_block = null' $DATA/config/genesis.json|sponge $DATA/config/genesis.json
-jq '.app_state.evm.params.chain_config.gray_glacier_block = null' $DATA/config/genesis.json|sponge $DATA/config/genesis.json
-jq '.app_state.evm.params.chain_config.merge_netsplit_block = null' $DATA/config/genesis.json|sponge $DATA/config/genesis.json
-jq '.app_state.evm.params.chain_config.shanghai_block = null' $DATA/config/genesis.json|sponge $DATA/config/genesis.json
-jq '.app_state.evm.params.chain_config.cancun_block = null' $DATA/config/genesis.json|sponge $DATA/config/genesis.json
+cat $GENESIS | jq '.app_state.evm.params.chain_config.london_block = null' >$TMP_GENESIS && mv $TMP_GENESIS $GENESIS
+cat $GENESIS | jq '.app_state.evm.params.chain_config.arrow_glacier_block = null' >$TMP_GENESIS && mv $TMP_GENESIS $GENESIS
+cat $GENESIS | jq '.app_state.evm.params.chain_config.gray_glacier_block = null' >$TMP_GENESIS && mv $TMP_GENESIS $GENESIS
+cat $GENESIS | jq '.app_state.evm.params.chain_config.merge_netsplit_block = null' >$TMP_GENESIS && mv $TMP_GENESIS $GENESIS
+cat $GENESIS | jq '.app_state.evm.params.chain_config.shanghai_block = null' >$TMP_GENESIS && mv $TMP_GENESIS $GENESIS
+cat $GENESIS | jq '.app_state.evm.params.chain_config.cancun_block = null' >$TMP_GENESIS && mv $TMP_GENESIS $GENESIS
 
 # Add earn vault
-jq '.app_state.earn.params.allowed_vaults =  [
+cat $GENESIS | jq '.app_state.earn.params.allowed_vaults =  [
     {
         denom: "usdx",
         strategies: ["STRATEGY_TYPE_HARD"],
@@ -106,9 +109,9 @@ jq '.app_state.earn.params.allowed_vaults =  [
     {
         denom: "bkava",
         strategies: ["STRATEGY_TYPE_SAVINGS"],
-    }]' $DATA/config/genesis.json | sponge $DATA/config/genesis.json
+    }]' >$TMP_GENESIS && mv $TMP_GENESIS $GENESIS
 
-jq '.app_state.savings.params.supported_denoms = ["bkava-kavavaloper1ffv7nhd3z6sych2qpqkk03ec6hzkmufyz4scd0"]' $DATA/config/genesis.json | sponge $DATA/config/genesis.json
+cat $GENESIS | jq '.app_state.savings.params.supported_denoms = ["bkava-kavavaloper1ffv7nhd3z6sych2qpqkk03ec6hzkmufyz4scd0"]' >$TMP_GENESIS && mv $TMP_GENESIS $GENESIS
 
 
 $BINARY config broadcast-mode sync
