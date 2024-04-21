@@ -6,13 +6,13 @@ function help() {
     echo "  -i    Identity file"
     echo "  -k    Keyring password to create key (for Linux only)"
     echo "  -n    Network (default: testnet)"
-    echo "  -c    Chain ID (default: \"zgtendermint_9000-1\")"
+    echo "  -c    Chain ID (default: \"zgtendermint_16600-1\")"
     echo ""
 }
 
 if [[ $# -eq 0 ]]; then
-	help
-	exit 1
+    help
+    exit 1
 fi
 
 set -e
@@ -25,29 +25,29 @@ NETWORK="testnet"
 INIT_GENESIS_ENV=""
 
 while [[ $# -gt 0 ]]; do
-	case $1 in
-	-i)
-		PEM_FLAG="-i $2";
+    case $1 in
+    -i)
+        PEM_FLAG="-i $2";
         shift; shift
-		;;
-	-k)
-		KEYRING_PASSWORD=$2;
+        ;;
+    -k)
+        KEYRING_PASSWORD=$2;
         shift; shift
-		;;
+        ;;
     -n)
         NETWORK=$2
-		INIT_GENESIS_ENV="$INIT_GENESIS_ENV export ROOT_DIR=$2;"
+        INIT_GENESIS_ENV="$INIT_GENESIS_ENV export ROOT_DIR=$2;"
         shift; shift
-		;;
+        ;;
     -c)
-		INIT_GENESIS_ENV="$INIT_GENESIS_ENV export CHAIN_ID=$2;"
+        INIT_GENESIS_ENV="$INIT_GENESIS_ENV export CHAIN_ID=$2;"
         shift; shift
-		;;
-	*)
+        ;;
+    *)
         help
         echo "Unknown flag passed: \"$1\""
-		exit 1
-		;;
+        exit 1
+        ;;
     esac
 done
 
@@ -56,7 +56,7 @@ NUM_NODES=${#IPS[@]}
 
 # Install dependent libraries and binary
 for ((i=0; i<$NUM_NODES; i++)) do
-    ssh $PEM_FLAG ubuntu@${IPS[$i]} "git clone https://github.com/0glabs/0g-chain.git; cd 0g-chain; ./networks/testnet/install.sh"
+    ssh $PEM_FLAG ubuntu@${IPS[$i]} "rm -rf 0g-chain; git clone https://github.com/0glabs/0g-chain.git; cd 0g-chain; git checkout testnet; ./networks/testnet/install.sh"
 done
 
 # Create genesis config on node0
