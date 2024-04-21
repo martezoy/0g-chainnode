@@ -1,29 +1,29 @@
 #!/bin/bash
 
 ROOT_DIR=${ROOT_DIR:-testnet}
-CHAIN_ID=${CHAIN_ID:-zgtendermint_9000-1}
+CHAIN_ID=${CHAIN_ID:-zgtendermint_16600-1}
 
 # Usage: init-genesis.sh IP1,IP2,IP3 KEYRING_PASSWORD
 OS_NAME=`uname -o`
 USAGE="Usage: ${BASH_SOURCE[0]} IP1,IP2,IP3"
 if [[ "$OS_NAME" = "GNU/Linux" ]]; then
-	USAGE="$USAGE KEYRING_PASSWORD"
+    USAGE="$USAGE KEYRING_PASSWORD"
 fi
 
 if [[ $# -eq 0 ]]; then
-	echo "IP list not specified"
-	echo $USAGE
-	exit 1
+    echo "IP list not specified"
+    echo $USAGE
+    exit 1
 fi
 
 if [[ "$OS_NAME" = "GNU/Linux" ]]; then
-	if [[ $# -eq 1 ]]; then
-		echo "Keyring password not specified"
-		echo $USAGE
-		exit 1
-	fi
+    if [[ $# -eq 1 ]]; then
+        echo "Keyring password not specified"
+        echo $USAGE
+        exit 1
+    fi
 
-	PASSWORD=$2
+    PASSWORD=$2
 fi
 
 kava version 2>/dev/null || export PATH=$PATH:$(go env GOPATH)/bin
@@ -33,19 +33,20 @@ set -e
 IFS=","; declare -a IPS=($1); unset IFS
 
 NUM_NODES=${#IPS[@]}
-BALANCE=$((100000000/$NUM_NODES))kava
-STAKING=$((50000000/$NUM_NODES))kava
+VLIDATOR_BALANCE=20000000000000ukava
+FAUCET_BALANCE=20000000000000ukava
+STAKING=2000000000000ukava
 
 # Init configs
 for ((i=0; i<$NUM_NODES; i++)) do
-	HOMEDIR="$ROOT_DIR"/node$i
-	
-	# Change parameter token denominations to neuron
-	GENESIS="$HOMEDIR"/config/genesis.json
-	TMP_GENESIS="$HOMEDIR"/config/tmp_genesis.json
+    HOMEDIR="$ROOT_DIR"/node$i
+    
+    # Change parameter token denominations to neuron
+    GENESIS="$HOMEDIR"/config/genesis.json
+    TMP_GENESIS="$HOMEDIR"/config/tmp_genesis.json
 
-	# Init
-	kava init "node$i" --home "$HOMEDIR" --chain-id "$CHAIN_ID" >/dev/null 2>&1
+    # Init
+    kava init "node$i" --home "$HOMEDIR" --chain-id "$CHAIN_ID" >/dev/null 2>&1
 
     # Replace stake with ukava
     sed -in-place='' 's/stake/ukava/g' "$GENESIS"
@@ -80,16 +81,19 @@ for ((i=0; i<$NUM_NODES; i++)) do
             strategies: ["STRATEGY_TYPE_SAVINGS"],
         }]' >$TMP_GENESIS && mv $TMP_GENESIS $GENESIS
 
-    cat $GENESIS | jq '.app_state.savings.params.supported_denoms = ["bkava-kavavaloper1ffv7nhd3z6sych2qpqkk03ec6hzkmufyz4scd0"]' >$TMP_GENESIS && mv $TMP_GENESIS $GENESIS
+    # cat "$GENESIS" | jq '.app_state["staking"]["params"]["bond_denom"]="ukava"' >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+    # cat "$GENESIS" | jq '.app_state["gov"]["params"]["min_deposit"][0]["denom"]="ukava"' >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
-	# cat "$GENESIS" | jq '.app_state["staking"]["params"]["bond_denom"]="ukava"' >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	# cat "$GENESIS" | jq '.app_state["gov"]["params"]["min_deposit"][0]["denom"]="neuron"' >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+    cat "$GENESIS" | jq '.app_state["staking"]["params"]["max_validators"]=200' >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+    cat "$GENESIS" | jq '.app_state["slashing"]["params"]["signed_blocks_window"]="1000"' >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
-	# Change app.toml
-	APP_TOML="$HOMEDIR"/config/app.toml
-	sed -i 's/minimum-gas-prices = "0akava"/minimum-gas-prices = "1000000000ukava"/' "$APP_TOML"
-	sed -i '/\[json-rpc\]/,/^\[/ s/enable = false/enable = true/' "$APP_TOML"
-	sed -i '/\[json-rpc\]/,/^\[/ s/address = "127.0.0.1:8545"/address = "0.0.0.0:8545"/' "$APP_TOML"
+    cat "$GENESIS" | jq '.app_state["consensus_params"]["block"]["time_iota_ms"]="3000"' >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+
+    # Change app.toml
+    APP_TOML="$HOMEDIR"/config/app.toml
+    sed -i 's/minimum-gas-prices = "0akava"/minimum-gas-prices = "1000000000akava"/' "$APP_TOML"
+    sed -i '/\[json-rpc\]/,/^\[/ s/enable = false/enable = true/' "$APP_TOML"
+    sed -i '/\[json-rpc\]/,/^\[/ s/address = "127.0.0.1:8545"/address = "0.0.0.0:8545"/' "$APP_TOML"
 
     # Set evm tracer to json
     sed -in-place='' 's/tracer = ""/tracer = "json"/g' "$APP_TOML"
@@ -102,13 +106,13 @@ done
 # Update seeds in config.toml
 SEEDS=""
 for ((i=0; i<$NUM_NODES; i++)) do
-	if [[ $i -gt 0 ]]; then SEEDS=$SEEDS,; fi
-	NODE_ID=`kava tendermint show-node-id --home $ROOT_DIR/node$i`
-	SEEDS=$SEEDS$NODE_ID@${IPS[$i]}:26656
+    if [[ $i -gt 0 ]]; then SEEDS=$SEEDS,; fi
+    NODE_ID=`kava tendermint show-node-id --home $ROOT_DIR/node$i`
+    SEEDS=$SEEDS$NODE_ID@${IPS[$i]}:26656
 done
 
 for ((i=0; i<$NUM_NODES; i++)) do
-	sed -i "/seeds = /c\seeds = \"$SEEDS\"" "$ROOT_DIR"/node$i/config/config.toml
+    sed -i "/seeds = /c\seeds = \"$SEEDS\"" "$ROOT_DIR"/node$i/config/config.toml
 done
 
 # Prepare validators
@@ -121,53 +125,54 @@ done
 # - Windows: Windows credentials management.
 # - Linux: under `--home` specified folder.
 if [[ "$OS_NAME" = "Msys" ]]; then
-	for ((i=0; i<$NUM_NODES; i++)) do
-		VALIDATOR="0gchain_9000_validator_$i"
-		set +e
-		ret=`kava keys list --keyring-backend os -n | grep $VALIDATOR`
-		set -e
-		if [[ "$ret" = "" ]]; then
-			echo "Create validator key: $VALIDATOR"
-			kava keys add $VALIDATOR --keyring-backend os
-		fi
-	done
+    for ((i=0; i<$NUM_NODES; i++)) do
+        VALIDATOR="0gchain_9000_validator_$i"
+        set +e
+        ret=`kava keys list --keyring-backend os -n | grep $VALIDATOR`
+        set -e
+        if [[ "$ret" = "" ]]; then
+            echo "Create validator key: $VALIDATOR"
+            kava keys add $VALIDATOR --keyring-backend os --eth
+        fi
+    done
 elif [[ "$OS_NAME" = "GNU/Linux" ]]; then
-	# Create N validators for node0
-	for ((i=0; i<$NUM_NODES; i++)) do
-		yes $PASSWORD | kava keys add "0gchain_9000_validator_$i" --keyring-backend os --home "$ROOT_DIR"/node0
-	done
+    # Create N validators for node0
+    for ((i=0; i<$NUM_NODES; i++)) do
+        yes $PASSWORD | kava keys add "0gchain_9000_validator_$i" --keyring-backend os --home "$ROOT_DIR"/node0 --eth
+    done
 
-	# Copy validators to other nodes
-	for ((i=1; i<$NUM_NODES; i++)) do
-		cp "$ROOT_DIR"/node0/keyhash "$ROOT_DIR"/node$i
-		cp "$ROOT_DIR"/node0/*.address "$ROOT_DIR"/node$i
-		cp "$ROOT_DIR"/node0/*.info "$ROOT_DIR"/node$i
-	done
+    # Copy validators to other nodes
+    for ((i=1; i<$NUM_NODES; i++)) do
+        cp "$ROOT_DIR"/node0/keyhash "$ROOT_DIR"/node$i
+        cp "$ROOT_DIR"/node0/*.address "$ROOT_DIR"/node$i
+        cp "$ROOT_DIR"/node0/*.info "$ROOT_DIR"/node$i
+    done
 else
-	echo -e "\n\nOS: $OS_NAME"
-	echo "Unsupported OS to generate keys for validators!!!"
-	exit 1
+    echo -e "\n\nOS: $OS_NAME"
+    echo "Unsupported OS to generate keys for validators!!!"
+    exit 1
 fi
 
 # Add all validators in genesis
 for ((i=0; i<$NUM_NODES; i++)) do
-	for ((j=0; j<$NUM_NODES; j++)) do
-		if [[ "$OS_NAME" = "GNU/Linux" ]]; then
-			yes $PASSWORD | kava add-genesis-account "0gchain_9000_validator_$i" $BALANCE --home "$ROOT_DIR/node$j"
-		else
-			kava add-genesis-account "0gchain_9000_validator_$i" $BALANCE --home "$ROOT_DIR/node$j"
-		fi 
-	done
+    for ((j=0; j<$NUM_NODES; j++)) do
+        if [[ "$OS_NAME" = "GNU/Linux" ]]; then
+            yes $PASSWORD | kava add-genesis-account "0gchain_9000_validator_$j" $VLIDATOR_BALANCE --home "$ROOT_DIR/node$i"
+        else
+            kava add-genesis-account "0gchain_9000_validator_$j" $VLIDATOR_BALANCE --home "$ROOT_DIR/node$i"
+        fi
+    done
+    kava add-genesis-account kava17n8707c20e8gge2tk2gestetjcs4536pdtf8y0 $FAUCET_BALANCE --home "$ROOT_DIR/node$i"
 done
 
 # Prepare genesis txs
 mkdir -p "$ROOT_DIR"/gentxs
 for ((i=0; i<$NUM_NODES; i++)) do
-	if [[ "$OS_NAME" = "GNU/Linux" ]]; then
-		yes $PASSWORD | kava gentx "0gchain_9000_validator_$i" $STAKING --home "$ROOT_DIR/node$i" --output-document "$ROOT_DIR/gentxs/node$i.json"
-	else
-		kava gentx "0gchain_9000_validator_$i" $STAKING --home "$ROOT_DIR/node$i" --output-document "$ROOT_DIR/gentxs/node$i.json"
-	fi 
+    if [[ "$OS_NAME" = "GNU/Linux" ]]; then
+        yes $PASSWORD | kava gentx "0gchain_9000_validator_$i" $STAKING --home "$ROOT_DIR/node$i" --output-document "$ROOT_DIR/gentxs/node$i.json"
+    else
+        kava gentx "0gchain_9000_validator_$i" $STAKING --home "$ROOT_DIR/node$i" --output-document "$ROOT_DIR/gentxs/node$i.json"
+    fi
 done
 
 # Create genesis at node0 and copy to other nodes
@@ -175,20 +180,20 @@ kava collect-gentxs --home "$ROOT_DIR/node0" --gentx-dir "$ROOT_DIR/gentxs" >/de
 sed -i '/persistent_peers = /c\persistent_peers = ""' "$ROOT_DIR"/node0/config/config.toml
 kava validate-genesis --home "$ROOT_DIR/node0"
 for ((i=1; i<$NUM_NODES; i++)) do
-	cp "$ROOT_DIR"/node0/config/genesis.json "$ROOT_DIR"/node$i/config/genesis.json
+    cp "$ROOT_DIR"/node0/config/genesis.json "$ROOT_DIR"/node$i/config/genesis.json
 done
 
 # For linux, backup keys for all validators
 if [[ "$OS_NAME" = "GNU/Linux" ]]; then
-	mkdir -p "$ROOT_DIR"/keyring-os
+    mkdir -p "$ROOT_DIR"/keyring-os
 
-	cp "$ROOT_DIR"/node0/keyhash "$ROOT_DIR"/keyring-os
-	cp "$ROOT_DIR"/node0/*.address "$ROOT_DIR"/keyring-os
-	cp "$ROOT_DIR"/node0/*.info "$ROOT_DIR"/keyring-os
+    cp "$ROOT_DIR"/node0/keyhash "$ROOT_DIR"/keyring-os
+    cp "$ROOT_DIR"/node0/*.address "$ROOT_DIR"/keyring-os
+    cp "$ROOT_DIR"/node0/*.info "$ROOT_DIR"/keyring-os
 
-	for ((i=0; i<$NUM_NODES; i++)) do
-		rm -f "$ROOT_DIR"/node$i/keyhash "$ROOT_DIR"/node$i/*.address "$ROOT_DIR"/node$i/*.info
-	done
+    for ((i=0; i<$NUM_NODES; i++)) do
+        rm -f "$ROOT_DIR"/node$i/keyhash "$ROOT_DIR"/node$i/*.address "$ROOT_DIR"/node$i/*.info
+    done
 fi
 
 echo -e "\n\nSucceeded to init genesis!\n"
