@@ -12,10 +12,10 @@ import (
 	proposal "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/committee/keeper"
-	"github.com/kava-labs/kava/x/committee/types"
-	swaptypes "github.com/kava-labs/kava/x/swap/types"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/x/committee/keeper"
+	"github.com/0glabs/0g-chain/x/committee/types"
+	swaptypes "github.com/0glabs/0g-chain/x/swap/types"
 )
 
 //NewDistributionGenesisWithPool creates a default distribution genesis state with some coins in the community pool.

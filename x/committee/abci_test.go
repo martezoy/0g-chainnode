@@ -11,13 +11,13 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
-	"github.com/kava-labs/kava/app"
-	// "github.com/kava-labs/kava/x/cdp"
-	// cdptypes "github.com/kava-labs/kava/x/cdp/types"
-	"github.com/kava-labs/kava/x/committee"
-	"github.com/kava-labs/kava/x/committee/keeper"
-	"github.com/kava-labs/kava/x/committee/testutil"
-	"github.com/kava-labs/kava/x/committee/types"
+	"github.com/0glabs/0g-chain/app"
+	// "github.com/0glabs/0g-chain/x/cdp"
+	// cdptypes "github.com/0glabs/0g-chain/x/cdp/types"
+	"github.com/0glabs/0g-chain/x/committee"
+	"github.com/0glabs/0g-chain/x/committee/keeper"
+	"github.com/0glabs/0g-chain/x/committee/testutil"
+	"github.com/0glabs/0g-chain/x/committee/types"
 )
 
 type ModuleTestSuite struct {

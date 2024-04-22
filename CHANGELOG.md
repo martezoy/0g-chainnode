@@ -174,7 +174,7 @@ Ref: https://keepachangelog.com/en/1.0.0/
 ## [v0.13.0]
 
 - Hard Protocol - Introduces borrowing functionality to HARD protocol. See full
-  [spec](https://github.com/Kava-Labs/kava/tree/master/x/hard/spec)
+  [spec](https://github.com/0glabs/0g-chain/tree/master/x/hard/spec)
 
 ### Breaking changes
 
@@ -271,9 +271,9 @@ non-breaking manner and that nodes will be able to update seamlessly after the
 launch of kava-3.
 
 The steps for upgrading to kava-3 can be found
-[here](https://github.com/Kava-Labs/kava/blob/v0.10.0/contrib/kava-3/migration.md).
+[here](https://github.com/0glabs/0g-chain/blob/v0.10.0/contrib/kava-3/migration.md).
 Please note the additional section on
-[pruning](https://github.com/Kava-Labs/kava/blob/v0.10.0/contrib/kava-3/migration.md#Pruning).
+[pruning](https://github.com/0glabs/0g-chain/blob/v0.10.0/contrib/kava-3/migration.md#Pruning).
 
 ## [v0.8.0] kava-3 Release
 
@@ -285,7 +285,7 @@ state-machine faults that require a new version to launch successfully.
 ### Migration
 
 The steps for upgrading to kava-3 can be found
-[here](https://github.com/Kava-Labs/kava/blob/v0.10.0/contrib/kava-3/migration.md)
+[here](https://github.com/0glabs/0g-chain/blob/v0.10.0/contrib/kava-3/migration.md)
 
 ### Features
 
@@ -325,86 +325,86 @@ the [changelog](https://github.com/cosmos/cosmos-sdk/blob/v0.38.4/CHANGELOG.md).
 
 ### Improvements
 
-- [#257](https://github.com/Kava-Labs/kava/pulls/257) Include scripts to run
+- [#257](https://github.com/0glabs/0g-chain/pulls/257) Include scripts to run
   large-scale simulations remotely using aws-batch
 
-[#1846]: https://github.com/Kava-Labs/kava/pull/1846
-[#1848]: https://github.com/Kava-Labs/kava/pull/1848
-[#1839]: https://github.com/Kava-Labs/kava/pull/1839
-[#1836]: https://github.com/Kava-Labs/kava/pull/1836
-[#1832]: https://github.com/Kava-Labs/kava/pull/1832
-[#1811]: https://github.com/Kava-Labs/kava/pull/1811
-[#1804]: https://github.com/Kava-Labs/kava/pull/1804
-[#1785]: https://github.com/Kava-Labs/kava/pull/1785
-[#1784]: https://github.com/Kava-Labs/kava/pull/1784
-[#1770]: https://github.com/Kava-Labs/kava/pull/1770
-[#1755]: https://github.com/Kava-Labs/kava/pull/1755
-[#1761]: https://github.com/Kava-Labs/kava/pull/1761
-[#1752]: https://github.com/Kava-Labs/kava/pull/1752
-[#1751]: https://github.com/Kava-Labs/kava/pull/1751
-[#1745]: https://github.com/Kava-Labs/kava/pull/1745
-[#1729]: https://github.com/Kava-Labs/kava/pull/1729
-[#1707]: https://github.com/Kava-Labs/kava/pull/1707
-[#1706]: https://github.com/Kava-Labs/kava/pull/1706
-[#1704]: https://github.com/Kava-Labs/kava/pull/1704
-[#1668]: https://github.com/Kava-Labs/kava/pull/1668
-[#1669]: https://github.com/Kava-Labs/kava/pull/1669
-[#1655]: https://github.com/Kava-Labs/kava/pull/1655
-[#1624]: https://github.com/Kava-Labs/kava/pull/1624
-[#1631]: https://github.com/Kava-Labs/kava/pull/1631
-[#1622]: https://github.com/Kava-Labs/kava/pull/1622
-[#1614]: https://github.com/Kava-Labs/kava/pull/1614
-[#1610]: https://github.com/Kava-Labs/kava/pull/1610
-[#1609]: https://github.com/Kava-Labs/kava/pull/1609
-[#1605]: https://github.com/Kava-Labs/kava/pull/1605
-[#1604]: https://github.com/Kava-Labs/kava/pull/1604
-[#1603]: https://github.com/Kava-Labs/kava/pull/1603
-[#1598]: https://github.com/Kava-Labs/kava/pull/1598
-[#1596]: https://github.com/Kava-Labs/kava/pull/1596
-[#1591]: https://github.com/Kava-Labs/kava/pull/1591
-[#1590]: https://github.com/Kava-Labs/kava/pull/1590
-[#1568]: https://github.com/Kava-Labs/kava/pull/1568
-[#1567]: https://github.com/Kava-Labs/kava/pull/1567
-[#1566]: https://github.com/Kava-Labs/kava/pull/1566
-[#1565]: https://github.com/Kava-Labs/kava/pull/1565
-[#1563]: https://github.com/Kava-Labs/kava/pull/1563
-[#1562]: https://github.com/Kava-Labs/kava/pull/1562
-[#1550]: https://github.com/Kava-Labs/kava/pull/1550
-[#1544]: https://github.com/Kava-Labs/kava/pull/1544
-[#1477]: https://github.com/Kava-Labs/kava/pull/1477
-[#1512]: https://github.com/Kava-Labs/kava/pull/1512
-[#1519]: https://github.com/Kava-Labs/kava/pull/1519
-[#1106]: https://github.com/Kava-Labs/kava/pull/1106
-[#1152]: https://github.com/Kava-Labs/kava/pull/1152
-[#1542]: https://github.com/Kava-Labs/kava/pull/1542
-[#253]: https://github.com/Kava-Labs/kava/pull/253
-[#260]: https://github.com/Kava-Labs/kava/pull/260
-[#266]: https://github.com/Kava-Labs/kava/pull/266
-[#364]: https://github.com/Kava-Labs/kava/pull/364
-[#590]: https://github.com/Kava-Labs/kava/pull/590
-[#591]: https://github.com/Kava-Labs/kava/pull/591
-[#596]: https://github.com/Kava-Labs/kava/pull/596
-[#598]: https://github.com/Kava-Labs/kava/pull/598
-[#625]: https://github.com/Kava-Labs/kava/pull/625
-[#701]: https://github.com/Kava-Labs/kava/pull/701
-[#750]: https://github.com/Kava-Labs/kava/pull/750
-[#751]: https://github.com/Kava-Labs/kava/pull/751
-[#780]: https://github.com/Kava-Labs/kava/pull/780
-[unreleased]: https://github.com/Kava-Labs/kava/compare/v0.25.0...HEAD
-[v0.25.0]: https://github.com/Kava-Labs/kava/compare/v0.25.0...v0.24.3
-[v0.24.3]: https://github.com/Kava-Labs/kava/compare/v0.24.3...v0.24.1
-[v0.24.1]: https://github.com/Kava-Labs/kava/compare/v0.24.1...v0.24.0
-[v0.24.0]: https://github.com/Kava-Labs/kava/compare/v0.24.0...v0.23.2
-[v0.23.2]: https://github.com/Kava-Labs/kava/compare/v0.23.1...v0.23.2
-[v0.23.0]: https://github.com/Kava-Labs/kava/compare/v0.21.1...v0.23.0
-[v0.16.1]: https://github.com/Kava-Labs/kava/compare/v0.16.0...v0.16.1
-[v0.16.0]: https://github.com/Kava-Labs/kava/compare/v0.15.2...v0.16.0
-[v0.13.0]: https://github.com/Kava-Labs/kava/compare/v0.12.4...v0.13.0
-[v0.12.0]: https://github.com/Kava-Labs/kava/compare/v0.11.1...v0.12.0
-[v0.11.0]: https://github.com/Kava-Labs/kava/compare/v0.10.0...v0.11.0
-[v0.8.1]: https://github.com/Kava-Labs/kava/compare/v0.8.0...v0.8.1
-[v0.8.0]: https://github.com/Kava-Labs/kava/compare/v0.7.0...v0.8.0
-[v0.3.5]: https://github.com/Kava-Labs/kava/compare/v0.3.4...v0.3.5
-[v0.3.2]: https://github.com/Kava-Labs/kava/compare/v0.3.1...v0.3.2
-[v0.3.1]: https://github.com/Kava-Labs/kava/compare/v0.3.0...v0.3.1
-[v0.3.0]: https://github.com/Kava-Labs/kava/compare/v0.2.0...v0.3.0
+[#1846]: https://github.com/0glabs/0g-chain/pull/1846
+[#1848]: https://github.com/0glabs/0g-chain/pull/1848
+[#1839]: https://github.com/0glabs/0g-chain/pull/1839
+[#1836]: https://github.com/0glabs/0g-chain/pull/1836
+[#1832]: https://github.com/0glabs/0g-chain/pull/1832
+[#1811]: https://github.com/0glabs/0g-chain/pull/1811
+[#1804]: https://github.com/0glabs/0g-chain/pull/1804
+[#1785]: https://github.com/0glabs/0g-chain/pull/1785
+[#1784]: https://github.com/0glabs/0g-chain/pull/1784
+[#1770]: https://github.com/0glabs/0g-chain/pull/1770
+[#1755]: https://github.com/0glabs/0g-chain/pull/1755
+[#1761]: https://github.com/0glabs/0g-chain/pull/1761
+[#1752]: https://github.com/0glabs/0g-chain/pull/1752
+[#1751]: https://github.com/0glabs/0g-chain/pull/1751
+[#1745]: https://github.com/0glabs/0g-chain/pull/1745
+[#1729]: https://github.com/0glabs/0g-chain/pull/1729
+[#1707]: https://github.com/0glabs/0g-chain/pull/1707
+[#1706]: https://github.com/0glabs/0g-chain/pull/1706
+[#1704]: https://github.com/0glabs/0g-chain/pull/1704
+[#1668]: https://github.com/0glabs/0g-chain/pull/1668
+[#1669]: https://github.com/0glabs/0g-chain/pull/1669
+[#1655]: https://github.com/0glabs/0g-chain/pull/1655
+[#1624]: https://github.com/0glabs/0g-chain/pull/1624
+[#1631]: https://github.com/0glabs/0g-chain/pull/1631
+[#1622]: https://github.com/0glabs/0g-chain/pull/1622
+[#1614]: https://github.com/0glabs/0g-chain/pull/1614
+[#1610]: https://github.com/0glabs/0g-chain/pull/1610
+[#1609]: https://github.com/0glabs/0g-chain/pull/1609
+[#1605]: https://github.com/0glabs/0g-chain/pull/1605
+[#1604]: https://github.com/0glabs/0g-chain/pull/1604
+[#1603]: https://github.com/0glabs/0g-chain/pull/1603
+[#1598]: https://github.com/0glabs/0g-chain/pull/1598
+[#1596]: https://github.com/0glabs/0g-chain/pull/1596
+[#1591]: https://github.com/0glabs/0g-chain/pull/1591
+[#1590]: https://github.com/0glabs/0g-chain/pull/1590
+[#1568]: https://github.com/0glabs/0g-chain/pull/1568
+[#1567]: https://github.com/0glabs/0g-chain/pull/1567
+[#1566]: https://github.com/0glabs/0g-chain/pull/1566
+[#1565]: https://github.com/0glabs/0g-chain/pull/1565
+[#1563]: https://github.com/0glabs/0g-chain/pull/1563
+[#1562]: https://github.com/0glabs/0g-chain/pull/1562
+[#1550]: https://github.com/0glabs/0g-chain/pull/1550
+[#1544]: https://github.com/0glabs/0g-chain/pull/1544
+[#1477]: https://github.com/0glabs/0g-chain/pull/1477
+[#1512]: https://github.com/0glabs/0g-chain/pull/1512
+[#1519]: https://github.com/0glabs/0g-chain/pull/1519
+[#1106]: https://github.com/0glabs/0g-chain/pull/1106
+[#1152]: https://github.com/0glabs/0g-chain/pull/1152
+[#1542]: https://github.com/0glabs/0g-chain/pull/1542
+[#253]: https://github.com/0glabs/0g-chain/pull/253
+[#260]: https://github.com/0glabs/0g-chain/pull/260
+[#266]: https://github.com/0glabs/0g-chain/pull/266
+[#364]: https://github.com/0glabs/0g-chain/pull/364
+[#590]: https://github.com/0glabs/0g-chain/pull/590
+[#591]: https://github.com/0glabs/0g-chain/pull/591
+[#596]: https://github.com/0glabs/0g-chain/pull/596
+[#598]: https://github.com/0glabs/0g-chain/pull/598
+[#625]: https://github.com/0glabs/0g-chain/pull/625
+[#701]: https://github.com/0glabs/0g-chain/pull/701
+[#750]: https://github.com/0glabs/0g-chain/pull/750
+[#751]: https://github.com/0glabs/0g-chain/pull/751
+[#780]: https://github.com/0glabs/0g-chain/pull/780
+[unreleased]: https://github.com/0glabs/0g-chain/compare/v0.25.0...HEAD
+[v0.25.0]: https://github.com/0glabs/0g-chain/compare/v0.25.0...v0.24.3
+[v0.24.3]: https://github.com/0glabs/0g-chain/compare/v0.24.3...v0.24.1
+[v0.24.1]: https://github.com/0glabs/0g-chain/compare/v0.24.1...v0.24.0
+[v0.24.0]: https://github.com/0glabs/0g-chain/compare/v0.24.0...v0.23.2
+[v0.23.2]: https://github.com/0glabs/0g-chain/compare/v0.23.1...v0.23.2
+[v0.23.0]: https://github.com/0glabs/0g-chain/compare/v0.21.1...v0.23.0
+[v0.16.1]: https://github.com/0glabs/0g-chain/compare/v0.16.0...v0.16.1
+[v0.16.0]: https://github.com/0glabs/0g-chain/compare/v0.15.2...v0.16.0
+[v0.13.0]: https://github.com/0glabs/0g-chain/compare/v0.12.4...v0.13.0
+[v0.12.0]: https://github.com/0glabs/0g-chain/compare/v0.11.1...v0.12.0
+[v0.11.0]: https://github.com/0glabs/0g-chain/compare/v0.10.0...v0.11.0
+[v0.8.1]: https://github.com/0glabs/0g-chain/compare/v0.8.0...v0.8.1
+[v0.8.0]: https://github.com/0glabs/0g-chain/compare/v0.7.0...v0.8.0
+[v0.3.5]: https://github.com/0glabs/0g-chain/compare/v0.3.4...v0.3.5
+[v0.3.2]: https://github.com/0glabs/0g-chain/compare/v0.3.1...v0.3.2
+[v0.3.1]: https://github.com/0glabs/0g-chain/compare/v0.3.0...v0.3.1
+[v0.3.0]: https://github.com/0glabs/0g-chain/compare/v0.2.0...v0.3.0

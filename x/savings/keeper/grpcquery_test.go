@@ -11,13 +11,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/0glabs/0g-chain/app"
+	liquidtypes "github.com/0glabs/0g-chain/x/liquid/types"
+	"github.com/0glabs/0g-chain/x/savings/keeper"
+	"github.com/0glabs/0g-chain/x/savings/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/kava-labs/kava/app"
-	liquidtypes "github.com/kava-labs/kava/x/liquid/types"
-	"github.com/kava-labs/kava/x/savings/keeper"
-	"github.com/kava-labs/kava/x/savings/types"
 )
 
 var dep = types.NewDeposit

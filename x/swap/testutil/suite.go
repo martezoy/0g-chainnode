@@ -5,9 +5,9 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/swap/keeper"
-	"github.com/kava-labs/kava/x/swap/types"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/x/swap/keeper"
+	"github.com/0glabs/0g-chain/x/swap/types"
 
 	sdkmath "cosmossdk.io/math"
 	abci "github.com/cometbft/cometbft/abci/types"

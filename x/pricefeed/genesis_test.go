@@ -8,9 +8,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/pricefeed"
-	"github.com/kava-labs/kava/x/pricefeed/keeper"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/x/pricefeed"
+	"github.com/0glabs/0g-chain/x/pricefeed/keeper"
 
 	"github.com/stretchr/testify/suite"
 )

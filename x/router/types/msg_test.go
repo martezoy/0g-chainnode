@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/kava-labs/kava/x/router/types"
+	"github.com/0glabs/0g-chain/x/router/types"
 )
 
 func TestMsgMintDeposit_Signing(t *testing.T) {

@@ -4,7 +4,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/kava-labs/kava/x/issuance/types"
+	"github.com/0glabs/0g-chain/x/issuance/types"
 )
 
 // GetParams returns the params from the store

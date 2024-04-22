@@ -13,7 +13,7 @@ import (
 
 	proto "github.com/cosmos/gogoproto/proto"
 
-	"github.com/kava-labs/kava/x/auction/types"
+	"github.com/0glabs/0g-chain/x/auction/types"
 )
 
 type queryServer struct {

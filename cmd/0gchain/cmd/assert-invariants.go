@@ -9,8 +9,8 @@ import (
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	"github.com/spf13/cobra"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/app/params"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/app/params"
 )
 
 func AssertInvariantsCmd(config params.EncodingConfig) *cobra.Command {

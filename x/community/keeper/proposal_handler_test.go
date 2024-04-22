@@ -12,14 +12,14 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/kava-labs/kava/app"
-	cdpkeeper "github.com/kava-labs/kava/x/cdp/keeper"
-	"github.com/kava-labs/kava/x/community/keeper"
-	"github.com/kava-labs/kava/x/community/testutil"
-	"github.com/kava-labs/kava/x/community/types"
-	hardkeeper "github.com/kava-labs/kava/x/hard/keeper"
-	hardtypes "github.com/kava-labs/kava/x/hard/types"
-	pricefeedtypes "github.com/kava-labs/kava/x/pricefeed/types"
+	"github.com/0glabs/0g-chain/app"
+	cdpkeeper "github.com/0glabs/0g-chain/x/cdp/keeper"
+	"github.com/0glabs/0g-chain/x/community/keeper"
+	"github.com/0glabs/0g-chain/x/community/testutil"
+	"github.com/0glabs/0g-chain/x/community/types"
+	hardkeeper "github.com/0glabs/0g-chain/x/hard/keeper"
+	hardtypes "github.com/0glabs/0g-chain/x/hard/types"
+	pricefeedtypes "github.com/0glabs/0g-chain/x/pricefeed/types"
 )
 
 const chainID = app.TestChainId

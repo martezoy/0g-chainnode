@@ -9,9 +9,9 @@ import (
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/metrics"
-	"github.com/kava-labs/kava/x/metrics/types"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/x/metrics"
+	"github.com/0glabs/0g-chain/x/metrics/types"
 )
 
 type MockGauge struct {

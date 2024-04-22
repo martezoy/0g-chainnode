@@ -164,7 +164,7 @@ printf "original evm util module params\n %s" , "$originalEvmUtilParams"
 # change the params of the chain like a god - make it so 🖖🏽
 # make sure to update god committee member permissions for the module
 # and params being updated (see below for example)
-# https://github.com/Kava-Labs/kava/pull/1556/files#diff-0bd6043650c708661f37bbe6fa5b29b52149e0ec0069103c3954168fc9f12612R900-R903
+# https://github.com/0glabs/0g-chain/pull/1556/files#diff-0bd6043650c708661f37bbe6fa5b29b52149e0ec0069103c3954168fc9f12612R900-R903
 kava tx committee submit-proposal 1 "$proposalFileName" --gas 2000000 --gas-prices 0.01ukava --from god -y
 
 sleep $AVG_SECONDS_BETWEEN_BLOCKS

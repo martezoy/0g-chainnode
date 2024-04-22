@@ -8,7 +8,7 @@ import (
 
 	tmtime "github.com/cometbft/cometbft/types/time"
 
-	"github.com/kava-labs/kava/x/bep3/types"
+	"github.com/0glabs/0g-chain/x/bep3/types"
 )
 
 func i(in int64) sdkmath.Int                { return sdkmath.NewInt(in) }

@@ -8,8 +8,8 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 
-	"github.com/kava-labs/kava/x/incentive/types"
-	// validatorvesting "github.com/kava-labs/kava/x/validator-vesting"
+	"github.com/0glabs/0g-chain/x/incentive/types"
+	// validatorvesting "github.com/0glabs/0g-chain/x/validator-vesting"
 )
 
 const (

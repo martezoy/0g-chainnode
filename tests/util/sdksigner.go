@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/kava-labs/kava/app/params"
+	"github.com/0glabs/0g-chain/app/params"
 	"google.golang.org/grpc/codes"
 	grpcstatus "google.golang.org/grpc/status"
 

@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	simappparams "cosmossdk.io/simapp/params"
+	"github.com/0glabs/0g-chain/client/rest"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -20,7 +21,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/types"
-	"github.com/kava-labs/kava/client/rest"
 )
 
 func TestBaseReq_Sanitize(t *testing.T) {

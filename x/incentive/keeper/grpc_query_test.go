@@ -5,13 +5,13 @@ import (
 	"time"
 
 	sdkmath "cosmossdk.io/math"
+	"github.com/0glabs/0g-chain/app"
+	hardtypes "github.com/0glabs/0g-chain/x/hard/types"
+	"github.com/0glabs/0g-chain/x/incentive/keeper"
+	"github.com/0glabs/0g-chain/x/incentive/types"
 	tmprototypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/kava-labs/kava/app"
-	hardtypes "github.com/kava-labs/kava/x/hard/types"
-	"github.com/kava-labs/kava/x/incentive/keeper"
-	"github.com/kava-labs/kava/x/incentive/types"
 	"github.com/stretchr/testify/suite"
 )
 

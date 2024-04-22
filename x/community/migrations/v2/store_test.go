@@ -7,11 +7,11 @@ import (
 	sdkmath "cosmossdk.io/math"
 	"github.com/stretchr/testify/require"
 
+	"github.com/0glabs/0g-chain/app"
+	v2 "github.com/0glabs/0g-chain/x/community/migrations/v2"
+	"github.com/0glabs/0g-chain/x/community/types"
 	"github.com/cosmos/cosmos-sdk/testutil"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/kava-labs/kava/app"
-	v2 "github.com/kava-labs/kava/x/community/migrations/v2"
-	"github.com/kava-labs/kava/x/community/types"
 )
 
 func TestMigrateStore(t *testing.T) {

@@ -33,13 +33,13 @@ import (
 	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/kava-labs/kava/app"
-	cdptypes "github.com/kava-labs/kava/x/cdp/types"
-	evmutilkeeper "github.com/kava-labs/kava/x/evmutil/keeper"
-	evmutiltestutil "github.com/kava-labs/kava/x/evmutil/testutil"
-	evmutiltypes "github.com/kava-labs/kava/x/evmutil/types"
-	hardtypes "github.com/kava-labs/kava/x/hard/types"
-	pricefeedtypes "github.com/kava-labs/kava/x/pricefeed/types"
+	"github.com/0glabs/0g-chain/app"
+	cdptypes "github.com/0glabs/0g-chain/x/cdp/types"
+	evmutilkeeper "github.com/0glabs/0g-chain/x/evmutil/keeper"
+	evmutiltestutil "github.com/0glabs/0g-chain/x/evmutil/testutil"
+	evmutiltypes "github.com/0glabs/0g-chain/x/evmutil/types"
+	hardtypes "github.com/0glabs/0g-chain/x/hard/types"
+	pricefeedtypes "github.com/0glabs/0g-chain/x/pricefeed/types"
 )
 
 const (

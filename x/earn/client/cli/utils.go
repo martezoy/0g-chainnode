@@ -5,7 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/kava-labs/kava/x/earn/types"
+	"github.com/0glabs/0g-chain/x/earn/types"
 )
 
 // ParseCommunityPoolDepositProposalJSON reads and parses a CommunityPoolDepositProposalJSON from a file.

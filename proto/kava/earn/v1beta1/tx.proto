@@ -7,7 +7,7 @@ import "gogoproto/gogo.proto";
 import "kava/earn/v1beta1/strategy.proto";
 import "kava/earn/v1beta1/vault.proto";
 
-option go_package = "github.com/kava-labs/kava/x/earn/types";
+option go_package = "github.com/0glabs/0g-chain/x/earn/types";
 
 // Msg defines the earn Msg service.
 service Msg {

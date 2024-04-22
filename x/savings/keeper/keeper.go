@@ -10,7 +10,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
-	"github.com/kava-labs/kava/x/savings/types"
+	"github.com/0glabs/0g-chain/x/savings/types"
 )
 
 // Keeper struct for savings module

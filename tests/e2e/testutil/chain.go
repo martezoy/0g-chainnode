@@ -21,11 +21,11 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 
-	"github.com/kava-labs/kava/app"
-	kavaparams "github.com/kava-labs/kava/app/params"
-	"github.com/kava-labs/kava/client/grpc"
-	"github.com/kava-labs/kava/tests/e2e/runner"
-	"github.com/kava-labs/kava/tests/util"
+	"github.com/0glabs/0g-chain/app"
+	kavaparams "github.com/0glabs/0g-chain/app/params"
+	"github.com/0glabs/0g-chain/client/grpc"
+	"github.com/0glabs/0g-chain/tests/e2e/runner"
+	"github.com/0glabs/0g-chain/tests/util"
 )
 
 // Chain wraps query clients & accounts for a network

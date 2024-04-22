@@ -12,8 +12,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/savings/types"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/x/savings/types"
 )
 
 func (suite *KeeperTestSuite) TestWithdraw() {

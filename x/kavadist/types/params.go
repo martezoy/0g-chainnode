@@ -8,7 +8,7 @@ import (
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	tmtime "github.com/cometbft/cometbft/types/time"
-	// cdptypes "github.com/kava-labs/kava/x/cdp/types"
+	// cdptypes "github.com/0glabs/0g-chain/x/cdp/types"
 )
 
 // Parameter keys and default values

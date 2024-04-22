@@ -17,8 +17,8 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/stretchr/testify/suite"
 
-	earntypes "github.com/kava-labs/kava/x/earn/types"
-	liquidtypes "github.com/kava-labs/kava/x/liquid/types"
+	earntypes "github.com/0glabs/0g-chain/x/earn/types"
+	liquidtypes "github.com/0glabs/0g-chain/x/liquid/types"
 )
 
 // d is an alias for sdk.MustNewDecFromStr

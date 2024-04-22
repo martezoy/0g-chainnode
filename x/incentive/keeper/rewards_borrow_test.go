@@ -11,16 +11,16 @@ import (
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/committee"
-	committeekeeper "github.com/kava-labs/kava/x/committee/keeper"
-	committeetypes "github.com/kava-labs/kava/x/committee/types"
-	"github.com/kava-labs/kava/x/hard"
-	hardkeeper "github.com/kava-labs/kava/x/hard/keeper"
-	"github.com/kava-labs/kava/x/incentive/keeper"
-	"github.com/kava-labs/kava/x/incentive/testutil"
-	"github.com/kava-labs/kava/x/incentive/types"
-	kavadisttypes "github.com/kava-labs/kava/x/kavadist/types"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/x/committee"
+	committeekeeper "github.com/0glabs/0g-chain/x/committee/keeper"
+	committeetypes "github.com/0glabs/0g-chain/x/committee/types"
+	"github.com/0glabs/0g-chain/x/hard"
+	hardkeeper "github.com/0glabs/0g-chain/x/hard/keeper"
+	"github.com/0glabs/0g-chain/x/incentive/keeper"
+	"github.com/0glabs/0g-chain/x/incentive/testutil"
+	"github.com/0glabs/0g-chain/x/incentive/types"
+	kavadisttypes "github.com/0glabs/0g-chain/x/kavadist/types"
 )
 
 type BorrowIntegrationTests struct {

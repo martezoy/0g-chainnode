@@ -10,7 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/version"
 
-	"github.com/kava-labs/kava/x/earn/types"
+	"github.com/0glabs/0g-chain/x/earn/types"
 )
 
 // flags for cli queries

@@ -5,7 +5,7 @@ import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 
-option go_package = "github.com/kava-labs/kava/x/validator-vesting/types";
+option go_package = "github.com/0glabs/0g-chain/x/validator-vesting/types";
 option (gogoproto.goproto_getters_all) = false;
 
 // Query defines the gRPC querier service for validator-vesting module

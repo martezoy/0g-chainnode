@@ -9,7 +9,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "kava/hard/v1beta1/hard.proto";
 
-option go_package = "github.com/kava-labs/kava/x/hard/types";
+option go_package = "github.com/0glabs/0g-chain/x/hard/types";
 
 // Query defines the gRPC querier service for bep3 module.
 service Query {

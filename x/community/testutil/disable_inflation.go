@@ -11,11 +11,11 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	sdkmath "cosmossdk.io/math"
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/community"
-	"github.com/kava-labs/kava/x/community/keeper"
-	"github.com/kava-labs/kava/x/community/types"
-	kavadisttypes "github.com/kava-labs/kava/x/kavadist/types"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/x/community"
+	"github.com/0glabs/0g-chain/x/community/keeper"
+	"github.com/0glabs/0g-chain/x/community/types"
+	kavadisttypes "github.com/0glabs/0g-chain/x/kavadist/types"
 )
 
 type testFunc func(sdk.Context, keeper.Keeper)

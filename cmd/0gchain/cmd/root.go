@@ -23,16 +23,16 @@ import (
 	servercfg "github.com/evmos/ethermint/server/config"
 	"github.com/spf13/cobra"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/app/params"
-	"github.com/kava-labs/kava/cmd/kava/cmd/rocksdb"
-	"github.com/kava-labs/kava/cmd/kava/opendb"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/app/params"
+	"github.com/0glabs/0g-chain/cmd/0gchain/cmd/rocksdb"
+	"github.com/0glabs/0g-chain/cmd/0gchain/opendb"
 )
 
 // EnvPrefix is the prefix environment variables must have to configure the app.
-const EnvPrefix = "KAVA"
+const EnvPrefix = "0GCHAIN"
 
-// NewRootCmd creates a new root command for the kava blockchain.
+// NewRootCmd creates a new root command for the 0gchain blockchain.
 func NewRootCmd() *cobra.Command {
 	app.SetSDKConfig().Seal()
 
@@ -51,8 +51,8 @@ func NewRootCmd() *cobra.Command {
 		WithViper(EnvPrefix)
 
 	rootCmd := &cobra.Command{
-		Use:   "kava",
-		Short: "Daemon and CLI for the Kava blockchain.",
+		Use:   "0g-chain",
+		Short: "Daemon and CLI for the 0g-chain blockchain.",
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			cmd.SetOut(cmd.OutOrStdout())
 			cmd.SetErr(cmd.ErrOrStderr())
@@ -71,7 +71,7 @@ func NewRootCmd() *cobra.Command {
 				return err
 			}
 
-			customAppTemplate, customAppConfig := servercfg.AppConfig("ukava")
+			customAppTemplate, customAppConfig := servercfg.AppConfig("ukava") // TODO: merge evmos
 
 			return server.InterceptConfigsPreRunHandler(
 				cmd,
@@ -87,7 +87,7 @@ func NewRootCmd() *cobra.Command {
 	return rootCmd
 }
 
-// addSubCmds registers all the sub commands used by kava.
+// addSubCmds registers all the sub commands used by 0gchain.
 func addSubCmds(rootCmd *cobra.Command, encodingConfig params.EncodingConfig, defaultNodeHome string) {
 	gentxModule, ok := app.ModuleBasics[genutiltypes.ModuleName].(genutil.AppModuleBasic)
 	if !ok {

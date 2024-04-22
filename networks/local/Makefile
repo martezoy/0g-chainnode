@@ -1,4 +1,4 @@
 all:
-	docker build --tag kava/kavanode kavanode
+	docker build --tag 0glabs/0gchain-node 0gchain-node
 
 .PHONY: all

@@ -4,7 +4,7 @@ package kava.incentive.v1beta1;
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/kava-labs/kava/x/incentive/types";
+option go_package = "github.com/0glabs/0g-chain/x/incentive/types";
 
 // Apy contains the calculated APY for a given collateral type at a specific
 // instant in time.

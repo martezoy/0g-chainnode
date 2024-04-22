@@ -3,7 +3,7 @@ package kava.earn.v1beta1;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/kava-labs/kava/x/earn/types";
+option go_package = "github.com/0glabs/0g-chain/x/earn/types";
 
 // StrategyType is the type of strategy that a vault uses to optimize yields.
 enum StrategyType {

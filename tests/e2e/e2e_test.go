@@ -18,9 +18,9 @@ import (
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	emtypes "github.com/evmos/ethermint/types"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/tests/e2e/testutil"
-	"github.com/kava-labs/kava/tests/util"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/tests/e2e/testutil"
+	"github.com/0glabs/0g-chain/tests/util"
 )
 
 var (

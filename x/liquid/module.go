@@ -15,9 +15,9 @@ import (
 
 	abci "github.com/cometbft/cometbft/abci/types"
 
-	"github.com/kava-labs/kava/x/liquid/client/cli"
-	"github.com/kava-labs/kava/x/liquid/keeper"
-	"github.com/kava-labs/kava/x/liquid/types"
+	"github.com/0glabs/0g-chain/x/liquid/client/cli"
+	"github.com/0glabs/0g-chain/x/liquid/keeper"
+	"github.com/0glabs/0g-chain/x/liquid/types"
 )
 
 var (

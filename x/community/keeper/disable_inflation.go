@@ -3,8 +3,8 @@ package keeper
 import (
 	"time"
 
+	"github.com/0glabs/0g-chain/x/community/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/kava-labs/kava/x/community/types"
 )
 
 // CheckAndDisableMintAndKavaDistInflation compares the disable inflation time and block time,

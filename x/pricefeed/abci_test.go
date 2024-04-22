@@ -3,10 +3,10 @@ package pricefeed_test
 import (
 	"testing"
 
+	"github.com/0glabs/0g-chain/x/pricefeed"
+	"github.com/0glabs/0g-chain/x/pricefeed/keeper"
+	"github.com/0glabs/0g-chain/x/pricefeed/testutil"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/kava-labs/kava/x/pricefeed"
-	"github.com/kava-labs/kava/x/pricefeed/keeper"
-	"github.com/kava-labs/kava/x/pricefeed/testutil"
 )
 
 func TestEndBlocker_UpdatesMultipleMarkets(t *testing.T) {

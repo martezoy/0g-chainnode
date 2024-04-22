@@ -7,7 +7,7 @@
   },
   "externalDocs": {
     "description": "GitHub",
-    "url": "https://github.com/Kava-Labs/kava"
+    "url": "https://github.com/0glabs/0g-chain"
   },
   "host": "api.data.kava.io",
   "schemes": ["https"],

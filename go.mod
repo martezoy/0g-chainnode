@@ -1,4 +1,4 @@
-module github.com/kava-labs/kava
+module github.com/0glabs/0g-chain
 
 go 1.21
 

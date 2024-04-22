@@ -5,11 +5,11 @@ import (
 	"fmt"
 
 	sdkmath "cosmossdk.io/math"
+	"github.com/0glabs/0g-chain/x/swap/types"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	tmtime "github.com/cometbft/cometbft/types/time"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/kava-labs/kava/x/swap/types"
 )
 
 func (suite *keeperTestSuite) TestSwapExactForTokens() {

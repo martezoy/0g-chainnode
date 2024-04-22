@@ -3,8 +3,8 @@ package grpc
 import (
 	"errors"
 
-	"github.com/kava-labs/kava/client/grpc/query"
-	"github.com/kava-labs/kava/client/grpc/util"
+	"github.com/0glabs/0g-chain/client/grpc/query"
+	"github.com/0glabs/0g-chain/client/grpc/util"
 )
 
 // KavaGrpcClient enables the usage of kava grpc query clients and query utils

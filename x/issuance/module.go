@@ -15,9 +15,9 @@ import (
 
 	abci "github.com/cometbft/cometbft/abci/types"
 
-	"github.com/kava-labs/kava/x/issuance/client/cli"
-	"github.com/kava-labs/kava/x/issuance/keeper"
-	"github.com/kava-labs/kava/x/issuance/types"
+	"github.com/0glabs/0g-chain/x/issuance/client/cli"
+	"github.com/0glabs/0g-chain/x/issuance/keeper"
+	"github.com/0glabs/0g-chain/x/issuance/types"
 )
 
 var (

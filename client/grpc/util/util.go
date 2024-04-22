@@ -7,9 +7,9 @@ import (
 	grpctypes "github.com/cosmos/cosmos-sdk/types/grpc"
 	"google.golang.org/grpc/metadata"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/app/params"
-	query "github.com/kava-labs/kava/client/grpc/query"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/app/params"
+	query "github.com/0glabs/0g-chain/client/grpc/query"
 )
 
 // Util contains utility functions for the Kava gRPC client

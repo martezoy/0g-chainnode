@@ -4,11 +4,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/x/hard/keeper"
+	"github.com/0glabs/0g-chain/x/hard/types"
 	tmprototypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/hard/keeper"
-	"github.com/kava-labs/kava/x/hard/types"
 	"github.com/stretchr/testify/suite"
 )
 

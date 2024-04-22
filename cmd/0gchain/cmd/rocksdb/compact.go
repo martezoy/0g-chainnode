@@ -14,9 +14,9 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/0glabs/0g-chain/cmd/kava/opendb"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/server"
-	"github.com/kava-labs/kava/cmd/kava/opendb"
 	"github.com/linxGnu/grocksdb"
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/slices"

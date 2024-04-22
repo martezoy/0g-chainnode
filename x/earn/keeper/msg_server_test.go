@@ -6,10 +6,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
+	"github.com/0glabs/0g-chain/x/earn/keeper"
+	"github.com/0glabs/0g-chain/x/earn/testutil"
+	"github.com/0glabs/0g-chain/x/earn/types"
 	"github.com/cometbft/cometbft/crypto"
-	"github.com/kava-labs/kava/x/earn/keeper"
-	"github.com/kava-labs/kava/x/earn/testutil"
-	"github.com/kava-labs/kava/x/earn/types"
 	"github.com/stretchr/testify/suite"
 )
 

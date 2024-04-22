@@ -5,7 +5,7 @@ import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/kava-labs/kava/x/community/types";
+option go_package = "github.com/0glabs/0g-chain/x/community/types";
 
 // Params defines the parameters of the community module.
 message Params {

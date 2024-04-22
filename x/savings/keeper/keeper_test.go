@@ -15,10 +15,10 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/x/savings/keeper"
+	"github.com/0glabs/0g-chain/x/savings/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/savings/keeper"
-	"github.com/kava-labs/kava/x/savings/types"
 )
 
 // Test suite used for all keeper tests
