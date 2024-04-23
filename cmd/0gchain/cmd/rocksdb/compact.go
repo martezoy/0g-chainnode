@@ -14,7 +14,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/0glabs/0g-chain/cmd/kava/opendb"
+	"github.com/0glabs/0g-chain/cmd/0gchain/opendb"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/server"
 	"github.com/linxGnu/grocksdb"

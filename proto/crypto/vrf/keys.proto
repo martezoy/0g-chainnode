@@ -1,0 +1,25 @@
+// Copyright Tharsis Labs Ltd.(Evmos)
+// SPDX-License-Identifier:ENCL-1.0(https://github.com/evmos/evmos/blob/main/LICENSE)
+syntax = "proto3";
+package crypto.vrf;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/0glabs/0g-chain/crypto/vrf";
+
+// PubKey defines a type alias for an vrf.PublicKey that implements
+// Vrf's PubKey interface. It represents the 32-byte compressed public
+// key format.
+message PubKey {
+  option (gogoproto.goproto_stringer) = false;
+
+  // key is the public key in byte form
+  bytes key = 1;
+}
+
+// PrivKey defines a type alias for an vrf.PrivateKey that implements
+// Vrf's PrivateKey interface.
+message PrivKey {
+  // key is the private key in byte form
+  bytes key = 1;
+}
