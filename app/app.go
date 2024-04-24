@@ -108,32 +108,9 @@ import (
 	"github.com/kava-labs/kava/app/ante"
 	kavaparams "github.com/kava-labs/kava/app/params"
 
-	// "github.com/kava-labs/kava/x/auction"
-	// "github.com/kava-labs/kava/x/bep3"
-	// bep3keeper "github.com/kava-labs/kava/x/bep3/keeper"
-	// bep3types "github.com/kava-labs/kava/x/bep3/types"
-
-	// "github.com/kava-labs/kava/x/cdp"
-	// "github.com/kava-labs/kava/x/committee"
-	// "github.com/kava-labs/kava/x/community"
-	// "github.com/kava-labs/kava/x/earn"
-	// "github.com/kava-labs/kava/x/hard"
-	// "github.com/kava-labs/kava/x/incentive"
-	// "github.com/kava-labs/kava/x/issuance"
-	// "github.com/kava-labs/kava/x/kavadist"
-	// "github.com/kava-labs/kava/x/liquid"
-	// "github.com/kava-labs/kava/x/pricefeed"
-	// "github.com/kava-labs/kava/x/router"
-	// "github.com/kava-labs/kava/x/savings"
-	// "github.com/kava-labs/kava/x/swap"
-
-	"github.com/kava-labs/kava/x/bep3"
 	evmutil "github.com/kava-labs/kava/x/evmutil"
 	evmutilkeeper "github.com/kava-labs/kava/x/evmutil/keeper"
 	evmutiltypes "github.com/kava-labs/kava/x/evmutil/types"
-
-	// metrics "github.com/kava-labs/kava/x/metrics"
-	// metricstypes "github.com/kava-labs/kava/x/metrics/types"
 
 	validatorvesting "github.com/kava-labs/kava/x/validator-vesting"
 	validatorvestingrest "github.com/kava-labs/kava/x/validator-vesting/client/rest"
@@ -163,12 +140,6 @@ var (
 			upgradeclient.LegacyCancelProposalHandler,
 			ibcclientclient.UpdateClientProposalHandler,
 			ibcclientclient.UpgradeProposalHandler,
-			// kavadistclient.ProposalHandler,
-			// committeeclient.ProposalHandler,
-			// earnclient.DepositProposalHandler,
-			// earnclient.WithdrawProposalHandler,
-			// communityclient.LendDepositProposalHandler,
-			// communityclient.LendWithdrawProposalHandler,
 		}),
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},
@@ -184,25 +155,9 @@ var (
 		vesting.AppModuleBasic{},
 		evm.AppModuleBasic{},
 		feemarket.AppModuleBasic{},
-		// kavadist.AppModuleBasic{},
-		// auction.AppModuleBasic{},
-		// issuance.AppModuleBasic{},
-		bep3.AppModuleBasic{},
-		// pricefeed.AppModuleBasic{},
-		// swap.AppModuleBasic{},
-		// cdp.AppModuleBasic{},
-		// hard.AppModuleBasic{},
-		// committee.AppModuleBasic{},
-		// incentive.AppModuleBasic{},
-		// savings.AppModuleBasic{},
 		validatorvesting.AppModuleBasic{},
 		evmutil.AppModuleBasic{},
-		// liquid.AppModuleBasic{},
-		// earn.AppModuleBasic{},
-		// router.AppModuleBasic{},
 		mint.AppModuleBasic{},
-		// community.AppModuleBasic{},
-		// metrics.AppModuleBasic{},
 		consensus.AppModuleBasic{},
 	)
 
@@ -218,20 +173,7 @@ var (
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		evmtypes.ModuleName:            {authtypes.Minter, authtypes.Burner}, // used for secure addition and subtraction of balance using module account
 		evmutiltypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
-		// kavadisttypes.KavaDistMacc:      {authtypes.Minter},
-		// auctiontypes.ModuleName:         nil,
-		// issuancetypes.ModuleAccountName: {authtypes.Minter, authtypes.Burner},
-		// bep3types.ModuleName: {authtypes.Burner, authtypes.Minter},
-		// swaptypes.ModuleName: nil,
-		// cdptypes.ModuleName:             {authtypes.Minter, authtypes.Burner},
-		// cdptypes.LiquidatorMacc:         {authtypes.Minter, authtypes.Burner},
-		// hardtypes.ModuleAccountName:     {authtypes.Minter},
-		// savingstypes.ModuleAccountName: nil,
-		// liquidtypes.ModuleAccountName:   {authtypes.Minter, authtypes.Burner},
-		// earntypes.ModuleAccountName:     nil,
-		// kavadisttypes.FundModuleAccount: nil,
-		minttypes.ModuleName: {authtypes.Minter},
-		// communitytypes.ModuleName:       nil,
+		minttypes.ModuleName:           {authtypes.Minter},
 	}
 )
 
@@ -250,7 +192,6 @@ type Options struct {
 	MempoolAuthAddresses  []sdk.AccAddress
 	EVMTrace              string
 	EVMMaxGasWanted       uint64
-	// TelemetryOptions      metricstypes.TelemetryOptions
 }
 
 // DefaultOptions is a sensible default Options value.
@@ -274,40 +215,25 @@ type App struct {
 	memKeys map[string]*storetypes.MemoryStoreKey
 
 	// keepers from all the modules
-	accountKeeper       authkeeper.AccountKeeper
-	bankKeeper          bankkeeper.Keeper
-	capabilityKeeper    *capabilitykeeper.Keeper
-	stakingKeeper       *stakingkeeper.Keeper
-	distrKeeper         distrkeeper.Keeper
-	govKeeper           govkeeper.Keeper
-	paramsKeeper        paramskeeper.Keeper
-	authzKeeper         authzkeeper.Keeper
-	crisisKeeper        crisiskeeper.Keeper
-	slashingKeeper      slashingkeeper.Keeper
-	ibcKeeper           *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
-	packetForwardKeeper *packetforwardkeeper.Keeper
-	evmKeeper           *evmkeeper.Keeper
-	evmutilKeeper       evmutilkeeper.Keeper
-	feeMarketKeeper     feemarketkeeper.Keeper
-	upgradeKeeper       upgradekeeper.Keeper
-	evidenceKeeper      evidencekeeper.Keeper
-	transferKeeper      ibctransferkeeper.Keeper
-	// kavadistKeeper        kavadistkeeper.Keeper
-	// auctionKeeper         auctionkeeper.Keeper
-	// issuanceKeeper        issuancekeeper.Keeper
-	// bep3Keeper bep3keeper.Keeper
-	// pricefeedKeeper pricefeedkeeper.Keeper
-	// swapKeeper swapkeeper.Keeper
-	// cdpKeeper             cdpkeeper.Keeper
-	// hardKeeper            hardkeeper.Keeper
-	// committeeKeeper       committeekeeper.Keeper
-	// incentiveKeeper       incentivekeeper.Keeper
-	// savingsKeeper savingskeeper.Keeper
-	// liquidKeeper          liquidkeeper.Keeper
-	// earnKeeper            earnkeeper.Keeper
-	// routerKeeper routerkeeper.Keeper
-	mintKeeper mintkeeper.Keeper
-	// communityKeeper       communitykeeper.Keeper
+	accountKeeper         authkeeper.AccountKeeper
+	bankKeeper            bankkeeper.Keeper
+	capabilityKeeper      *capabilitykeeper.Keeper
+	stakingKeeper         *stakingkeeper.Keeper
+	distrKeeper           distrkeeper.Keeper
+	govKeeper             govkeeper.Keeper
+	paramsKeeper          paramskeeper.Keeper
+	authzKeeper           authzkeeper.Keeper
+	crisisKeeper          crisiskeeper.Keeper
+	slashingKeeper        slashingkeeper.Keeper
+	ibcKeeper             *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
+	packetForwardKeeper   *packetforwardkeeper.Keeper
+	evmKeeper             *evmkeeper.Keeper
+	evmutilKeeper         evmutilkeeper.Keeper
+	feeMarketKeeper       feemarketkeeper.Keeper
+	upgradeKeeper         upgradekeeper.Keeper
+	evidenceKeeper        evidencekeeper.Keeper
+	transferKeeper        ibctransferkeeper.Keeper
+	mintKeeper            mintkeeper.Keeper
 	consensusParamsKeeper consensusparamkeeper.Keeper
 
 	// make scoped keepers public for test purposes
@@ -369,20 +295,7 @@ func NewApp(
 		feemarkettypes.StoreKey,
 		authzkeeper.StoreKey,
 		capabilitytypes.StoreKey,
-		// kavadisttypes.StoreKey,
-		// auctiontypes.StoreKey,
-		// issuancetypes.StoreKey,
-		// bep3types.StoreKey,
-		// pricefeedtypes.StoreKey,
-		// swaptypes.StoreKey,
-		// cdptypes.StoreKey,
-		// hardtypes.StoreKey,
-		// communitytypes.StoreKey,
-		// committeetypes.StoreKey,
-		// incentivetypes.StoreKey,
 		evmutiltypes.StoreKey,
-		// savingstypes.StoreKey,
-		// earntypes.StoreKey,
 		minttypes.StoreKey,
 		consensusparamtypes.StoreKey,
 		crisistypes.StoreKey,
@@ -418,23 +331,12 @@ func NewApp(
 	slashingSubspace := app.paramsKeeper.Subspace(slashingtypes.ModuleName)
 	govSubspace := app.paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(govv1.ParamKeyTable())
 	crisisSubspace := app.paramsKeeper.Subspace(crisistypes.ModuleName)
-	// kavadistSubspace := app.paramsKeeper.Subspace(kavadisttypes.ModuleName)
-	// auctionSubspace := app.paramsKeeper.Subspace(auctiontypes.ModuleName)
-	// issuanceSubspace := app.paramsKeeper.Subspace(issuancetypes.ModuleName)
-	// bep3Subspace := app.paramsKeeper.Subspace(bep3types.ModuleName)
-	// pricefeedSubspace := app.paramsKeeper.Subspace(pricefeedtypes.ModuleName)
-	// swapSubspace := app.paramsKeeper.Subspace(swaptypes.ModuleName)
-	// cdpSubspace := app.paramsKeeper.Subspace(cdptypes.ModuleName)
-	// hardSubspace := app.paramsKeeper.Subspace(hardtypes.ModuleName)
-	// incentiveSubspace := app.paramsKeeper.Subspace(incentivetypes.ModuleName)
-	// savingsSubspace := app.paramsKeeper.Subspace(savingstypes.ModuleName)
 	ibcSubspace := app.paramsKeeper.Subspace(ibcexported.ModuleName)
 	ibctransferSubspace := app.paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	packetforwardSubspace := app.paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
 	feemarketSubspace := app.paramsKeeper.Subspace(feemarkettypes.ModuleName)
 	evmSubspace := app.paramsKeeper.Subspace(evmtypes.ModuleName)
 	evmutilSubspace := app.paramsKeeper.Subspace(evmutiltypes.ModuleName)
-	// earnSubspace := app.paramsKeeper.Subspace(earntypes.ModuleName)
 	mintSubspace := app.paramsKeeper.Subspace(minttypes.ModuleName)
 
 	// set the BaseApp's parameter store
@@ -598,96 +500,6 @@ func NewApp(
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferStack)
 	app.ibcKeeper.SetRouter(ibcRouter)
 
-	// app.auctionKeeper = auctionkeeper.NewKeeper(
-	// 	appCodec,
-	// 	keys[auctiontypes.StoreKey],
-	// 	auctionSubspace,
-	// 	app.bankKeeper,
-	// 	app.accountKeeper,
-	// )
-	// app.issuanceKeeper = issuancekeeper.NewKeeper(
-	// 	appCodec,
-	// 	keys[issuancetypes.StoreKey],
-	// 	issuanceSubspace,
-	// 	app.accountKeeper,
-	// 	app.bankKeeper,
-	// )
-	// app.bep3Keeper = bep3keeper.NewKeeper(
-	// 	appCodec,
-	// 	keys[bep3types.StoreKey],
-	// 	app.bankKeeper,
-	// 	app.accountKeeper,
-	// 	bep3Subspace,
-	// 	app.ModuleAccountAddrs(),
-	// )
-	// app.pricefeedKeeper = pricefeedkeeper.NewKeeper(
-	// 	appCodec,
-	// 	keys[pricefeedtypes.StoreKey],
-	// 	pricefeedSubspace,
-	// )
-	// swapKeeper := swapkeeper.NewKeeper(
-	// 	appCodec,
-	// 	keys[swaptypes.StoreKey],
-	// 	swapSubspace,
-	// 	app.accountKeeper,
-	// 	app.bankKeeper,
-	// )
-	// cdpKeeper := cdpkeeper.NewKeeper(
-	// 	appCodec,
-	// 	keys[cdptypes.StoreKey],
-	// 	cdpSubspace,
-	// 	app.pricefeedKeeper,
-	// 	app.auctionKeeper,
-	// 	app.bankKeeper,
-	// 	app.accountKeeper,
-	// 	mAccPerms,
-	// )
-	// hardKeeper := hardkeeper.NewKeeper(
-	// 	appCodec,
-	// 	keys[hardtypes.StoreKey],
-	// 	hardSubspace,
-	// 	app.accountKeeper,
-	// 	app.bankKeeper,
-	// 	app.pricefeedKeeper,
-	// 	app.auctionKeeper,
-	// )
-	// app.liquidKeeper = liquidkeeper.NewDefaultKeeper(
-	// 	appCodec,
-	// 	app.accountKeeper,
-	// 	app.bankKeeper,
-	// 	app.stakingKeeper,
-	// 	&app.distrKeeper,
-	// )
-	// savingsKeeper := savingskeeper.NewKeeper(
-	// 	appCodec,
-	// 	keys[savingstypes.StoreKey],
-	// 	savingsSubspace,
-	// 	app.accountKeeper,
-	// 	app.bankKeeper,
-	// 	app.liquidKeeper,
-	// )
-	// earnKeeper := earnkeeper.NewKeeper(
-	// 	appCodec,
-	// 	keys[earntypes.StoreKey],
-	// 	earnSubspace,
-	// 	app.accountKeeper,
-	// 	app.bankKeeper,
-	// 	&app.liquidKeeper,
-	// 	&hardKeeper,
-	// 	&savingsKeeper,
-	// 	&app.distrKeeper,
-	// )
-
-	// app.kavadistKeeper = kavadistkeeper.NewKeeper(
-	// 	appCodec,
-	// 	keys[kavadisttypes.StoreKey],
-	// 	kavadistSubspace,
-	// 	app.bankKeeper,
-	// 	app.accountKeeper,
-	// 	app.distrKeeper,
-	// 	app.loadBlockedMaccAddrs(),
-	// )
-
 	app.mintKeeper = mintkeeper.NewKeeper(
 		appCodec,
 		keys[minttypes.StoreKey],
@@ -698,75 +510,12 @@ func NewApp(
 		govAuthAddrStr,
 	)
 
-	// x/community's deposit/withdraw to lend proposals depend on hard keeper.
-	// app.communityKeeper = communitykeeper.NewKeeper(
-	// 	appCodec,
-	// 	keys[communitytypes.StoreKey],
-	// 	app.accountKeeper,
-	// 	app.bankKeeper,
-	// 	&cdpKeeper,
-	// 	app.distrKeeper,
-	// 	&hardKeeper,
-	// 	&app.mintKeeper,
-	// 	&app.kavadistKeeper,
-	// 	app.stakingKeeper,
-	// 	govAuthAddr,
-	// )
-
-	// app.incentiveKeeper = incentivekeeper.NewKeeper(
-	// 	appCodec,
-	// 	keys[incentivetypes.StoreKey],
-	// 	incentiveSubspace,
-	// 	app.bankKeeper,
-	// 	&cdpKeeper,
-	// 	&hardKeeper,
-	// 	app.accountKeeper,
-	// 	app.stakingKeeper,
-	// 	&swapKeeper,
-	// 	&savingsKeeper,
-	// 	&app.liquidKeeper,
-	// 	&earnKeeper,
-	// 	app.mintKeeper,
-	// 	app.distrKeeper,
-	// 	app.pricefeedKeeper,
-	// )
-	// app.routerKeeper = routerkeeper.NewKeeper(
-	// 	&app.earnKeeper,
-	// 	app.liquidKeeper,
-	// 	app.stakingKeeper,
-	// )
-
-	// create committee keeper with router
-	// committeeGovRouter := govv1beta1.NewRouter()
-	// committeeGovRouter.
-	// 	AddRoute(govtypes.RouterKey, govv1beta1.ProposalHandler).
-	// 	AddRoute(communitytypes.RouterKey, community.NewCommunityPoolProposalHandler(app.communityKeeper)).
-	// 	AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.paramsKeeper)).
-	// 	AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(&app.upgradeKeeper))
-	// // Note: the committee proposal handler is not registered on the committee router. This means committees cannot create or update other committees.
-	// // Adding the committee proposal handler to the router is possible but awkward as the handler depends on the keeper which depends on the handler.
-	// app.committeeKeeper = committeekeeper.NewKeeper(
-	// 	appCodec,
-	// 	keys[committeetypes.StoreKey],
-	// 	committeeGovRouter,
-	// 	app.paramsKeeper,
-	// 	app.accountKeeper,
-	// 	app.bankKeeper,
-	// )
-
 	// register the staking hooks
 	app.stakingKeeper.SetHooks(
 		stakingtypes.NewMultiStakingHooks(
 			app.distrKeeper.Hooks(),
 			app.slashingKeeper.Hooks(),
-			// app.incentiveKeeper.Hooks(),
 		))
-
-	// app.swapKeeper = *swapKeeper.SetHooks(app.incentiveKeeper.Hooks())
-	// app.cdpKeeper = *cdpKeeper.SetHooks(cdptypes.NewMultiCDPHooks(app.incentiveKeeper.Hooks()))
-	// app.hardKeeper = *hardKeeper.SetHooks(hardtypes.NewMultiHARDHooks(app.incentiveKeeper.Hooks()))
-	// app.savingsKeeper = savingsKeeper // savings incentive hooks disabled
-	// app.earnKeeper = *earnKeeper.SetHooks(app.incentiveKeeper.Hooks())
 
 	// create gov keeper with router
 	// NOTE this must be done after any keepers referenced in the gov router (ie committee) are defined
@@ -776,12 +525,6 @@ func NewApp(
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.paramsKeeper)).
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(&app.upgradeKeeper)).
 		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.ibcKeeper.ClientKeeper))
-		// .
-		// AddRoute(kavadisttypes.RouterKey, kavadist.NewCommunityPoolMultiSpendProposalHandler(app.kavadistKeeper)).
-		// AddRoute(earntypes.RouterKey, earn.NewCommunityPoolProposalHandler(app.earnKeeper))
-		// .
-		// AddRoute(communitytypes.RouterKey, community.NewCommunityPoolProposalHandler(app.communityKeeper))
-		// .AddRoute(committeetypes.RouterKey, committee.NewProposalHandler(app.committeeKeeper))
 
 	govConfig := govtypes.DefaultConfig()
 	govKeeper := govkeeper.NewKeeper(
@@ -796,13 +539,6 @@ func NewApp(
 	)
 	govKeeper.SetLegacyRouter(govRouter)
 	app.govKeeper = *govKeeper
-
-	// override x/gov tally handler with custom implementation
-	// tallyHandler := NewTallyHandler(
-	//	app.govKeeper, *app.stakingKeeper, app.savingsKeeper, app.earnKeeper,
-	// 	app.liquidKeeper, app.bankKeeper,
-	// )
-	// app.govKeeper.SetTallyHandler(tallyHandler)
 
 	// create the module manager (Note: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.)
@@ -827,41 +563,17 @@ func NewApp(
 		transferModule,
 		vesting.NewAppModule(app.accountKeeper, app.bankKeeper),
 		authzmodule.NewAppModule(appCodec, app.authzKeeper, app.accountKeeper, app.bankKeeper, app.interfaceRegistry),
-		// kavadist.NewAppModule(app.kavadistKeeper, app.accountKeeper),
-		// auction.NewAppModule(app.auctionKeeper, app.accountKeeper, app.bankKeeper),
-		// issuance.NewAppModule(app.issuanceKeeper, app.accountKeeper, app.bankKeeper),
-		// bep3.NewAppModule(app.bep3Keeper, app.accountKeeper, app.bankKeeper),
-		// pricefeed.NewAppModule(app.pricefeedKeeper, app.accountKeeper),
 		validatorvesting.NewAppModule(app.bankKeeper),
-		// swap.NewAppModule(app.swapKeeper, app.accountKeeper),
-		// cdp.NewAppModule(app.cdpKeeper, app.accountKeeper, app.pricefeedKeeper, app.bankKeeper),
-		// hard.NewAppModule(app.hardKeeper, app.accountKeeper, app.bankKeeper, app.pricefeedKeeper),
-		// committee.NewAppModule(app.committeeKeeper, app.accountKeeper),
-		// incentive.NewAppModule(app.incentiveKeeper, app.accountKeeper, app.bankKeeper, app.cdpKeeper),
 		evmutil.NewAppModule(app.evmutilKeeper, app.bankKeeper, app.accountKeeper),
-		// savings.NewAppModule(app.savingsKeeper, app.accountKeeper, app.bankKeeper),
-		// liquid.NewAppModule(app.liquidKeeper),
-		// earn.NewAppModule(app.earnKeeper, app.accountKeeper, app.bankKeeper),
-		// router.NewAppModule(app.routerKeeper),
-		// nil InflationCalculationFn, use SDK's default inflation function
 		mint.NewAppModule(appCodec, app.mintKeeper, app.accountKeeper, nil, mintSubspace),
-		// community.NewAppModule(app.communityKeeper, app.accountKeeper),
-		// metrics.NewAppModule(options.TelemetryOptions),
 	)
 
 	// Warning: Some begin blockers must run before others. Ensure the dependencies are understood before modifying this list.
 	app.mm.SetOrderBeginBlockers(
-		// metricstypes.ModuleName,
 		// Upgrade begin blocker runs migrations on the first block after an upgrade. It should run before any other module.
 		upgradetypes.ModuleName,
 		// Capability begin blocker runs non state changing initialization.
 		capabilitytypes.ModuleName,
-		// Committee begin blocker changes module params by enacting proposals.
-		// Run before to ensure params are updated together before state changes.
-		// committeetypes.ModuleName,
-		// Community begin blocker should run before x/mint and x/kavadist since
-		// the disable inflation upgrade will update those modules' params.
-		// communitytypes.ModuleName,
 		minttypes.ModuleName,
 		distrtypes.ModuleName,
 		// During begin block slashing happens after distr.BeginBlocker so that
@@ -872,20 +584,9 @@ func NewApp(
 		stakingtypes.ModuleName,
 		feemarkettypes.ModuleName,
 		evmtypes.ModuleName,
-		// kavadisttypes.ModuleName,
-		// Auction begin blocker will close out expired auctions and pay debt back to cdp.
-		// It should be run before cdp begin blocker which cancels out debt with stable and starts more auctions.
-		// auctiontypes.ModuleName,
-		// cdptypes.ModuleName,
-		// bep3types.ModuleName,
-		// hardtypes.ModuleName,
-		// issuancetypes.ModuleName,
-		// incentivetypes.ModuleName,
 		ibcexported.ModuleName,
 		// Add all remaining modules with an empty begin blocker below since cosmos 0.45.0 requires it
-		// swaptypes.ModuleName,
 		vestingtypes.ModuleName,
-		// pricefeedtypes.ModuleName,
 		validatorvestingtypes.ModuleName,
 		authtypes.ModuleName,
 		banktypes.ModuleName,
@@ -896,10 +597,6 @@ func NewApp(
 		paramstypes.ModuleName,
 		authz.ModuleName,
 		evmutiltypes.ModuleName,
-		// savingstypes.ModuleName,
-		// liquidtypes.ModuleName,
-		// earntypes.ModuleName,
-		// routertypes.ModuleName,
 		consensusparamtypes.ModuleName,
 		packetforwardtypes.ModuleName,
 	)
@@ -912,22 +609,12 @@ func NewApp(
 		evmtypes.ModuleName,
 		// fee market module must go after evm module in order to retrieve the block gas used.
 		feemarkettypes.ModuleName,
-		// pricefeedtypes.ModuleName,
 		// Add all remaining modules with an empty end blocker below since cosmos 0.45.0 requires it
 		capabilitytypes.ModuleName,
-		// incentivetypes.ModuleName,
-		// issuancetypes.ModuleName,
 		slashingtypes.ModuleName,
 		distrtypes.ModuleName,
-		// auctiontypes.ModuleName,
-		// bep3types.ModuleName,
-		// cdptypes.ModuleName,
-		// hardtypes.ModuleName,
-		// committeetypes.ModuleName,
 		upgradetypes.ModuleName,
 		evidencetypes.ModuleName,
-		// kavadisttypes.ModuleName,
-		// swaptypes.ModuleName,
 		vestingtypes.ModuleName,
 		ibcexported.ModuleName,
 		validatorvestingtypes.ModuleName,
@@ -938,13 +625,7 @@ func NewApp(
 		paramstypes.ModuleName,
 		authz.ModuleName,
 		evmutiltypes.ModuleName,
-		// savingstypes.ModuleName,
-		// liquidtypes.ModuleName,
-		// earntypes.ModuleName,
-		// routertypes.ModuleName,
 		minttypes.ModuleName,
-		// communitytypes.ModuleName,
-		// metricstypes.ModuleName,
 		consensusparamtypes.ModuleName,
 		packetforwardtypes.ModuleName,
 	)
@@ -965,29 +646,13 @@ func NewApp(
 		ibctransfertypes.ModuleName,
 		evmtypes.ModuleName,
 		feemarkettypes.ModuleName,
-		// kavadisttypes.ModuleName,
-		// auctiontypes.ModuleName,
-		// issuancetypes.ModuleName,
-		// savingstypes.ModuleName,
-		// bep3types.ModuleName,
-		// pricefeedtypes.ModuleName,
-		// swaptypes.ModuleName,
-		// cdptypes.ModuleName, // reads market prices, so must run after pricefeed genesis
-		// hardtypes.ModuleName,
-		// incentivetypes.ModuleName, // reads cdp params, so must run after cdp genesis
-		// committeetypes.ModuleName,
 		evmutiltypes.ModuleName,
-		// earntypes.ModuleName,
-		// communitytypes.ModuleName,
 		genutiltypes.ModuleName, // runs arbitrary txs included in genisis state, so run after modules have been initialized
 		// Add all remaining modules with an empty InitGenesis below since cosmos 0.45.0 requires it
 		vestingtypes.ModuleName,
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
 		validatorvestingtypes.ModuleName,
-		// liquidtypes.ModuleName,
-		// routertypes.ModuleName,
-		// metricstypes.ModuleName,
 		consensusparamtypes.ModuleName,
 		packetforwardtypes.ModuleName,
 		crisistypes.ModuleName, // runs the invariants at genesis, should run after other modules
@@ -1029,8 +694,6 @@ func NewApp(
 	if options.MempoolEnableAuth {
 		fetchers = append(fetchers,
 			func(sdk.Context) []sdk.AccAddress { return options.MempoolAuthAddresses },
-			// app.bep3Keeper.GetAuthorizedAddresses,
-			// app.pricefeedKeeper.GetAuthorizedAddresses,
 		)
 	}
 
@@ -1194,19 +857,7 @@ func (app *App) RegisterNodeService(clientCtx client.Context) {
 // loadBlockedMaccAddrs returns a map indicating the blocked status of each module account address
 func (app *App) loadBlockedMaccAddrs() map[string]bool {
 	modAccAddrs := app.ModuleAccountAddrs()
-	allowedMaccs := map[string]bool{
-		// kavadist
-		// app.accountKeeper.GetModuleAddress(kavadisttypes.ModuleName).String(): true,
-		// earn
-		// app.accountKeeper.GetModuleAddress(earntypes.ModuleName).String(): true,
-		// liquid
-		// app.accountKeeper.GetModuleAddress(liquidtypes.ModuleName).String(): true,
-		// kavadist fund
-		// app.accountKeeper.GetModuleAddress(kavadisttypes.FundModuleAccount).String(): true,
-		// community
-		// app.accountKeeper.GetModuleAddress(communitytypes.ModuleAccountName).String(): true,
-		// NOTE: if adding evmutil, adjust the cosmos-coins-fully-backed-invariant accordingly.
-	}
+	allowedMaccs := map[string]bool{}
 
 	for addr := range modAccAddrs {
 		// Set allowed module accounts as unblocked
