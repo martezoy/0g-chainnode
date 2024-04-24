@@ -7,9 +7,9 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 
-	"github.com/kava-labs/kava/tests/e2e/contracts/greeter"
-	// "github.com/kava-labs/kava/x/cdp/types"
-	evmutiltypes "github.com/kava-labs/kava/x/evmutil/types"
+	"github.com/0glabs/0g-chain/tests/e2e/contracts/greeter"
+	// "github.com/0glabs/0g-chain/x/cdp/types"
+	evmutiltypes "github.com/0glabs/0g-chain/x/evmutil/types"
 )
 
 // InitKavaEvmData is run after the chain is running, but before the tests are run.
@@ -35,7 +35,7 @@ func (suite *E2eTestSuite) InitKavaEvmData() {
 	found := false
 	erc20Addr := suite.DeployedErc20.Address.Hex()
 	for _, p := range params.Params.EnabledConversionPairs {
-		if common.BytesToAddress(p.KavaERC20Address).Hex() == erc20Addr {
+		if common.BytesToAddress(p.ZgchainERC20Address).Hex() == erc20Addr {
 			found = true
 			suite.DeployedErc20.CosmosDenom = p.Denom
 		}

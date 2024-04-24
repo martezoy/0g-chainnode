@@ -105,16 +105,22 @@ import (
 	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
 	"github.com/gorilla/mux"
 
-	"github.com/kava-labs/kava/app/ante"
-	kavaparams "github.com/kava-labs/kava/app/params"
+	"github.com/0glabs/0g-chain/app/ante"
+	kavaparams "github.com/0glabs/0g-chain/app/params"
 
-	evmutil "github.com/kava-labs/kava/x/evmutil"
-	evmutilkeeper "github.com/kava-labs/kava/x/evmutil/keeper"
-	evmutiltypes "github.com/kava-labs/kava/x/evmutil/types"
+	evmutil "github.com/0glabs/0g-chain/x/evmutil"
+	evmutilkeeper "github.com/0glabs/0g-chain/x/evmutil/keeper"
+	evmutiltypes "github.com/0glabs/0g-chain/x/evmutil/types"
 
-	validatorvesting "github.com/kava-labs/kava/x/validator-vesting"
-	validatorvestingrest "github.com/kava-labs/kava/x/validator-vesting/client/rest"
-	validatorvestingtypes "github.com/kava-labs/kava/x/validator-vesting/types"
+	committee "github.com/0glabs/0g-chain/x/committee/v1"
+	committeekeeper "github.com/0glabs/0g-chain/x/committee/v1/keeper"
+	committeetypes "github.com/0glabs/0g-chain/x/committee/v1/types"
+	das "github.com/0glabs/0g-chain/x/das/v1"
+	daskeeper "github.com/0glabs/0g-chain/x/das/v1/keeper"
+	dastypes "github.com/0glabs/0g-chain/x/das/v1/types"
+	validatorvesting "github.com/0glabs/0g-chain/x/validator-vesting"
+	validatorvestingrest "github.com/0glabs/0g-chain/x/validator-vesting/client/rest"
+	validatorvestingtypes "github.com/0glabs/0g-chain/x/validator-vesting/types"
 )
 
 const (
@@ -159,6 +165,8 @@ var (
 		evmutil.AppModuleBasic{},
 		mint.AppModuleBasic{},
 		consensus.AppModuleBasic{},
+		committee.AppModuleBasic{},
+		das.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -235,6 +243,8 @@ type App struct {
 	transferKeeper        ibctransferkeeper.Keeper
 	mintKeeper            mintkeeper.Keeper
 	consensusParamsKeeper consensusparamkeeper.Keeper
+	CommitteeKeeper       committeekeeper.Keeper
+	DasKeeper             daskeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
@@ -299,6 +309,8 @@ func NewApp(
 		minttypes.StoreKey,
 		consensusparamtypes.StoreKey,
 		crisistypes.StoreKey,
+		committeetypes.StoreKey,
+		dastypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey, feemarkettypes.TransientKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -540,6 +552,11 @@ func NewApp(
 	govKeeper.SetLegacyRouter(govRouter)
 	app.govKeeper = *govKeeper
 
+	app.CommitteeKeeper = committeekeeper.NewKeeper(
+		keys[committeetypes.StoreKey], appCodec, app.stakingKeeper,
+	)
+	app.DasKeeper = daskeeper.NewKeeper(keys[dastypes.StoreKey], appCodec, app.stakingKeeper)
+
 	// create the module manager (Note: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.)
 	app.mm = module.NewManager(
@@ -599,6 +616,9 @@ func NewApp(
 		evmutiltypes.ModuleName,
 		consensusparamtypes.ModuleName,
 		packetforwardtypes.ModuleName,
+
+		committeetypes.ModuleName,
+		dastypes.ModuleName,
 	)
 
 	// Warning: Some end blockers must run before others. Ensure the dependencies are understood before modifying this list.
@@ -628,6 +648,8 @@ func NewApp(
 		minttypes.ModuleName,
 		consensusparamtypes.ModuleName,
 		packetforwardtypes.ModuleName,
+		committeetypes.ModuleName,
+		dastypes.ModuleName,
 	)
 
 	// Warning: Some init genesis methods must run before others. Ensure the dependencies are understood before modifying this list
@@ -656,6 +678,8 @@ func NewApp(
 		consensusparamtypes.ModuleName,
 		packetforwardtypes.ModuleName,
 		crisistypes.ModuleName, // runs the invariants at genesis, should run after other modules
+		committeetypes.ModuleName,
+		dastypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.crisisKeeper)

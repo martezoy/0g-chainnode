@@ -41,7 +41,7 @@ import (
 	feemarketkeeper "github.com/evmos/ethermint/x/feemarket/keeper"
 	"github.com/stretchr/testify/require"
 
-	evmutilkeeper "github.com/kava-labs/kava/x/evmutil/keeper"
+	evmutilkeeper "github.com/0glabs/0g-chain/x/evmutil/keeper"
 )
 
 var (

@@ -10,9 +10,9 @@ import (
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/tests/e2e/runner"
-	"github.com/kava-labs/kava/tests/util"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/tests/e2e/runner"
+	"github.com/0glabs/0g-chain/tests/util"
 )
 
 const (
@@ -27,7 +27,7 @@ const (
 )
 
 // DeployedErc20 is a type that wraps the details of the pre-deployed erc20 used by the e2e test suite.
-// The Address comes from SuiteConfig.KavaErc20Address
+// The Address comes from SuiteConfig.ZgchainERC20Address
 // The CosmosDenom is fetched from the EnabledConversionPairs param of x/evmutil.
 // The tests expect the following:
 // - the funded account has a nonzero balance of the erc20
@@ -90,7 +90,7 @@ func (suite *E2eTestSuite) SetupSuite() {
 	suiteConfig := ParseSuiteConfig()
 	suite.config = suiteConfig
 	suite.DeployedErc20 = DeployedErc20{
-		Address: common.HexToAddress(suiteConfig.KavaErc20Address),
+		Address: common.HexToAddress(suiteConfig.ZgchainERC20Address),
 		// Denom & CdpCollateralType are fetched in InitKavaEvmData()
 	}
 

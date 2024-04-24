@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	sdkmath "cosmossdk.io/math"
-	"github.com/kava-labs/kava/app"
+	"github.com/0glabs/0g-chain/app"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 	tmbytes "github.com/cometbft/cometbft/libs/bytes"

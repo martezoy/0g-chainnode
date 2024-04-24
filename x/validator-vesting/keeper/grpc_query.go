@@ -5,8 +5,8 @@ import (
 	"time"
 
 	sdkmath "cosmossdk.io/math"
+	"github.com/0glabs/0g-chain/x/validator-vesting/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/kava-labs/kava/x/validator-vesting/types"
 )
 
 type queryServer struct {

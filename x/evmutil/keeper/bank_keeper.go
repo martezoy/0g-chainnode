@@ -9,7 +9,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
 
-	"github.com/kava-labs/kava/x/evmutil/types"
+	"github.com/0glabs/0g-chain/x/evmutil/types"
 )
 
 const (

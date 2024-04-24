@@ -14,8 +14,8 @@ import (
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/app/ante"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/app/ante"
 )
 
 func newMsgGrant(granter sdk.AccAddress, grantee sdk.AccAddress, a authz.Authorization, expiration time.Time) *authz.MsgGrant {
