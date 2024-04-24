@@ -13,9 +13,9 @@ import (
 // LiveNodeRunnerConfig implements NodeRunner.
 // It connects to a running network via the RPC, GRPC, and EVM urls.
 type LiveNodeRunnerConfig struct {
-	KavaRpcUrl    string
-	KavaGrpcUrl   string
-	KavaEvmRpcUrl string
+	ZgChainRpcUrl    string
+	ZgChainGrpcUrl   string
+	ZgChainEvmRpcUrl string
 
 	UpgradeHeight int64
 }
@@ -37,41 +37,41 @@ func NewLiveNodeRunner(config LiveNodeRunnerConfig) *LiveNodeRunner {
 // It initializes connections to the chain based on parameters.
 // It attempts to ping the necessary endpoints and panics if they cannot be reached.
 func (r LiveNodeRunner) StartChains() Chains {
-	fmt.Println("establishing connection to live kava network")
+	fmt.Println("establishing connection to live 0g-chain network")
 	chains := NewChains()
 
-	kavaChain := ChainDetails{
-		RpcUrl:    r.config.KavaRpcUrl,
-		GrpcUrl:   r.config.KavaGrpcUrl,
-		EvmRpcUrl: r.config.KavaEvmRpcUrl,
+	zgChain := ChainDetails{
+		RpcUrl:    r.config.ZgChainRpcUrl,
+		GrpcUrl:   r.config.ZgChainGrpcUrl,
+		EvmRpcUrl: r.config.ZgChainEvmRpcUrl,
 	}
 
-	if err := waitForChainStart(kavaChain); err != nil {
+	if err := waitForChainStart(zgChain); err != nil {
 		panic(fmt.Sprintf("failed to ping chain: %s", err))
 	}
 
 	// determine chain id
-	client, err := grpc.NewClient(kavaChain.GrpcUrl)
+	client, err := grpc.NewClient(zgChain.GrpcUrl)
 	if err != nil {
-		panic(fmt.Sprintf("failed to create kava grpc client: %s", err))
+		panic(fmt.Sprintf("failed to create 0gchain grpc client: %s", err))
 	}
 
 	nodeInfo, err := client.Query.Tm.GetNodeInfo(context.Background(), &tmservice.GetNodeInfoRequest{})
 	if err != nil {
-		panic(fmt.Sprintf("failed to fetch kava node info: %s", err))
+		panic(fmt.Sprintf("failed to fetch 0gchain node info: %s", err))
 	}
-	kavaChain.ChainId = nodeInfo.DefaultNodeInfo.Network
+	zgChain.ChainId = nodeInfo.DefaultNodeInfo.Network
 
 	// determine staking denom
 	stakingParams, err := client.Query.Staking.Params(context.Background(), &stakingtypes.QueryParamsRequest{})
 	if err != nil {
-		panic(fmt.Sprintf("failed to fetch kava staking params: %s", err))
+		panic(fmt.Sprintf("failed to fetch 0gchain staking params: %s", err))
 	}
-	kavaChain.StakingDenom = stakingParams.Params.BondDenom
+	zgChain.StakingDenom = stakingParams.Params.BondDenom
 
-	chains.Register("kava", &kavaChain)
+	chains.Register("0gchain", &zgChain)
 
-	fmt.Printf("successfully connected to live network %+v\n", kavaChain)
+	fmt.Printf("successfully connected to live network %+v\n", zgChain)
 
 	return chains
 }

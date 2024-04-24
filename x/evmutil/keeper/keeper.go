@@ -115,7 +115,7 @@ func (k Keeper) SetAccount(ctx sdk.Context, account types.Account) error {
 	return nil
 }
 
-// GetBalance returns the total balance of akava for a given account by address.
+// GetBalance returns the total balance of neuron for a given account by address.
 func (k Keeper) GetBalance(ctx sdk.Context, addr sdk.AccAddress) sdkmath.Int {
 	account := k.GetAccount(ctx, addr)
 	if account == nil {
@@ -124,7 +124,7 @@ func (k Keeper) GetBalance(ctx sdk.Context, addr sdk.AccAddress) sdkmath.Int {
 	return account.Balance
 }
 
-// SetBalance sets the total balance of akava for a given account by address.
+// SetBalance sets the total balance of neuron for a given account by address.
 func (k Keeper) SetBalance(ctx sdk.Context, addr sdk.AccAddress, bal sdkmath.Int) error {
 	account := k.GetAccount(ctx, addr)
 	if account == nil {
@@ -140,10 +140,10 @@ func (k Keeper) SetBalance(ctx sdk.Context, addr sdk.AccAddress, bal sdkmath.Int
 	return k.SetAccount(ctx, *account)
 }
 
-// SendBalance transfers the akava balance from sender addr to recipient addr.
+// SendBalance transfers the neuron balance from sender addr to recipient addr.
 func (k Keeper) SendBalance(ctx sdk.Context, senderAddr sdk.AccAddress, recipientAddr sdk.AccAddress, amt sdkmath.Int) error {
 	if amt.IsNegative() {
-		return fmt.Errorf("cannot send a negative amount of akava: %d", amt)
+		return fmt.Errorf("cannot send a negative amount of neuron: %d", amt)
 	}
 
 	if amt.IsZero() {
@@ -162,13 +162,13 @@ func (k Keeper) SendBalance(ctx sdk.Context, senderAddr sdk.AccAddress, recipien
 	return k.SetBalance(ctx, recipientAddr, receiverBal)
 }
 
-// AddBalance increments the akava balance of an address.
+// AddBalance increments the neuron balance of an address.
 func (k Keeper) AddBalance(ctx sdk.Context, addr sdk.AccAddress, amt sdkmath.Int) error {
 	bal := k.GetBalance(ctx, addr)
 	return k.SetBalance(ctx, addr, amt.Add(bal))
 }
 
-// RemoveBalance decrements the akava balance of an address.
+// RemoveBalance decrements the neuron balance of an address.
 func (k Keeper) RemoveBalance(ctx sdk.Context, addr sdk.AccAddress, amt sdkmath.Int) error {
 	if amt.IsNegative() {
 		return fmt.Errorf("cannot remove a negative amount from balance: %d", amt)
@@ -184,7 +184,7 @@ func (k Keeper) RemoveBalance(ctx sdk.Context, addr sdk.AccAddress, amt sdkmath.
 	return k.SetBalance(ctx, addr, finalBal)
 }
 
-// SetDeployedCosmosCoinContract stores a single deployed ERC20KavaWrappedCosmosCoin contract address
+// SetDeployedCosmosCoinContract stores a single deployed ERC20ZgChainWrappedCosmosCoin contract address
 func (k *Keeper) SetDeployedCosmosCoinContract(ctx sdk.Context, cosmosDenom string, contractAddress types.InternalEVMAddress) error {
 	if err := sdk.ValidateDenom(cosmosDenom); err != nil {
 		return errorsmod.Wrap(types.ErrInvalidCosmosDenom, cosmosDenom)
@@ -203,7 +203,7 @@ func (k *Keeper) SetDeployedCosmosCoinContract(ctx sdk.Context, cosmosDenom stri
 	return nil
 }
 
-// SetDeployedCosmosCoinContract gets a deployed ERC20KavaWrappedCosmosCoin contract address by cosmos denom
+// SetDeployedCosmosCoinContract gets a deployed ERC20ZgChainWrappedCosmosCoin contract address by cosmos denom
 // Returns the stored address and a bool indicating if it was found or not
 func (k *Keeper) GetDeployedCosmosCoinContract(ctx sdk.Context, cosmosDenom string) (types.InternalEVMAddress, bool) {
 	store := ctx.KVStore(k.storeKey)

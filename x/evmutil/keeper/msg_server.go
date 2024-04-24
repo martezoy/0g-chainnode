@@ -26,7 +26,7 @@ var _ types.MsgServer = msgServer{}
 ////////////////////////////
 
 // ConvertCoinToERC20 handles a MsgConvertCoinToERC20 message to convert
-// sdk.Coin to Kava EVM tokens.
+// sdk.Coin to 0gChain EVM tokens.
 func (s msgServer) ConvertCoinToERC20(
 	goCtx context.Context,
 	msg *types.MsgConvertCoinToERC20,
@@ -64,7 +64,7 @@ func (s msgServer) ConvertCoinToERC20(
 }
 
 // ConvertERC20ToCoin handles a MsgConvertERC20ToCoin message to convert
-// sdk.Coin to Kava EVM tokens.
+// sdk.Coin to 0gChain EVM tokens.
 func (s msgServer) ConvertERC20ToCoin(
 	goCtx context.Context,
 	msg *types.MsgConvertERC20ToCoin,

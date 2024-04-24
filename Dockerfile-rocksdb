@@ -1,4 +1,4 @@
-FROM golang:1.21-bullseye AS kava-builder
+FROM golang:1.21-bullseye AS chain-builder
 
 # Set up dependencies
 RUN apt-get update \
@@ -19,7 +19,7 @@ RUN git clone https://github.com/facebook/rocksdb.git \
     && make -j$(nproc) install-shared \
     && ldconfig
 
-WORKDIR /root/kava
+WORKDIR /root/0gchain
 # Copy dependency files first to facilitate dependency caching
 COPY ./go.mod ./
 COPY ./go.sum ./
@@ -32,13 +32,13 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 # Add source files
 COPY . .
 
-ARG kava_database_backend=rocksdb
-ENV KAVA_DATABASE_BACKEND=$kava_database_backend
+ARG 0gchain_database_backend=rocksdb
+ENV 0GCHAIN_DATABASE_BACKEND=$0gchain_database_backend
 
 # Mount go build and mod caches as container caches, persisted between builder invocations
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
-    make install COSMOS_BUILD_OPTIONS=$KAVA_DATABASE_BACKEND
+    make install COSMOS_BUILD_OPTIONS=$0GCHAIN_DATABASE_BACKEND
 
 
 FROM ubuntu:22.04
@@ -48,10 +48,10 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # copy rocksdb shared objects
-COPY --from=kava-builder /usr/local/lib/ /usr/local/lib/
+COPY --from=chain-builder /usr/local/lib/ /usr/local/lib/
 RUN ldconfig
 
-# copy kava binary
-COPY --from=kava-builder /go/bin/kava /bin/kava
+# copy 0g-chain binary
+COPY --from=chain-builder /go/bin/0gchaind /bin/0gchaind
 
-CMD ["kava"]
+CMD ["0gchaind"]

@@ -68,10 +68,10 @@ func (k Keeper) DeployTestMintableERC20Contract(
 	return types.NewInternalEVMAddress(contractAddr), nil
 }
 
-// DeployKavaWrappedCosmosCoinERC20Contract validates token details and then deploys an ERC20
+// DeployZgChainWrappedCosmosCoinERC20Contract validates token details and then deploys an ERC20
 // contract with the token metadata.
 // This method does NOT check if a token for the provided SdkDenom has already been deployed.
-func (k Keeper) DeployKavaWrappedCosmosCoinERC20Contract(
+func (k Keeper) DeployZgChainWrappedCosmosCoinERC20Contract(
 	ctx sdk.Context,
 	token types.AllowedCosmosCoinERC20Token,
 ) (types.InternalEVMAddress, error) {
@@ -79,7 +79,7 @@ func (k Keeper) DeployKavaWrappedCosmosCoinERC20Contract(
 		return types.InternalEVMAddress{}, errorsmod.Wrapf(err, "failed to deploy erc20 for sdk denom %s", token.CosmosDenom)
 	}
 
-	packedAbi, err := types.ERC20KavaWrappedCosmosCoinContract.ABI.Pack(
+	packedAbi, err := types.ERC20ZgChainWrappedCosmosCoinContract.ABI.Pack(
 		"", // Empty string for contract constructor
 		token.Name,
 		token.Symbol,
@@ -89,13 +89,13 @@ func (k Keeper) DeployKavaWrappedCosmosCoinERC20Contract(
 		return types.InternalEVMAddress{}, errorsmod.Wrapf(err, "failed to pack token with details %+v", token)
 	}
 
-	data := make([]byte, len(types.ERC20KavaWrappedCosmosCoinContract.Bin)+len(packedAbi))
+	data := make([]byte, len(types.ERC20ZgChainWrappedCosmosCoinContract.Bin)+len(packedAbi))
 	copy(
-		data[:len(types.ERC20KavaWrappedCosmosCoinContract.Bin)],
-		types.ERC20KavaWrappedCosmosCoinContract.Bin,
+		data[:len(types.ERC20ZgChainWrappedCosmosCoinContract.Bin)],
+		types.ERC20ZgChainWrappedCosmosCoinContract.Bin,
 	)
 	copy(
-		data[len(types.ERC20KavaWrappedCosmosCoinContract.Bin):],
+		data[len(types.ERC20ZgChainWrappedCosmosCoinContract.Bin):],
 		packedAbi,
 	)
 
@@ -126,7 +126,7 @@ func (k *Keeper) GetOrDeployCosmosCoinERC20Contract(
 	}
 
 	// deploy a new contract
-	contractAddress, err := k.DeployKavaWrappedCosmosCoinERC20Contract(ctx, tokenInfo)
+	contractAddress, err := k.DeployZgChainWrappedCosmosCoinERC20Contract(ctx, tokenInfo)
 	if err != nil {
 		return contractAddress, err
 	}
@@ -170,7 +170,7 @@ func (k Keeper) BurnERC20(
 ) error {
 	_, err := k.CallEVM(
 		ctx,
-		types.ERC20KavaWrappedCosmosCoinContract.ABI,
+		types.ERC20ZgChainWrappedCosmosCoinContract.ABI,
 		types.ModuleEVMAddress,
 		contractAddr,
 		erc20BurnMethod,
@@ -213,7 +213,7 @@ func (k Keeper) QueryERC20TotalSupply(
 ) (*big.Int, error) {
 	res, err := k.CallEVM(
 		ctx,
-		types.ERC20KavaWrappedCosmosCoinContract.ABI,
+		types.ERC20ZgChainWrappedCosmosCoinContract.ABI,
 		types.ModuleEVMAddress,
 		contractAddr,
 		erc20TotalSupplyMethod,

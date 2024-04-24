@@ -7,7 +7,7 @@ FROM golang:1.21-alpine AS build-env
 RUN apk add bash git make libc-dev gcc linux-headers eudev-dev jq curl
 
 # Set working directory for the build
-WORKDIR /root/kava
+WORKDIR /root/0g-chain
 # default home directory is /root
 
 # Copy dependency files first to facilitate dependency caching
@@ -32,6 +32,6 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 FROM alpine:3.15
 
 RUN apk add bash jq curl
-COPY --from=build-env /go/bin/kava /bin/kava
+COPY --from=build-env /go/bin/0gchaind /bin/0gchaind
 
-CMD ["kava"]
+CMD ["0gchaind"]

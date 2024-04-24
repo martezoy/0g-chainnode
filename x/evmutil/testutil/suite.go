@@ -37,6 +37,7 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/evmutil/keeper"
 	"github.com/0glabs/0g-chain/x/evmutil/types"
 )
@@ -81,14 +82,14 @@ func (suite *Suite) SetupTest() {
 	suite.Addrs = addrs
 
 	evmGenesis := evmtypes.DefaultGenesisState()
-	evmGenesis.Params.EvmDenom = "akava"
+	evmGenesis.Params.EvmDenom = chaincfg.BaseDenom
 
 	feemarketGenesis := feemarkettypes.DefaultGenesisState()
 	feemarketGenesis.Params.EnableHeight = 1
 	feemarketGenesis.Params.NoBaseFee = false
 
 	cdc := suite.App.AppCodec()
-	coins := sdk.NewCoins(sdk.NewInt64Coin("ukava", 1000_000_000_000_000_000))
+	coins := sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 1000_000_000_000_000_000))
 	authGS := app.NewFundedGenStateWithSameCoins(cdc, coins, []sdk.AccAddress{
 		sdk.AccAddress(suite.Key1.PubKey().Address()),
 		sdk.AccAddress(suite.Key2.PubKey().Address()),
@@ -184,29 +185,29 @@ func (suite *Suite) ModuleBalance(denom string) sdk.Int {
 	return suite.App.GetModuleAccountBalance(suite.Ctx, types.ModuleName, denom)
 }
 
-func (suite *Suite) FundAccountWithKava(addr sdk.AccAddress, coins sdk.Coins) {
-	ukava := coins.AmountOf("ukava")
-	if ukava.IsPositive() {
-		err := suite.App.FundAccount(suite.Ctx, addr, sdk.NewCoins(sdk.NewCoin("ukava", ukava)))
+func (suite *Suite) FundAccountWithZgChain(addr sdk.AccAddress, coins sdk.Coins) {
+	a0gi := coins.AmountOf(chaincfg.DisplayDenom)
+	if a0gi.IsPositive() {
+		err := suite.App.FundAccount(suite.Ctx, addr, sdk.NewCoins(sdk.NewCoin(chaincfg.DisplayDenom, a0gi)))
 		suite.Require().NoError(err)
 	}
-	akava := coins.AmountOf("akava")
-	if akava.IsPositive() {
-		err := suite.Keeper.SetBalance(suite.Ctx, addr, akava)
+	neuron := coins.AmountOf(chaincfg.BaseDenom)
+	if neuron.IsPositive() {
+		err := suite.Keeper.SetBalance(suite.Ctx, addr, neuron)
 		suite.Require().NoError(err)
 	}
 }
 
-func (suite *Suite) FundModuleAccountWithKava(moduleName string, coins sdk.Coins) {
-	ukava := coins.AmountOf("ukava")
-	if ukava.IsPositive() {
-		err := suite.App.FundModuleAccount(suite.Ctx, moduleName, sdk.NewCoins(sdk.NewCoin("ukava", ukava)))
+func (suite *Suite) FundModuleAccountWithZgChain(moduleName string, coins sdk.Coins) {
+	a0gi := coins.AmountOf(chaincfg.DisplayDenom)
+	if a0gi.IsPositive() {
+		err := suite.App.FundModuleAccount(suite.Ctx, moduleName, sdk.NewCoins(sdk.NewCoin(chaincfg.DisplayDenom, a0gi)))
 		suite.Require().NoError(err)
 	}
-	akava := coins.AmountOf("akava")
-	if akava.IsPositive() {
+	neuron := coins.AmountOf(chaincfg.BaseDenom)
+	if neuron.IsPositive() {
 		addr := suite.AccountKeeper.GetModuleAddress(moduleName)
-		err := suite.Keeper.SetBalance(suite.Ctx, addr, akava)
+		err := suite.Keeper.SetBalance(suite.Ctx, addr, neuron)
 		suite.Require().NoError(err)
 	}
 }
@@ -217,7 +218,7 @@ func (suite *Suite) DeployERC20() types.InternalEVMAddress {
 	suite.App.FundModuleAccount(
 		suite.Ctx,
 		types.ModuleName,
-		sdk.NewCoins(sdk.NewCoin("ukava", sdkmath.NewInt(0))),
+		sdk.NewCoins(sdk.NewCoin(chaincfg.DisplayDenom, sdkmath.NewInt(0))),
 	)
 
 	contractAddr, err := suite.Keeper.DeployTestMintableERC20Contract(suite.Ctx, "USDC", "USDC", uint8(18))
@@ -318,7 +319,7 @@ func (suite *Suite) SendTx(
 	// Mint the max gas to the FeeCollector to ensure balance in case of refund
 	suite.MintFeeCollector(sdk.NewCoins(
 		sdk.NewCoin(
-			"ukava",
+			chaincfg.DisplayDenom,
 			sdkmath.NewInt(baseFee.Int64()*int64(gasRes.Gas*2)),
 		)))
 

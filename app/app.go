@@ -3,10 +3,6 @@ package app
 import (
 	"fmt"
 	"io"
-	stdlog "log"
-	"net/http"
-	"os"
-	"path/filepath"
 
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
@@ -103,10 +99,10 @@ import (
 	"github.com/evmos/ethermint/x/feemarket"
 	feemarketkeeper "github.com/evmos/ethermint/x/feemarket/keeper"
 	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
-	"github.com/gorilla/mux"
 
 	"github.com/0glabs/0g-chain/app/ante"
-	kavaparams "github.com/0glabs/0g-chain/app/params"
+	chainparams "github.com/0glabs/0g-chain/app/params"
+	"github.com/0glabs/0g-chain/chaincfg"
 
 	evmutil "github.com/0glabs/0g-chain/x/evmutil"
 	evmutilkeeper "github.com/0glabs/0g-chain/x/evmutil/keeper"
@@ -123,14 +119,7 @@ import (
 	validatorvestingtypes "github.com/0glabs/0g-chain/x/validator-vesting/types"
 )
 
-const (
-	appName = "kava"
-)
-
 var (
-	// DefaultNodeHome default home directories for the application daemon
-	DefaultNodeHome string
-
 	// ModuleBasics manages simple versions of full app modules.
 	// It's used for things such as codec registration and genesis file verification.
 	ModuleBasics = module.NewBasicManager(
@@ -208,7 +197,7 @@ var DefaultOptions = Options{
 	EVMMaxGasWanted: ethermintconfig.DefaultMaxTxGasWanted,
 }
 
-// App is the Kava ABCI application.
+// App is the 0gChain ABCI application.
 type App struct {
 	*baseapp.BaseApp
 
@@ -260,22 +249,13 @@ type App struct {
 	configurator module.Configurator
 }
 
-func init() {
-	userHomeDir, err := os.UserHomeDir()
-	if err != nil {
-		stdlog.Printf("Failed to get home dir %v", err)
-	}
-
-	DefaultNodeHome = filepath.Join(userHomeDir, ".kava")
-}
-
 // NewApp returns a reference to an initialized App.
 func NewApp(
 	logger tmlog.Logger,
 	db dbm.DB,
 	homePath string,
 	traceStore io.Writer,
-	encodingConfig kavaparams.EncodingConfig,
+	encodingConfig chainparams.EncodingConfig,
 	options Options,
 	baseAppOptions ...func(*baseapp.BaseApp),
 ) *App {
@@ -283,7 +263,7 @@ func NewApp(
 	legacyAmino := encodingConfig.Amino
 	interfaceRegistry := encodingConfig.InterfaceRegistry
 
-	bApp := baseapp.NewBaseApp(appName, logger, db, encodingConfig.TxConfig.TxDecoder(), baseAppOptions...)
+	bApp := baseapp.NewBaseApp(chaincfg.AppName, logger, db, encodingConfig.TxConfig.TxDecoder(), baseAppOptions...)
 	bApp.SetCommitMultiStoreTracer(traceStore)
 	bApp.SetVersion(version.Version)
 	bApp.SetInterfaceRegistry(interfaceRegistry)
@@ -779,7 +759,7 @@ func (app *App) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.Res
 		panic(err)
 	}
 
-	// Store current module versions in kava-10 to setup future in-place upgrades.
+	// Store current module versions in 0gChain-10 to setup future in-place upgrades.
 	// During in-place migrations, the old module versions in the store will be referenced to determine which migrations to run.
 	app.upgradeKeeper.SetModuleVersionMap(ctx, app.mm.GetVersionMap())
 
@@ -818,9 +798,6 @@ func (app *App) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig
 	// Register custom REST routes
 	validatorvestingrest.RegisterRoutes(clientCtx, apiSvr.Router)
 
-	// Register rewrite routes
-	RegisterAPIRouteRewrites(apiSvr.Router)
-
 	// Register GRPC Gateway routes
 	tmservice.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 	authtx.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
@@ -828,33 +805,6 @@ func (app *App) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig
 	nodeservice.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 
 	// Swagger API configuration is ignored
-}
-
-// RegisterAPIRouteRewrites registers overwritten API routes that are
-// registered after this function is called. This must be called before any
-// other route registrations on the router in order for rewrites to take effect.
-// The first route that matches in the mux router wins, so any registrations
-// here will be prioritized over the later registrations in modules.
-func RegisterAPIRouteRewrites(router *mux.Router) {
-	// Mapping of client path to backend path. Similar to nginx rewrite rules,
-	// but does not return a 301 or 302 redirect.
-	// Eg: querying /cosmos/distribution/v1beta1/community_pool will return
-	// the same response as querying /kava/community/v1beta1/total_balance
-	routeMap := map[string]string{
-		"/cosmos/distribution/v1beta1/community_pool": "/kava/community/v1beta1/total_balance",
-	}
-
-	for clientPath, backendPath := range routeMap {
-		router.HandleFunc(
-			clientPath,
-			func(w http.ResponseWriter, r *http.Request) {
-				r.URL.Path = backendPath
-
-				// Use handler of the new path
-				router.ServeHTTP(w, r)
-			},
-		).Methods("GET")
-	}
 }
 
 // RegisterTxService implements the Application.RegisterTxService method.

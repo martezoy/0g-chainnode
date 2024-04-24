@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/validator-vesting/keeper"
 	"github.com/0glabs/0g-chain/x/validator-vesting/types"
 )
@@ -52,7 +53,7 @@ func TestGrpcQueryTestSuite(t *testing.T) {
 
 func (suite *grpcQueryTestSuite) TestCirculatingSupply() {
 	suite.Run("vesting period supply", func() {
-		suite.bk.SetSupply(suite.ctx, "ukava", sdkmath.NewInt(2_500_000_000_000))
+		suite.bk.SetSupply(suite.ctx, chaincfg.DisplayDenom, sdkmath.NewInt(2_500_000_000_000))
 		lastVestingPeriod := time.Date(2022, 8, 5, 24, 0, 0, 0, time.UTC)
 		queryClient := suite.queryClientWithBlockTime(lastVestingPeriod)
 		res, err := queryClient.CirculatingSupply(context.Background(), &types.QueryCirculatingSupplyRequest{})
@@ -61,7 +62,7 @@ func (suite *grpcQueryTestSuite) TestCirculatingSupply() {
 	})
 
 	suite.Run("supply after last vesting period", func() {
-		suite.bk.SetSupply(suite.ctx, "ukava", sdkmath.NewInt(100_000_000))
+		suite.bk.SetSupply(suite.ctx, chaincfg.DisplayDenom, sdkmath.NewInt(100_000_000))
 		res, err := suite.queryClient.CirculatingSupply(context.Background(), &types.QueryCirculatingSupplyRequest{})
 		suite.Require().NoError(err)
 		suite.Require().Equal(sdkmath.NewInt(100), res.Amount)
@@ -69,7 +70,7 @@ func (suite *grpcQueryTestSuite) TestCirculatingSupply() {
 }
 
 func (suite *grpcQueryTestSuite) TestTotalSupply() {
-	suite.bk.SetSupply(suite.ctx, "ukava", sdkmath.NewInt(100_000_000))
+	suite.bk.SetSupply(suite.ctx, chaincfg.DisplayDenom, sdkmath.NewInt(100_000_000))
 	res, err := suite.queryClient.TotalSupply(context.Background(), &types.QueryTotalSupplyRequest{})
 	suite.Require().NoError(err)
 	suite.Require().Equal(sdkmath.NewInt(100), res.Amount)

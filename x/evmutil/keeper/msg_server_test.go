@@ -34,7 +34,7 @@ func TestMsgServerSuite(t *testing.T) {
 }
 
 func (suite *MsgServerSuite) TestConvertCoinToERC20() {
-	invoker, err := sdk.AccAddressFromBech32("kava123fxg0l602etulhhcdm0vt7l57qya5wjcrwhzz")
+	invoker, err := sdk.AccAddressFromBech32("0g123fxg0l602etulhhcdm0vt7l57qya5wjcrwhzz")
 	suite.Require().NoError(err)
 
 	err = suite.App.FundAccount(suite.Ctx, invoker, sdk.NewCoins(sdk.NewCoin("erc20/usdc", sdkmath.NewInt(10000))))
@@ -282,7 +282,7 @@ func (suite *MsgServerSuite) TestConvertCosmosCoinToERC20_InitialContractDeploy(
 		// make the denom allowed for conversion
 		params := suite.Keeper.GetParams(suite.Ctx)
 		params.AllowedCosmosDenoms = types.NewAllowedCosmosCoinERC20Tokens(
-			types.NewAllowedCosmosCoinERC20Token(allowedDenom, "Kava EVM Atom", "ATOM", 6),
+			types.NewAllowedCosmosCoinERC20Token(allowedDenom, "0gChain EVM Atom", "ATOM", 6),
 		)
 		suite.Keeper.SetParams(suite.Ctx, params)
 
@@ -331,7 +331,7 @@ func (suite *MsgServerSuite) TestConvertCosmosCoinToERC20_InitialContractDeploy(
 		{
 			name: "invalid - bad initiator",
 			msg: types.NewMsgConvertCosmosCoinToERC20(
-				"invalid-kava-address",
+				"invalid-0g-address",
 				testutil.RandomEvmAddress().Hex(),
 				sdk.NewInt64Coin(allowedDenom, 1e4),
 			),
@@ -452,7 +452,7 @@ func (suite *MsgServerSuite) TestConvertCosmosCoinToERC20_AlreadyDeployedContrac
 	// make the denom allowed for conversion
 	params := suite.Keeper.GetParams(suite.Ctx)
 	params.AllowedCosmosDenoms = types.NewAllowedCosmosCoinERC20Tokens(
-		types.NewAllowedCosmosCoinERC20Token(allowedDenom, "Kava EVM Atom", "ATOM", 6),
+		types.NewAllowedCosmosCoinERC20Token(allowedDenom, "0gChain EVM Atom", "ATOM", 6),
 	)
 	suite.Keeper.SetParams(suite.Ctx, params)
 
@@ -499,7 +499,7 @@ func (suite *MsgServerSuite) TestConvertCosmosCoinToERC20_AlreadyDeployedContrac
 	// check total supply
 	caller, key := testutil.RandomEvmAccount()
 	totalSupply, err := suite.QueryContract(
-		types.ERC20KavaWrappedCosmosCoinContract.ABI,
+		types.ERC20ZgChainWrappedCosmosCoinContract.ABI,
 		caller,
 		key,
 		contractAddress,
@@ -639,7 +639,7 @@ func (suite *MsgServerSuite) TestConvertCosmosCoinFromERC20() {
 			// expect erc20 total supply to reflect new value
 			caller, key := testutil.RandomEvmAccount()
 			totalSupply, err := suite.QueryContract(
-				types.ERC20KavaWrappedCosmosCoinContract.ABI,
+				types.ERC20ZgChainWrappedCosmosCoinContract.ABI,
 				caller,
 				key,
 				contractAddress,

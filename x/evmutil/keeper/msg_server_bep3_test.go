@@ -9,7 +9,7 @@ import (
 )
 
 func (suite *MsgServerSuite) TestConvertCoinToERC20_Bep3() {
-	invoker, err := sdk.AccAddressFromBech32("kava123fxg0l602etulhhcdm0vt7l57qya5wjcrwhzz")
+	invoker, err := sdk.AccAddressFromBech32("0g123fxg0l602etulhhcdm0vt7l57qya5wjcrwhzz")
 	receiverAddr := testutil.MustNewInternalEVMAddressFromString("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2")
 	suite.Require().NoError(err)
 

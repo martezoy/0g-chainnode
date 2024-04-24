@@ -34,6 +34,8 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
+
 	// cdptypes "github.com/0glabs/0g-chain/x/cdp/types"
 	evmutilkeeper "github.com/0glabs/0g-chain/x/evmutil/keeper"
 	evmutiltestutil "github.com/0glabs/0g-chain/x/evmutil/testutil"
@@ -158,7 +160,7 @@ func (suite *EIP712TestSuite) SetupTest() {
 	// Genesis states
 	evmGs := evmtypes.NewGenesisState(
 		evmtypes.NewParams(
-			"akava",                       // evmDenom
+			chaincfg.BaseDenom,            // evmDenom
 			false,                         // allowedUnprotectedTxs
 			true,                          // enableCreate
 			true,                          // enableCall
@@ -267,10 +269,10 @@ func (suite *EIP712TestSuite) SetupTest() {
 		// pricefeedtypes.ModuleName: cdc.MustMarshalJSON(&pricefeedGenState),
 	}
 
-	// funds our test accounts with some ukava
+	// funds our test accounts with some a0gi
 	coinsGenState := app.NewFundedGenStateWithSameCoins(
 		tApp.AppCodec(),
-		sdk.NewCoins(sdk.NewInt64Coin("ukava", 1e9)),
+		sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 1e9)),
 		[]sdk.AccAddress{suite.testAddr, suite.testAddr2},
 	)
 
@@ -357,67 +359,22 @@ func (suite *EIP712TestSuite) SetupTest() {
 	params := evmKeeper.GetParams(suite.ctx)
 	params.EIP712AllowedMsgs = []evmtypes.EIP712AllowedMsg{
 		{
-			MsgTypeUrl:       "/kava.evmutil.v1beta1.MsgConvertERC20ToCoin",
+			MsgTypeUrl:       "/0g-chain.evmutil.v1beta1.MsgConvertERC20ToCoin",
 			MsgValueTypeName: "MsgValueEVMConvertERC20ToCoin",
 			ValueTypes: []evmtypes.EIP712MsgAttrType{
 				{Name: "initiator", Type: "string"},
 				{Name: "receiver", Type: "string"},
-				{Name: "kava_erc20_address", Type: "string"},
+				{Name: "0gchain_erc20_address", Type: "string"},
 				{Name: "amount", Type: "string"},
 			},
 		},
 		{
-			MsgTypeUrl:       "/kava.cdp.v1beta1.MsgCreateCDP",
-			MsgValueTypeName: "MsgValueCDPCreate",
-			ValueTypes: []evmtypes.EIP712MsgAttrType{
-				{Name: "sender", Type: "string"},
-				{Name: "collateral", Type: "Coin"},
-				{Name: "principal", Type: "Coin"},
-				{Name: "collateral_type", Type: "string"},
-			},
-		},
-		{
-			MsgTypeUrl:       "/kava.cdp.v1beta1.MsgDeposit",
-			MsgValueTypeName: "MsgValueCDPDeposit",
-			ValueTypes: []evmtypes.EIP712MsgAttrType{
-				{Name: "depositor", Type: "string"},
-				{Name: "owner", Type: "string"},
-				{Name: "collateral", Type: "Coin"},
-				{Name: "collateral_type", Type: "string"},
-			},
-		},
-		{
-			MsgTypeUrl:       "/kava.hard.v1beta1.MsgDeposit",
-			MsgValueTypeName: "MsgValueHardDeposit",
-			ValueTypes: []evmtypes.EIP712MsgAttrType{
-				{Name: "depositor", Type: "string"},
-				{Name: "amount", Type: "Coin[]"},
-			},
-		},
-		{
-			MsgTypeUrl:       "/kava.evmutil.v1beta1.MsgConvertCoinToERC20",
+			MsgTypeUrl:       "/0g-chain.evmutil.v1beta1.MsgConvertCoinToERC20",
 			MsgValueTypeName: "MsgValueEVMConvertCoinToERC20",
 			ValueTypes: []evmtypes.EIP712MsgAttrType{
 				{Name: "initiator", Type: "string"},
 				{Name: "receiver", Type: "string"},
 				{Name: "amount", Type: "Coin"},
-			},
-		},
-		{
-			MsgTypeUrl:       "/kava.cdp.v1beta1.MsgRepayDebt",
-			MsgValueTypeName: "MsgValueCDPRepayDebt",
-			ValueTypes: []evmtypes.EIP712MsgAttrType{
-				{Name: "sender", Type: "string"},
-				{Name: "collateral_type", Type: "string"},
-				{Name: "payment", Type: "Coin"},
-			},
-		},
-		{
-			MsgTypeUrl:       "/kava.hard.v1beta1.MsgWithdraw",
-			MsgValueTypeName: "MsgValueHardWithdraw",
-			ValueTypes: []evmtypes.EIP712MsgAttrType{
-				{Name: "depositor", Type: "string"},
-				{Name: "amount", Type: "Coin[]"},
 			},
 		},
 	}
@@ -465,7 +422,7 @@ func (suite *EIP712TestSuite) deployUSDCERC20(app app.TestApp, ctx sdk.Context) 
 	suite.tApp.FundModuleAccount(
 		suite.ctx,
 		evmutiltypes.ModuleName,
-		sdk.NewCoins(sdk.NewCoin("ukava", sdkmath.NewInt(0))),
+		sdk.NewCoins(sdk.NewCoin(chaincfg.DisplayDenom, sdkmath.NewInt(0))),
 	)
 
 	contractAddr, err := suite.evmutilKeeper.DeployTestMintableERC20Contract(suite.ctx, "USDC", "USDC", uint8(18))
@@ -565,7 +522,7 @@ func (suite *EIP712TestSuite) TestEIP712Tx() {
 			errMsg:         "insufficient funds",
 			updateTx: func(txBuilder client.TxBuilder, msgs []sdk.Msg) client.TxBuilder {
 				bk := suite.tApp.GetBankKeeper()
-				gasCoins := bk.GetBalance(suite.ctx, suite.testAddr, "ukava")
+				gasCoins := bk.GetBalance(suite.ctx, suite.testAddr, chaincfg.DisplayDenom)
 				suite.tApp.GetBankKeeper().SendCoins(suite.ctx, suite.testAddr, suite.testAddr2, sdk.NewCoins(gasCoins))
 				return txBuilder
 			},
@@ -577,9 +534,9 @@ func (suite *EIP712TestSuite) TestEIP712Tx() {
 			failCheckTx:    true,
 			errMsg:         "invalid chain-id",
 			updateTx: func(txBuilder client.TxBuilder, msgs []sdk.Msg) client.TxBuilder {
-				gasAmt := sdk.NewCoins(sdk.NewCoin("ukava", sdkmath.NewInt(20)))
+				gasAmt := sdk.NewCoins(sdk.NewCoin(chaincfg.DisplayDenom, sdkmath.NewInt(20)))
 				return suite.createTestEIP712CosmosTxBuilder(
-					suite.testAddr, suite.testPrivKey, "kavatest_12-1", uint64(sims.DefaultGenTxGas*10), gasAmt, msgs,
+					suite.testAddr, suite.testPrivKey, "0gchaintest_12-1", uint64(sims.DefaultGenTxGas*10), gasAmt, msgs,
 				)
 			},
 		},
@@ -590,7 +547,7 @@ func (suite *EIP712TestSuite) TestEIP712Tx() {
 			failCheckTx:    true,
 			errMsg:         "invalid pubkey",
 			updateTx: func(txBuilder client.TxBuilder, msgs []sdk.Msg) client.TxBuilder {
-				gasAmt := sdk.NewCoins(sdk.NewCoin("ukava", sdkmath.NewInt(20)))
+				gasAmt := sdk.NewCoins(sdk.NewCoin(chaincfg.DisplayDenom, sdkmath.NewInt(20)))
 				return suite.createTestEIP712CosmosTxBuilder(
 					suite.testAddr2, suite.testPrivKey2, ChainID, uint64(sims.DefaultGenTxGas*10), gasAmt, msgs,
 				)
@@ -630,7 +587,7 @@ func (suite *EIP712TestSuite) TestEIP712Tx() {
 				msgs = tc.updateMsgs(msgs)
 			}
 
-			gasAmt := sdk.NewCoins(sdk.NewCoin("ukava", sdkmath.NewInt(20)))
+			gasAmt := sdk.NewCoins(sdk.NewCoin(chaincfg.DisplayDenom, sdkmath.NewInt(20)))
 			txBuilder := suite.createTestEIP712CosmosTxBuilder(
 				suite.testAddr, suite.testPrivKey, ChainID, uint64(sims.DefaultGenTxGas*10), gasAmt, msgs,
 			)
@@ -716,7 +673,7 @@ func (suite *EIP712TestSuite) TestEIP712Tx_DepositAndWithdraw() {
 	}
 
 	// deliver deposit msg
-	gasAmt := sdk.NewCoins(sdk.NewCoin("ukava", sdkmath.NewInt(20)))
+	gasAmt := sdk.NewCoins(sdk.NewCoin(chaincfg.DisplayDenom, sdkmath.NewInt(20)))
 	txBuilder := suite.createTestEIP712CosmosTxBuilder(
 		suite.testAddr, suite.testPrivKey, ChainID, uint64(sims.DefaultGenTxGas*10), gasAmt, depositMsgs,
 	)

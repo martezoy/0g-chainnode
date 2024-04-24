@@ -33,7 +33,7 @@ const (
 	flagSkipLoadLatest       = "skip-load-latest"
 )
 
-// appCreator holds functions used by the sdk server to control the kava app.
+// appCreator holds functions used by the sdk server to control the 0g-chain app.
 // The methods implement types in cosmos-sdk/server/types
 type appCreator struct {
 	encodingConfig params.EncodingConfig

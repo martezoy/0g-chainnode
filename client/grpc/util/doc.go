@@ -1,5 +1,5 @@
 /*
-The util package contains utility functions for the Kava gRPC client.
+The util package contains utility functions for the 0gChain gRPC client.
 
 For example, `account.go` includes account-related query helpers.
 In this file, utilities such as `client.Util.BaseAccount(addr)` is exposed to

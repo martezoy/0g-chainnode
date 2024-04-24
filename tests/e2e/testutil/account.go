@@ -28,7 +28,7 @@ import (
 	emtests "github.com/evmos/ethermint/tests"
 	emtypes "github.com/evmos/ethermint/types"
 
-	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/tests/util"
 )
 
@@ -43,9 +43,9 @@ type SigningAccount struct {
 	evmReqChan chan<- util.EvmTxRequest
 	evmResChan <-chan util.EvmTxResponse
 
-	kavaSigner *util.KavaSigner
-	sdkReqChan chan<- util.KavaMsgRequest
-	sdkResChan <-chan util.KavaMsgResponse
+	zgChainSigner *util.ZgChainSigner
+	sdkReqChan    chan<- util.ZgChainMsgRequest
+	sdkResChan    <-chan util.ZgChainMsgResponse
 
 	EvmAuth *bind.TransactOpts
 
@@ -72,7 +72,7 @@ func (chain *Chain) AddNewSigningAccount(name string, hdPath *hd.BIP44Params, ch
 		chain.t.Fatalf("account with name %s already exists", name)
 	}
 
-	// Kava signing account for SDK side
+	// 0gChain signing account for SDK side
 	privKeyBytes, err := hd.Secp256k1.Derive()(mnemonic, "", hdPath.String())
 	require.NoErrorf(chain.t, err, "failed to derive private key from mnemonic for %s: %s", name, err)
 	privKey := &ethsecp256k1.PrivKey{Key: privKeyBytes}
@@ -97,8 +97,8 @@ func (chain *Chain) AddNewSigningAccountFromPrivKey(
 		chain.t.Fatalf("account with name %s already exists", name)
 	}
 
-	// Kava signing account for SDK side
-	kavaSigner := util.NewKavaSigner(
+	// 0gChain signing account for SDK side
+	zgChainSigner := util.NewZgChainSigner(
 		chainId,
 		chain.EncodingConfig,
 		chain.Grpc.Query.Auth,
@@ -107,11 +107,11 @@ func (chain *Chain) AddNewSigningAccountFromPrivKey(
 		100,
 	)
 
-	sdkReqChan := make(chan util.KavaMsgRequest)
-	sdkResChan, err := kavaSigner.Run(sdkReqChan)
+	sdkReqChan := make(chan util.ZgChainMsgRequest)
+	sdkResChan, err := zgChainSigner.Run(sdkReqChan)
 	require.NoErrorf(chain.t, err, "failed to start signer for account %s: %s", name, err)
 
-	// Kava signing account for EVM side
+	// 0gChain signing account for EVM side
 	evmChainId, err := emtypes.ParseChainID(chainId)
 	require.NoErrorf(chain.t, err, "unable to parse ethermint-compatible chain id from %s", chainId)
 	ecdsaPrivKey, err := crypto.HexToECDSA(hex.EncodeToString(privKey.Bytes()))
@@ -141,21 +141,21 @@ func (chain *Chain) AddNewSigningAccountFromPrivKey(
 		evmReqChan: evmReqChan,
 		evmResChan: evmResChan,
 
-		kavaSigner: kavaSigner,
-		sdkReqChan: sdkReqChan,
-		sdkResChan: sdkResChan,
+		zgChainSigner: zgChainSigner,
+		sdkReqChan:    sdkReqChan,
+		sdkResChan:    sdkResChan,
 
 		EvmAuth: evmSigner.Auth,
 
 		EvmAddress: evmSigner.Address(),
-		SdkAddress: kavaSigner.Address(),
+		SdkAddress: zgChainSigner.Address(),
 	}
 
 	return chain.accounts[name]
 }
 
-// SignAndBroadcastKavaTx sends a request to the signer and awaits its response.
-func (a *SigningAccount) SignAndBroadcastKavaTx(req util.KavaMsgRequest) util.KavaMsgResponse {
+// SignAndBroadcastZgChainTx sends a request to the signer and awaits its response.
+func (a *SigningAccount) SignAndBroadcastZgChainTx(req util.ZgChainMsgRequest) util.ZgChainMsgResponse {
 	a.l.Printf("broadcasting sdk tx. has data = %+v\n", req.Data)
 	// send the request to signer
 	a.sdkReqChan <- req
@@ -222,7 +222,7 @@ func (chain *Chain) NewFundedAccount(name string, funds sdk.Coins) *SigningAccou
 
 	acc := chain.AddNewSigningAccount(
 		name,
-		hd.CreateHDPath(app.Bip44CoinType, 0, 0),
+		hd.CreateHDPath(chaincfg.Bip44CoinType, 0, 0),
 		chain.ChainID,
 		mnemonic,
 	)
@@ -257,12 +257,12 @@ func (a *SigningAccount) NextNonce() (uint64, error) {
 }
 
 // BankSend is a helper method for sending funds via x/bank's MsgSend
-func (a *SigningAccount) BankSend(to sdk.AccAddress, amount sdk.Coins) util.KavaMsgResponse {
-	return a.SignAndBroadcastKavaTx(
-		util.KavaMsgRequest{
+func (a *SigningAccount) BankSend(to sdk.AccAddress, amount sdk.Coins) util.ZgChainMsgResponse {
+	return a.SignAndBroadcastZgChainTx(
+		util.ZgChainMsgRequest{
 			Msgs:      []sdk.Msg{banktypes.NewMsgSend(a.SdkAddress, to, amount)},
 			GasLimit:  2e5,                                                        // 200,000 gas
-			FeeAmount: sdk.NewCoins(sdk.NewCoin(a.gasDenom, sdkmath.NewInt(200))), // assume min gas price of .001ukava
+			FeeAmount: sdk.NewCoins(sdk.NewCoin(a.gasDenom, sdkmath.NewInt(200))), // assume min gas price of .001a0gi
 			Data:      fmt.Sprintf("sending %s to %s", amount, to),
 		},
 	)

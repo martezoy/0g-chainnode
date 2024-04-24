@@ -1,7 +1,7 @@
 //go:build rocksdb
 // +build rocksdb
 
-// Copyright 2023 Kava Labs, Inc.
+// Copyright 2024 0glabs Labs, Inc.
 // Copyright 2023 Cronos Labs, Inc.
 //
 // Derived from https://github.com/crypto-org-chain/cronos@496ce7e

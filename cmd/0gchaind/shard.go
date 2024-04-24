@@ -39,7 +39,7 @@ func newShardCmd(opts ethermintserver.StartOptions) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "shard --home <path-to-home-dir> --start <start-block> --end <end-block> [--only-app-state] [--only-cometbft-state] [--force-app-version <app-version>]",
 		Short: "Strip all blocks from the database outside of a given range",
-		Long: `shard opens a local kava home directory's databases and removes all blocks outside a range defined by --start and --end. The range is inclusive of the end block.
+		Long: `shard opens a local 0g-chainhome directory's databases and removes all blocks outside a range defined by --start and --end. The range is inclusive of the end block.
 
 It works by first rolling back the latest state to the block before the end block, and then by pruning all state before the start block.
 
@@ -54,14 +54,14 @@ Similarly, the --only-cometbft-state flag skips pruning app state. This can be u
 The shard command only flags the iavl tree nodes for deletion. Actual removal from the databases will be performed when each database is compacted.
 
 WARNING: this is a destructive action.`,
-		Example: `Create a 1M block data shard (keeps blocks kava 1,000,000 to 2,000,000)
-$ kava shard --home path/to/.kava --start 1000000 --end 2000000
+		Example: `Create a 1M block data shard (keeps blocks a0gi 1,000,000 to 2,000,000)
+$ 0gchaind shard --home path/to/.0gchain --start 1000000 --end 2000000
 
 Prune all blocks up to 5,000,000:
-$ kava shard --home path/to/.kava --start 5000000 --end -1
+$ 0gchaind shard --home path/to/.0gchain --start 5000000 --end -1
 
 Prune first 1M blocks _without_ affecting blockstore or cometBFT state:
-$ kava shard --home path/to/.kava --start 1000000 --end -1 --only-app-state`,
+$ 0gchaind shard --home path/to/.0gchain --start 1000000 --end -1 --only-app-state`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			//////////////////////////
 			// parse & validate flags

@@ -10,29 +10,29 @@ import (
 
 // func (suite *IntegrationTestSuite) TestCommunityUpdateParams_NonAuthority() {
 // 	// ARRANGE
-// 	// setup kava account
-// 	funds := ukava(1e5) // .1 KAVA
-// 	kavaAcc := suite.Kava.NewFundedAccount("community-non-authority", sdk.NewCoins(funds))
+// 	// setup 0g account
+// 	funds := a0gi(1e5) // .1 A0GI
+// 	zgChainAcc := suite.ZgChain.NewFundedAccount("community-non-authority", sdk.NewCoins(funds))
 
 // 	gasLimit := int64(2e5)
-// 	fee := ukava(200)
+// 	fee := a0gi(200)
 
 // 	msg := communitytypes.NewMsgUpdateParams(
-// 		kavaAcc.SdkAddress,
+// 		zgChainAcc.SdkAddress,
 // 		communitytypes.DefaultParams(),
 // 	)
 
 // 	// ACT
-// 	req := util.KavaMsgRequest{
+// 	req := util.ZgChainMsgRequest{
 // 		Msgs:      []sdk.Msg{&msg},
 // 		GasLimit:  uint64(gasLimit),
 // 		FeeAmount: sdk.NewCoins(fee),
 // 		Memo:      "this is a failure!",
 // 	}
-// 	res := kavaAcc.SignAndBroadcastKavaTx(req)
+// 	res := zgChainAcc.SignAndBroadcastZgChainTx(req)
 
 // 	// ASSERT
-// 	_, err := util.WaitForSdkTxCommit(suite.Kava.Grpc.Query.Tx, res.Result.TxHash, 6*time.Second)
+// 	_, err := util.WaitForSdkTxCommit(suite.ZgChain.Grpc.Query.Tx, res.Result.TxHash, 6*time.Second)
 // 	suite.Require().Error(err)
 // 	suite.Require().ErrorContains(
 // 		err,
@@ -43,32 +43,32 @@ import (
 
 // func (suite *IntegrationTestSuite) TestCommunityUpdateParams_Authority() {
 // 	// ARRANGE
-// 	govParamsRes, err := suite.Kava.Grpc.Query.Gov.Params(context.Background(), &govv1.QueryParamsRequest{
+// 	govParamsRes, err := suite.ZgChain.Grpc.Query.Gov.Params(context.Background(), &govv1.QueryParamsRequest{
 // 		ParamsType: govv1.ParamDeposit,
 // 	})
 // 	suite.NoError(err)
 
 // 	// Check initial params
-// 	communityParamsResInitial, err := suite.Kava.Grpc.Query.Community.Params(
+// 	communityParamsResInitial, err := suite.ZgChain.Grpc.Query.Community.Params(
 // 		context.Background(),
 // 		&communitytypes.QueryParamsRequest{},
 // 	)
 // 	suite.Require().NoError(err)
 
-// 	// setup kava account
-// 	// .1 KAVA + min deposit amount for proposal
-// 	funds := sdk.NewCoins(ukava(1e5)).Add(govParamsRes.DepositParams.MinDeposit...)
-// 	kavaAcc := suite.Kava.NewFundedAccount("community-update-params", funds)
+// 	// setup 0g account
+// 	// .1 A0GI + min deposit amount for proposal
+// 	funds := sdk.NewCoins(a0gi(1e5)).Add(govParamsRes.DepositParams.MinDeposit...)
+// 	zgChainAcc := suite.ZgChain.NewFundedAccount("community-update-params", funds)
 
 // 	gasLimit := int64(2e5)
-// 	fee := ukava(200)
+// 	fee := a0gi(200)
 
 // 	// Wait until switchover actually happens - When testing without the upgrade
 // 	// handler that sets a relative switchover time, the switchover time in
 // 	// genesis should be set in the past so it runs immediately.
 // 	suite.Require().Eventually(
 // 		func() bool {
-// 			params, err := suite.Kava.Grpc.Query.Community.Params(
+// 			params, err := suite.ZgChain.Grpc.Query.Community.Params(
 // 				context.Background(),
 // 				&communitytypes.QueryParamsRequest{},
 // 			)
@@ -108,24 +108,24 @@ import (
 // 	proposalMsg, err := govv1.NewMsgSubmitProposal(
 // 		[]sdk.Msg{&updateParamsMsg},
 // 		govParamsRes.Params.MinDeposit,
-// 		kavaAcc.SdkAddress.String(),
+// 		zgChainAcc.SdkAddress.String(),
 // 		"community-update-params",
 // 		"title",
 // 		"summary",
 // 	)
 // 	suite.NoError(err)
 
-// 	req := util.KavaMsgRequest{
+// 	req := util.ZgChainMsgRequest{
 // 		Msgs:      []sdk.Msg{proposalMsg},
 // 		GasLimit:  uint64(gasLimit),
 // 		FeeAmount: sdk.NewCoins(fee),
 // 		Memo:      "this is a proposal please accept me",
 // 	}
-// 	res := kavaAcc.SignAndBroadcastKavaTx(req)
+// 	res := zgChainAcc.SignAndBroadcastZgChainTx(req)
 // 	suite.Require().NoError(res.Err)
 
 // 	// Wait for proposal to be submitted
-// 	txRes, err := util.WaitForSdkTxCommit(suite.Kava.Grpc.Query.Tx, res.Result.TxHash, 6*time.Second)
+// 	txRes, err := util.WaitForSdkTxCommit(suite.ZgChain.Grpc.Query.Tx, res.Result.TxHash, 6*time.Second)
 // 	suite.Require().NoError(err)
 
 // 	// Parse tx response to get proposal id
@@ -133,7 +133,7 @@ import (
 // 	suite.decodeTxMsgResponse(txRes, &govRes)
 
 // 	// 2. Vote for proposal from whale account
-// 	whale := suite.Kava.GetAccount(testutil.FundedAccountName)
+// 	whale := suite.ZgChain.GetAccount(testutil.FundedAccountName)
 // 	voteMsg := govv1.NewMsgVote(
 // 		whale.SdkAddress,
 // 		govRes.ProposalId,
@@ -141,21 +141,21 @@ import (
 // 		"",
 // 	)
 
-// 	voteReq := util.KavaMsgRequest{
+// 	voteReq := util.ZgChainMsgRequest{
 // 		Msgs:      []sdk.Msg{voteMsg},
 // 		GasLimit:  uint64(gasLimit),
 // 		FeeAmount: sdk.NewCoins(fee),
 // 		Memo:      "voting",
 // 	}
-// 	voteRes := whale.SignAndBroadcastKavaTx(voteReq)
+// 	voteRes := whale.SignAndBroadcastZgChainTx(voteReq)
 // 	suite.Require().NoError(voteRes.Err)
 
-// 	_, err = util.WaitForSdkTxCommit(suite.Kava.Grpc.Query.Tx, voteRes.Result.TxHash, 6*time.Second)
+// 	_, err = util.WaitForSdkTxCommit(suite.ZgChain.Grpc.Query.Tx, voteRes.Result.TxHash, 6*time.Second)
 // 	suite.Require().NoError(err)
 
 // 	// 3. Wait until proposal passes
 // 	suite.Require().Eventually(func() bool {
-// 		proposalRes, err := suite.Kava.Grpc.Query.Gov.Proposal(context.Background(), &govv1.QueryProposalRequest{
+// 		proposalRes, err := suite.ZgChain.Grpc.Query.Gov.Proposal(context.Background(), &govv1.QueryProposalRequest{
 // 			ProposalId: govRes.ProposalId,
 // 		})
 // 		suite.NoError(err)
@@ -164,7 +164,7 @@ import (
 // 	}, 60*time.Second, 1*time.Second)
 
 // 	// Check parameters are updated
-// 	communityParamsRes, err := suite.Kava.Grpc.Query.Community.Params(
+// 	communityParamsRes, err := suite.ZgChain.Grpc.Query.Community.Params(
 // 		context.Background(),
 // 		&communitytypes.QueryParamsRequest{},
 // 	)
@@ -180,10 +180,10 @@ func (suite *IntegrationTestSuite) decodeTxMsgResponse(txRes *sdk.TxResponse, pt
 
 	// Unmarshal data to TxMsgData
 	var txMsgData sdk.TxMsgData
-	suite.Kava.EncodingConfig.Marshaler.MustUnmarshal(txResBytes, &txMsgData)
+	suite.ZgChain.EncodingConfig.Marshaler.MustUnmarshal(txResBytes, &txMsgData)
 	suite.T().Logf("txData.MsgResponses: %v", txMsgData.MsgResponses)
 
 	// Parse MsgResponse
-	suite.Kava.EncodingConfig.Marshaler.MustUnmarshal(txMsgData.MsgResponses[0].Value, ptr)
+	suite.ZgChain.EncodingConfig.Marshaler.MustUnmarshal(txMsgData.MsgResponses[0].Value, ptr)
 	suite.Require().NoError(err)
 }

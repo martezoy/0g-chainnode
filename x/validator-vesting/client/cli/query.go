@@ -40,7 +40,7 @@ func queryCirculatingSupply() *cobra.Command {
 	return &cobra.Command{
 		Use:   "circulating-supply",
 		Short: "Get circulating supply",
-		Long:  "Get the current circulating supply of kava tokens",
+		Long:  "Get the current circulating supply of 0g tokens",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx, err := client.GetClientQueryContext(cmd)
@@ -62,7 +62,7 @@ func queryTotalSupply() *cobra.Command {
 	return &cobra.Command{
 		Use:   "total-supply",
 		Short: "Get total supply",
-		Long:  "Get the current total supply of kava tokens",
+		Long:  "Get the current total supply of 0g tokens",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx, err := client.GetClientQueryContext(cmd)

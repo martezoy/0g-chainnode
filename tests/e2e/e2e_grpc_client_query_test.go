@@ -2,6 +2,7 @@ package e2e_test
 
 import (
 	"context"
+	"math/big"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -11,13 +12,13 @@ import (
 
 func (suite *IntegrationTestSuite) TestGrpcClientQueryCosmosModule_Balance() {
 	// ARRANGE
-	// setup kava account
-	funds := ukava(1e5) // .1 KAVA
-	kavaAcc := suite.Kava.NewFundedAccount("balance-test", sdk.NewCoins(funds))
+	// setup 0g account
+	funds := a0gi(big.NewInt(1e5)) // .1 A0GI
+	zgChainAcc := suite.ZgChain.NewFundedAccount("balance-test", sdk.NewCoins(funds))
 
 	// ACT
-	rsp, err := suite.Kava.Grpc.Query.Bank.Balance(context.Background(), &banktypes.QueryBalanceRequest{
-		Address: kavaAcc.SdkAddress.String(),
+	rsp, err := suite.ZgChain.Grpc.Query.Bank.Balance(context.Background(), &banktypes.QueryBalanceRequest{
+		Address: zgChainAcc.SdkAddress.String(),
 		Denom:   funds.Denom,
 	})
 
@@ -26,9 +27,9 @@ func (suite *IntegrationTestSuite) TestGrpcClientQueryCosmosModule_Balance() {
 	suite.Require().Equal(funds.Amount, rsp.Balance.Amount)
 }
 
-func (suite *IntegrationTestSuite) TestGrpcClientQueryKavaModule_EvmParams() {
+func (suite *IntegrationTestSuite) TestGrpcClientQueryZgChainModule_EvmParams() {
 	// ACT
-	rsp, err := suite.Kava.Grpc.Query.Evmutil.Params(
+	rsp, err := suite.ZgChain.Grpc.Query.Evmutil.Params(
 		context.Background(), &evmutiltypes.QueryParamsRequest{},
 	)
 

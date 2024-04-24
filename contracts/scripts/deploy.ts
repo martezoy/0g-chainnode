@@ -1,14 +1,14 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const tokenName = "Kava-wrapped ATOM";
+  const tokenName = "0g-chain-wrapped ATOM";
   const tokenSymbol = "kATOM";
   const tokenDecimals = 6;
 
-  const ERC20KavaWrappedCosmosCoin = await ethers.getContractFactory(
-    "ERC20KavaWrappedCosmosCoin"
+  const ERC200gChainWrappedCosmosCoin = await ethers.getContractFactory(
+    "ERC200gChainWrappedCosmosCoin"
   );
-  const token = await ERC20KavaWrappedCosmosCoin.deploy(
+  const token = await ERC200gChainWrappedCosmosCoin.deploy(
     tokenName,
     tokenSymbol,
     tokenDecimals

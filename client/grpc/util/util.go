@@ -12,7 +12,7 @@ import (
 	query "github.com/0glabs/0g-chain/client/grpc/query"
 )
 
-// Util contains utility functions for the Kava gRPC client
+// Util contains utility functions for the 0gChain gRPC client
 type Util struct {
 	query          *query.QueryClient
 	encodingConfig params.EncodingConfig
