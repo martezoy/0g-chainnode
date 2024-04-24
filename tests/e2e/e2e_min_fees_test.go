@@ -21,16 +21,16 @@ func (suite *IntegrationTestSuite) TestEthGasPriceReturnsMinFee() {
 
 	// read expected min fee from app.toml
 	minGasPrices, err := getMinFeeFromAppToml(util.KavaHomePath())
-	suite.NoError(err)
+	suite.NoError(err, "failed to read min fee from app.toml")
 
 	// evm uses akava, get akava min fee
 	evmMinGas := minGasPrices.AmountOf("akava").TruncateInt().BigInt()
 
 	// returns eth_gasPrice, units in kava
 	gasPrice, err := suite.Kava.EvmClient.SuggestGasPrice(context.Background())
-	suite.NoError(err)
+	suite.NoError(err, "failed to get gas price")
 
-	suite.Equal(evmMinGas, gasPrice)
+	suite.Equal(evmMinGas, gasPrice, "gas price should be equal to min fee")
 }
 
 func (suite *IntegrationTestSuite) TestEvmRespectsMinFee() {

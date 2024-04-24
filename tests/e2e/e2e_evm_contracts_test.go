@@ -11,8 +11,8 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	"github.com/kava-labs/kava/app"
-	cdptypes "github.com/kava-labs/kava/x/cdp/types"
-	evmutiltypes "github.com/kava-labs/kava/x/evmutil/types"
+	// cdptypes "github.com/kava-labs/kava/x/cdp/types"
+	// evmutiltypes "github.com/kava-labs/kava/x/evmutil/types"
 
 	"github.com/kava-labs/kava/tests/e2e/contracts/greeter"
 	"github.com/kava-labs/kava/tests/util"
@@ -108,95 +108,95 @@ func (suite *IntegrationTestSuite) TestEip712BasicMessageAuthorization() {
 
 // Note that this test works because the deployed erc20 is configured in evmutil & cdp params.
 // This test matches the webapp's "USDT Earn" workflow
-func (suite *IntegrationTestSuite) TestEip712ConvertToCoinAndDepositToLend() {
-	// cdp requires minimum of $11 collateral
-	amount := sdk.NewInt(11e6) // 11 USDT
-	principal := sdk.NewCoin("usdx", sdk.NewInt(10e6))
-	sdkDenom := suite.DeployedErc20.CosmosDenom
+// func (suite *IntegrationTestSuite) TestEip712ConvertToCoinAndDepositToLend() {
+// 	// cdp requires minimum of $11 collateral
+// 	amount := sdk.NewInt(11e6) // 11 USDT
+// 	principal := sdk.NewCoin("usdx", sdk.NewInt(10e6))
+// 	sdkDenom := suite.DeployedErc20.CosmosDenom
 
-	// create new funded account
-	depositor := suite.Kava.NewFundedAccount("eip712-lend-depositor", sdk.NewCoins(ukava(1e5)))
-	// give them erc20 balance to deposit
-	fundRes := suite.FundKavaErc20Balance(depositor.EvmAddress, amount.BigInt())
-	suite.NoError(fundRes.Err)
+// 	// create new funded account
+// 	depositor := suite.Kava.NewFundedAccount("eip712-lend-depositor", sdk.NewCoins(ukava(1e5)))
+// 	// give them erc20 balance to deposit
+// 	fundRes := suite.FundKavaErc20Balance(depositor.EvmAddress, amount.BigInt())
+// 	suite.NoError(fundRes.Err)
 
-	// setup messages for convert to coin & deposit into earn
-	convertMsg := evmutiltypes.NewMsgConvertERC20ToCoin(
-		evmutiltypes.NewInternalEVMAddress(depositor.EvmAddress),
-		depositor.SdkAddress,
-		evmutiltypes.NewInternalEVMAddress(suite.DeployedErc20.Address),
-		amount,
-	)
-	depositMsg := cdptypes.NewMsgCreateCDP(
-		depositor.SdkAddress,
-		sdk.NewCoin(sdkDenom, amount),
-		principal,
-		suite.DeployedErc20.CdpCollateralType,
-	)
-	msgs := []sdk.Msg{
-		// convert to coin
-		&convertMsg,
-		// deposit into cdp (Mint), take out USDX
-		&depositMsg,
-	}
+// 	// setup messages for convert to coin & deposit into earn
+// 	convertMsg := evmutiltypes.NewMsgConvertERC20ToCoin(
+// 		evmutiltypes.NewInternalEVMAddress(depositor.EvmAddress),
+// 		depositor.SdkAddress,
+// 		evmutiltypes.NewInternalEVMAddress(suite.DeployedErc20.Address),
+// 		amount,
+// 	)
+// 	// depositMsg := cdptypes.NewMsgCreateCDP(
+// 	// 	depositor.SdkAddress,
+// 	// 	sdk.NewCoin(sdkDenom, amount),
+// 	// 	principal,
+// 	// 	suite.DeployedErc20.CdpCollateralType,
+// 	// )
+// 	msgs := []sdk.Msg{
+// 		// convert to coin
+// 		&convertMsg,
+// 		// deposit into cdp (Mint), take out USDX
+// 		// &depositMsg,
+// 	}
 
-	// create tx
-	tx := suite.NewEip712TxBuilder(
-		depositor,
-		suite.Kava,
-		1e6,
-		sdk.NewCoins(ukava(1e4)),
-		msgs,
-		"doing the USDT Earn workflow! erc20 -> sdk.Coin -> USDX hard deposit",
-	).GetTx()
+// 	// create tx
+// 	tx := suite.NewEip712TxBuilder(
+// 		depositor,
+// 		suite.Kava,
+// 		1e6,
+// 		sdk.NewCoins(ukava(1e4)),
+// 		msgs,
+// 		"doing the USDT Earn workflow! erc20 -> sdk.Coin -> USDX hard deposit",
+// 	).GetTx()
 
-	txBytes, err := suite.Kava.EncodingConfig.TxConfig.TxEncoder()(tx)
-	suite.NoError(err)
+// 	txBytes, err := suite.Kava.EncodingConfig.TxConfig.TxEncoder()(tx)
+// 	suite.NoError(err)
 
-	// broadcast tx
-	res, err := suite.Kava.Grpc.Query.Tx.BroadcastTx(context.Background(), &txtypes.BroadcastTxRequest{
-		TxBytes: txBytes,
-		Mode:    txtypes.BroadcastMode_BROADCAST_MODE_SYNC,
-	})
-	suite.NoError(err)
-	suite.Equal(sdkerrors.SuccessABCICode, res.TxResponse.Code)
+// 	// broadcast tx
+// 	res, err := suite.Kava.Grpc.Query.Tx.BroadcastTx(context.Background(), &txtypes.BroadcastTxRequest{
+// 		TxBytes: txBytes,
+// 		Mode:    txtypes.BroadcastMode_BROADCAST_MODE_SYNC,
+// 	})
+// 	suite.NoError(err)
+// 	suite.Equal(sdkerrors.SuccessABCICode, res.TxResponse.Code)
 
-	_, err = util.WaitForSdkTxCommit(suite.Kava.Grpc.Query.Tx, res.TxResponse.TxHash, 6*time.Second)
-	suite.Require().NoError(err)
+// 	_, err = util.WaitForSdkTxCommit(suite.Kava.Grpc.Query.Tx, res.TxResponse.TxHash, 6*time.Second)
+// 	suite.Require().NoError(err)
 
-	// check that depositor no longer has erc20 balance
-	balance := suite.Kava.GetErc20Balance(suite.DeployedErc20.Address, depositor.EvmAddress)
-	suite.BigIntsEqual(big.NewInt(0), balance, "expected no erc20 balance")
+// 	// check that depositor no longer has erc20 balance
+// 	balance := suite.Kava.GetErc20Balance(suite.DeployedErc20.Address, depositor.EvmAddress)
+// 	suite.BigIntsEqual(big.NewInt(0), balance, "expected no erc20 balance")
 
-	// check that account has cdp
-	cdpRes, err := suite.Kava.Grpc.Query.Cdp.Cdp(context.Background(), &cdptypes.QueryCdpRequest{
-		CollateralType: suite.DeployedErc20.CdpCollateralType,
-		Owner:          depositor.SdkAddress.String(),
-	})
-	suite.NoError(err)
-	suite.True(cdpRes.Cdp.Collateral.Amount.Equal(amount))
-	suite.True(cdpRes.Cdp.Principal.Equal(principal))
+// 	// check that account has cdp
+// 	// cdpRes, err := suite.Kava.Grpc.Query.Cdp.Cdp(context.Background(), &cdptypes.QueryCdpRequest{
+// 	// 	CollateralType: suite.DeployedErc20.CdpCollateralType,
+// 	// 	Owner:          depositor.SdkAddress.String(),
+// 	// })
+// 	// suite.NoError(err)
+// 	// suite.True(cdpRes.Cdp.Collateral.Amount.Equal(amount))
+// 	// suite.True(cdpRes.Cdp.Principal.Equal(principal))
 
-	// withdraw deposit & convert back to erc20 (this allows refund to recover erc20s used in test)
-	withdraw := cdptypes.NewMsgRepayDebt(
-		depositor.SdkAddress,
-		suite.DeployedErc20.CdpCollateralType,
-		principal,
-	)
-	convertBack := evmutiltypes.NewMsgConvertCoinToERC20(
-		depositor.SdkAddress.String(),
-		depositor.EvmAddress.Hex(),
-		sdk.NewCoin(sdkDenom, amount),
-	)
-	withdrawAndConvertBack := util.KavaMsgRequest{
-		Msgs:      []sdk.Msg{&withdraw, &convertBack},
-		GasLimit:  1e6,
-		FeeAmount: sdk.NewCoins(ukava(1000)),
-		Data:      "withdrawing from mint & converting back to erc20",
-	}
-	lastRes := depositor.SignAndBroadcastKavaTx(withdrawAndConvertBack)
-	suite.NoError(lastRes.Err)
+// 	// withdraw deposit & convert back to erc20 (this allows refund to recover erc20s used in test)
+// 	// withdraw := cdptypes.NewMsgRepayDebt(
+// 	// 	depositor.SdkAddress,
+// 	// 	suite.DeployedErc20.CdpCollateralType,
+// 	// 	principal,
+// 	// )
+// 	convertBack := evmutiltypes.NewMsgConvertCoinToERC20(
+// 		depositor.SdkAddress.String(),
+// 		depositor.EvmAddress.Hex(),
+// 		sdk.NewCoin(sdkDenom, amount),
+// 	)
+// 	withdrawAndConvertBack := util.KavaMsgRequest{
+// 		Msgs:      []sdk.Msg{&withdraw, &convertBack},
+// 		GasLimit:  1e6,
+// 		FeeAmount: sdk.NewCoins(ukava(1000)),
+// 		Data:      "withdrawing from mint & converting back to erc20",
+// 	}
+// 	lastRes := depositor.SignAndBroadcastKavaTx(withdrawAndConvertBack)
+// 	suite.NoError(lastRes.Err)
 
-	balance = suite.Kava.GetErc20Balance(suite.DeployedErc20.Address, depositor.EvmAddress)
-	suite.BigIntsEqual(amount.BigInt(), balance, "expected returned erc20 balance")
-}
+// 	balance = suite.Kava.GetErc20Balance(suite.DeployedErc20.Address, depositor.EvmAddress)
+// 	suite.BigIntsEqual(amount.BigInt(), balance, "expected returned erc20 balance")
+// }

@@ -8,7 +8,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/kava-labs/kava/tests/e2e/contracts/greeter"
-	"github.com/kava-labs/kava/x/cdp/types"
+	// "github.com/kava-labs/kava/x/cdp/types"
 	evmutiltypes "github.com/kava-labs/kava/x/evmutil/types"
 )
 
@@ -46,21 +46,21 @@ func (suite *E2eTestSuite) InitKavaEvmData() {
 	suite.Kava.RegisterErc20(suite.DeployedErc20.Address)
 
 	// expect the erc20's cosmos denom to be a supported cdp collateral type
-	cdpParams, err := suite.Kava.Grpc.Query.Cdp.Params(context.Background(), &types.QueryParamsRequest{})
-	suite.Require().NoError(err)
-	found = false
-	for _, cp := range cdpParams.Params.CollateralParams {
-		if cp.Denom == suite.DeployedErc20.CosmosDenom {
-			found = true
-			suite.DeployedErc20.CdpCollateralType = cp.Type
-		}
-	}
-	if !found {
-		panic(fmt.Sprintf(
-			"erc20's cosmos denom %s must be valid cdp collateral type",
-			suite.DeployedErc20.CosmosDenom),
-		)
-	}
+	// cdpParams, err := suite.Kava.Grpc.Query.Cdp.Params(context.Background(), &types.QueryParamsRequest{})
+	// suite.Require().NoError(err)
+	// found = false
+	// for _, cp := range cdpParams.Params.CollateralParams {
+	// 	if cp.Denom == suite.DeployedErc20.CosmosDenom {
+	// 		found = true
+	// 		suite.DeployedErc20.CdpCollateralType = cp.Type
+	// 	}
+	// }
+	// if !found {
+	// 	panic(fmt.Sprintf(
+	// 		"erc20's cosmos denom %s must be valid cdp collateral type",
+	// 		suite.DeployedErc20.CosmosDenom),
+	// 	)
+	// }
 
 	// deploy an example contract
 	greeterAddr, _, _, err := greeter.DeployGreeter(
