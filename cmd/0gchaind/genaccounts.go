@@ -1,5 +1,5 @@
 // Sourced from https://github.com/evmos/ethermint/blob/main/cmd/ethermintd/genaccounts.go
-package zgchaind
+package main
 
 import (
 	"bufio"

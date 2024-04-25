@@ -2,9 +2,9 @@
 ###                             Project Info                                 ###
 ################################################################################
 PROJECT_NAME := 0g-chain# unique namespace for project
-MAIN_ENTRY := ./cmd
 BINARY_NAME := 0gchaind
-DOCKER_IMAGE_NAME := 0glabs/0g-chain
+MAIN_ENTRY := ./cmd/$(BINARY_NAME)
+DOCKER_IMAGE_NAME := 0glabs/$(PROJECT_NAME)
 GO_BIN ?= go
 
 GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)

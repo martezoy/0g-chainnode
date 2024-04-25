@@ -7,14 +7,13 @@ import (
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 
 	"github.com/0glabs/0g-chain/chaincfg"
-	chain "github.com/0glabs/0g-chain/cmd/0gchaind"
 )
 
 func main() {
 	chaincfg.SetSDKConfig().Seal()
 	chaincfg.RegisterDenoms()
 
-	rootCmd := chain.NewRootCmd()
+	rootCmd := NewRootCmd()
 
 	if err := svrcmd.Execute(rootCmd, chaincfg.EnvPrefix, chaincfg.DefaultNodeHome); err != nil {
 		switch e := err.(type) {

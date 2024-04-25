@@ -1,4 +1,4 @@
-package zgchaind
+package main
 
 import (
 	"context"
