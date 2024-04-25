@@ -3,8 +3,8 @@ package types
 import errorsmod "cosmossdk.io/errors"
 
 var (
-	ErrUnknownCommittee        = errorsmod.Register(ModuleName, 2, "committee not found")
-	ErrInvalidCommittee        = errorsmod.Register(ModuleName, 3, "invalid committee")
+	ErrUnknownCouncil          = errorsmod.Register(ModuleName, 2, "council not found")
+	ErrInvalidCouncil          = errorsmod.Register(ModuleName, 3, "invalid council")
 	ErrUnknownProposal         = errorsmod.Register(ModuleName, 4, "proposal not found")
 	ErrProposalExpired         = errorsmod.Register(ModuleName, 5, "proposal expired")
 	ErrInvalidPubProposal      = errorsmod.Register(ModuleName, 6, "invalid pubproposal")

@@ -5,8 +5,8 @@ const (
 	EventTypeRegister = "register"
 	EventTypeVote     = "vote"
 
-	AttributeValueCategory          = "committee"
-	AttributeKeyCommitteeID         = "committee_id"
+	AttributeValueCategory          = "council"
+	AttributeKeyCouncilID           = "council_id"
 	AttributeKeyProposalID          = "proposal_id"
 	AttributeKeyVotingStartHeight   = "voting_start_height"
 	AttributeKeyVotingEndHeight     = "voting_end_height"

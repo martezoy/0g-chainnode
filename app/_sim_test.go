@@ -179,7 +179,7 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[kavadist.StoreKey], newApp.keys[kavadist.StoreKey], [][]byte{}},
 		{app.keys[pricefeed.StoreKey], newApp.keys[pricefeed.StoreKey], [][]byte{}},
 		{app.keys[validatorvesting.StoreKey], newApp.keys[validatorvesting.StoreKey], [][]byte{}},
-		{app.keys[committee.StoreKey], newApp.keys[committee.StoreKey], [][]byte{}},
+		{app.keys[council.StoreKey], newApp.keys[council.StoreKey], [][]byte{}},
 		{app.keys[swap.StoreKey], newApp.keys[swap.StoreKey], [][]byte{}},
 	}
 

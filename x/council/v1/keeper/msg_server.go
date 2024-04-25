@@ -6,7 +6,7 @@ package keeper
 import (
 	"context"
 
-	"github.com/0glabs/0g-chain/x/committee/v1/types"
+	"github.com/0glabs/0g-chain/x/council/v1/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
@@ -43,7 +43,7 @@ func (k Keeper) Vote(goCtx context.Context, msg *types.MsgVote) (*types.MsgVoteR
 		return nil, err
 	}
 
-	if err := k.AddVote(ctx, msg.CommitteeID, voter, msg.Ballots); err != nil {
+	if err := k.AddVote(ctx, msg.CouncilID, voter, msg.Ballots); err != nil {
 		return nil, err
 	}
 

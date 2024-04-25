@@ -1,4 +1,4 @@
-package committee
+package council
 
 import (
 	"fmt"
@@ -6,8 +6,8 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/0glabs/0g-chain/x/committee/v1/keeper"
-	"github.com/0glabs/0g-chain/x/committee/v1/types"
+	"github.com/0glabs/0g-chain/x/council/v1/keeper"
+	"github.com/0glabs/0g-chain/x/council/v1/types"
 )
 
 // InitGenesis initializes the store state from a genesis state.
@@ -22,10 +22,10 @@ func InitGenesis(ctx sdk.Context, keeper keeper.Keeper, gs types.GenesisState) {
 		panic(errorsmod.Wrapf(err, "error setting params"))
 	}
 
-	keeper.SetCurrentCommitteeID(ctx, gs.CurrentCommitteeID)
+	keeper.SetCurrentCouncilID(ctx, gs.CurrentCouncilID)
 
-	for _, p := range gs.Committees {
-		keeper.SetCommittee(ctx, p)
+	for _, p := range gs.Councils {
+		keeper.SetCouncil(ctx, p)
 	}
 }
 
@@ -41,7 +41,7 @@ func ExportGenesis(ctx sdk.Context, keeper keeper.Keeper) *types.GenesisState {
 		panic(err)
 	}
 
-	currentID, err := keeper.GetCurrentCommitteeID(ctx)
+	currentID, err := keeper.GetCurrentCouncilID(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -51,6 +51,6 @@ func ExportGenesis(ctx sdk.Context, keeper keeper.Keeper) *types.GenesisState {
 		startHeight,
 		period,
 		currentID,
-		keeper.GetCommittees(ctx),
+		keeper.GetCouncils(ctx),
 	)
 }

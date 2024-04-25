@@ -10,7 +10,7 @@ import (
 
 	sdkmath "cosmossdk.io/math"
 	"github.com/0glabs/0g-chain/crypto/vrf"
-	"github.com/0glabs/0g-chain/x/committee/v1/types"
+	"github.com/0glabs/0g-chain/x/council/v1/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -117,7 +117,7 @@ func NewRegisterCmd() *cobra.Command {
 
 func NewVoteCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "vote committee-id",
+		Use:   "vote council-id",
 		Short: "Vote on a proposal",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -151,12 +151,12 @@ func NewVoteCmd() *cobra.Command {
 			}
 			sk := vrfalgo.PrivateKey(voterRecord.GetLocal().PrivKey.Value)
 
-			committeeID, err := strconv.ParseUint(args[0], 10, 64)
+			councilID, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
 
-			votingStartHeight := types.DefaultVotingStartHeight + (committeeID-1)*types.DefaultVotingPeriod
+			votingStartHeight := types.DefaultVotingStartHeight + (councilID-1)*types.DefaultVotingPeriod
 
 			rsp, err := stakingtypes.NewQueryClient(clientCtx).HistoricalInfo(cmd.Context(), &stakingtypes.QueryHistoricalInfoRequest{Height: int64(votingStartHeight)})
 			if err != nil {
@@ -183,9 +183,9 @@ func NewVoteCmd() *cobra.Command {
 			}
 
 			msg := &types.MsgVote{
-				CommitteeID: committeeID,
-				Voter:       valAddr.String(),
-				Ballots:     ballots,
+				CouncilID: councilID,
+				Voter:     valAddr.String(),
+				Ballots:   ballots,
 			}
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},

@@ -13,36 +13,36 @@ type Ballot struct {
 }
 
 func (k *Keeper) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
-	committeeID, err := k.GetCurrentCommitteeID(ctx)
+	councilID, err := k.GetCurrentCouncilID(ctx)
 	if err != nil {
-		// TODO: handle the case where committeeID is not available
+		// TODO: handle the case where councilID is not available
 		return
 	}
-	committee, bz := k.GetCommittee(ctx, committeeID)
+	council, bz := k.GetCouncil(ctx, councilID)
 	if !bz {
 		return
 	}
 
-	if ctx.BlockHeight() >= int64(committee.StartHeight) {
-		// We are ready to accept votes for the next committee
-		if err := k.StoreNewCommittee(ctx, committee.StartHeight); err != nil {
+	if ctx.BlockHeight() >= int64(council.StartHeight) {
+		// We are ready to accept votes for the next council
+		if err := k.StoreNewCouncil(ctx, council.StartHeight); err != nil {
 			return
 		}
 	}
 
-	if ctx.BlockHeight() < int64(committee.EndHeight) {
+	if ctx.BlockHeight() < int64(council.EndHeight) {
 		return
 	}
 
-	k.IncrementCurrentCommitteeID(ctx)
-	committee, bz = k.GetCommittee(ctx, committeeID+1)
+	k.IncrementCurrentCouncilID(ctx)
+	council, bz = k.GetCouncil(ctx, councilID+1)
 	if !bz {
 		return
 	}
 
 	ballots := []Ballot{}
 	seen := make(map[string]struct{})
-	for _, vote := range committee.Votes {
+	for _, vote := range council.Votes {
 		for _, ballot := range vote.Ballots {
 			ballot := Ballot{
 				voter:   vote.Voter,
@@ -59,13 +59,13 @@ func (k *Keeper) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 		return ballots[i].content < ballots[j].content
 	})
 
-	committeeSize := k.GetParams(ctx).CommitteeSize
-	committee.Members = make([]sdk.ValAddress, committeeSize)
-	for i := 0; i < int(committeeSize); i = i + 1 {
-		committee.Members[i] = ballots[i].voter
+	councilSize := k.GetParams(ctx).CouncilSize
+	council.Members = make([]sdk.ValAddress, councilSize)
+	for i := 0; i < int(councilSize); i = i + 1 {
+		council.Members[i] = ballots[i].voter
 	}
 
-	k.SetCommittee(ctx, committee)
+	k.SetCouncil(ctx, council)
 }
 
 func (k *Keeper) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) {

@@ -1,4 +1,4 @@
-package committee
+package council
 
 import (
 	"context"
@@ -17,12 +17,12 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
-	"github.com/0glabs/0g-chain/x/committee/v1/client/cli"
-	"github.com/0glabs/0g-chain/x/committee/v1/keeper"
-	"github.com/0glabs/0g-chain/x/committee/v1/types"
+	"github.com/0glabs/0g-chain/x/council/v1/client/cli"
+	"github.com/0glabs/0g-chain/x/council/v1/keeper"
+	"github.com/0glabs/0g-chain/x/council/v1/types"
 )
 
-// consensusVersion defines the current x/committee module consensus version.
+// consensusVersion defines the current x/council module consensus version.
 const consensusVersion = 1
 
 // type check to ensure the interface is properly implemented

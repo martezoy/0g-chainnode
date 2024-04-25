@@ -1,15 +1,15 @@
 syntax = "proto3";
-package zgc.committee.v1;
+package zgc.council.v1;
 
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
-import "zgc/committee/v1/genesis.proto";
+import "zgc/council/v1/genesis.proto";
 
-option go_package = "github.com/0glabs/0g-chain/x/committee/v1/types";
+option go_package = "github.com/0glabs/0g-chain/x/council/v1/types";
 option (gogoproto.goproto_getters_all) = false;
 
-// Msg defines the committee Msg service
+// Msg defines the council Msg service
 service Msg {
     rpc Register(MsgRegister) returns (MsgRegisterResponse);
     rpc Vote(MsgVote) returns (MsgVoteResponse);
@@ -23,7 +23,7 @@ message MsgRegister {
 message MsgRegisterResponse {}
 
 message MsgVote {
-    uint64 committee_id = 1 [(gogoproto.customname) = "CommitteeID"];
+    uint64 council_id = 1 [(gogoproto.customname) = "CouncilID"];
     string voter = 2;
     repeated Ballot ballots = 3;
 }

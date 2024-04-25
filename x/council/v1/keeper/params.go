@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"github.com/0glabs/0g-chain/x/committee/v1/types"
+	"github.com/0glabs/0g-chain/x/council/v1/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 

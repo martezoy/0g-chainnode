@@ -11,7 +11,7 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/0glabs/0g-chain/x/committee/v1/types"
+	"github.com/0glabs/0g-chain/x/council/v1/types"
 )
 
 // Keeper of the inflation store
@@ -40,29 +40,29 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 }
 
 // ------------------------------------------
-//				Committees
+//				Councils
 // ------------------------------------------
 
-func (k Keeper) SetCurrentCommitteeID(ctx sdk.Context, id uint64) {
+func (k Keeper) SetCurrentCouncilID(ctx sdk.Context, id uint64) {
 	store := ctx.KVStore(k.storeKey)
-	store.Set(types.CurrentCommitteeIDKey, types.GetKeyFromID(id))
+	store.Set(types.CurrentCouncilIDKey, types.GetKeyFromID(id))
 }
 
-func (k Keeper) GetCurrentCommitteeID(ctx sdk.Context) (uint64, error) {
+func (k Keeper) GetCurrentCouncilID(ctx sdk.Context) (uint64, error) {
 	store := ctx.KVStore(k.storeKey)
-	bz := store.Get(types.CurrentCommitteeIDKey)
+	bz := store.Get(types.CurrentCouncilIDKey)
 	if bz == nil {
-		return 0, errorsmod.Wrap(types.ErrInvalidGenesis, "current committee ID not set at genesis")
+		return 0, errorsmod.Wrap(types.ErrInvalidGenesis, "current council ID not set at genesis")
 	}
 	return types.Uint64FromBytes(bz), nil
 }
 
-func (k Keeper) IncrementCurrentCommitteeID(ctx sdk.Context) error {
-	id, err := k.GetCurrentCommitteeID(ctx)
+func (k Keeper) IncrementCurrentCouncilID(ctx sdk.Context) error {
+	id, err := k.GetCurrentCouncilID(ctx)
 	if err != nil {
 		return err
 	}
-	k.SetCurrentCommitteeID(ctx, id+1)
+	k.SetCurrentCouncilID(ctx, id+1)
 	return nil
 }
 
@@ -94,9 +94,9 @@ func (k Keeper) GetVotingPeriod(ctx sdk.Context) (uint64, error) {
 	return types.Uint64FromBytes(bz), nil
 }
 
-// StoreNewCommittee stores a committee, adding a new ID
-func (k Keeper) StoreNewCommittee(ctx sdk.Context, votingStartHeight uint64) error {
-	currentCommitteeID, err := k.GetCurrentCommitteeID(ctx)
+// StoreNewCouncil stores a council, adding a new ID
+func (k Keeper) StoreNewCouncil(ctx sdk.Context, votingStartHeight uint64) error {
+	currentCouncilID, err := k.GetCurrentCouncilID(ctx)
 	if err != nil {
 		return err
 	}
@@ -105,35 +105,35 @@ func (k Keeper) StoreNewCommittee(ctx sdk.Context, votingStartHeight uint64) err
 	if err != nil {
 		return err
 	}
-	com := types.Committee{
-		ID:                currentCommitteeID + 1,
+	com := types.Council{
+		ID:                currentCouncilID + 1,
 		VotingStartHeight: votingStartHeight,
 		StartHeight:       votingStartHeight + votingPeriod,
 		EndHeight:         votingStartHeight + votingPeriod*2,
 		Votes:             []types.Vote{},
 		Members:           []sdk.ValAddress{},
 	}
-	k.SetCommittee(ctx, com)
+	k.SetCouncil(ctx, com)
 
 	return nil
 }
 
-func (k Keeper) GetCommittee(ctx sdk.Context, committeeID uint64) (types.Committee, bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.CommitteeKeyPrefix)
-	bz := store.Get(types.GetKeyFromID(committeeID))
+func (k Keeper) GetCouncil(ctx sdk.Context, councilID uint64) (types.Council, bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.CouncilKeyPrefix)
+	bz := store.Get(types.GetKeyFromID(councilID))
 	if bz == nil {
-		return types.Committee{}, false
+		return types.Council{}, false
 	}
-	var com types.Committee
+	var com types.Council
 	k.cdc.MustUnmarshal(bz, &com)
 	return com, true
 }
 
-// SetCommittee puts a committee into the store.
-func (k Keeper) SetCommittee(ctx sdk.Context, committee types.Committee) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.CommitteeKeyPrefix)
-	bz := k.cdc.MustMarshal(&committee)
-	store.Set(types.GetKeyFromID(committee.ID), bz)
+// SetCouncil puts a council into the store.
+func (k Keeper) SetCouncil(ctx sdk.Context, council types.Council) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.CouncilKeyPrefix)
+	bz := k.cdc.MustMarshal(&council)
+	store.Set(types.GetKeyFromID(council.ID), bz)
 }
 
 // // DeleteProposal removes a proposal from the store.
@@ -144,22 +144,22 @@ func (k Keeper) SetCommittee(ctx sdk.Context, committee types.Committee) {
 
 // IterateProposals provides an iterator over all stored proposals.
 // For each proposal, cb will be called. If cb returns true, the iterator will close and stop.
-func (k Keeper) IterateCommittee(ctx sdk.Context, cb func(proposal types.Committee) (stop bool)) {
-	iterator := sdk.KVStorePrefixIterator(ctx.KVStore(k.storeKey), types.CommitteeKeyPrefix)
+func (k Keeper) IterateCouncil(ctx sdk.Context, cb func(proposal types.Council) (stop bool)) {
+	iterator := sdk.KVStorePrefixIterator(ctx.KVStore(k.storeKey), types.CouncilKeyPrefix)
 
 	defer iterator.Close()
 	for ; iterator.Valid(); iterator.Next() {
-		var committee types.Committee
-		k.cdc.MustUnmarshal(iterator.Value(), &committee)
-		if cb(committee) {
+		var council types.Council
+		k.cdc.MustUnmarshal(iterator.Value(), &council)
+		if cb(council) {
 			break
 		}
 	}
 }
 
-func (k Keeper) GetCommittees(ctx sdk.Context) types.Committees {
-	results := types.Committees{}
-	k.IterateCommittee(ctx, func(prop types.Committee) bool {
+func (k Keeper) GetCouncils(ctx sdk.Context) types.Councils {
+	results := types.Councils{}
+	k.IterateCouncil(ctx, func(prop types.Council) bool {
 		results = append(results, prop)
 		return false
 	})
@@ -195,13 +195,13 @@ func (k Keeper) GetVote(ctx sdk.Context, epochID uint64, voter sdk.ValAddress) (
 func (k Keeper) SetVote(ctx sdk.Context, vote types.Vote) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.VoteKeyPrefix)
 	bz := k.cdc.MustMarshal(&vote)
-	store.Set(types.GetVoteKey(vote.CommitteeID, vote.Voter), bz)
+	store.Set(types.GetVoteKey(vote.CouncilID, vote.Voter), bz)
 }
 
 // DeleteVote removes a Vote from the store.
-func (k Keeper) DeleteVote(ctx sdk.Context, committeeID uint64, voter sdk.ValAddress) {
+func (k Keeper) DeleteVote(ctx sdk.Context, councilID uint64, voter sdk.ValAddress) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.VoteKeyPrefix)
-	store.Delete(types.GetVoteKey(committeeID, voter))
+	store.Delete(types.GetVoteKey(councilID, voter))
 }
 
 // IterateVotes provides an iterator over all stored votes.
@@ -231,9 +231,9 @@ func (k Keeper) GetVotes(ctx sdk.Context) []types.Vote {
 }
 
 // GetVotesByProposal returns all votes for one proposal.
-func (k Keeper) GetVotesByCommittee(ctx sdk.Context, committeeID uint64) []types.Vote {
+func (k Keeper) GetVotesByCouncil(ctx sdk.Context, councilID uint64) []types.Vote {
 	results := []types.Vote{}
-	iterator := sdk.KVStorePrefixIterator(ctx.KVStore(k.storeKey), append(types.VoteKeyPrefix, types.GetKeyFromID(committeeID)...))
+	iterator := sdk.KVStorePrefixIterator(ctx.KVStore(k.storeKey), append(types.VoteKeyPrefix, types.GetKeyFromID(councilID)...))
 
 	defer iterator.Close()
 	for ; iterator.Valid(); iterator.Next() {
@@ -294,11 +294,11 @@ func (k Keeper) AddVoter(ctx sdk.Context, voter sdk.ValAddress, key []byte) erro
 	return nil
 }
 
-func (k Keeper) AddVote(ctx sdk.Context, committeeID uint64, voter sdk.ValAddress, ballots []*types.Ballot) error {
+func (k Keeper) AddVote(ctx sdk.Context, councilID uint64, voter sdk.ValAddress, ballots []*types.Ballot) error {
 	// Validate
-	com, found := k.GetCommittee(ctx, committeeID)
+	com, found := k.GetCouncil(ctx, councilID)
 	if !found {
-		return errorsmod.Wrapf(types.ErrUnknownCommittee, "%d", committeeID)
+		return errorsmod.Wrapf(types.ErrUnknownCouncil, "%d", councilID)
 	}
 	if com.HasVotingEndedBy(ctx.BlockHeight()) {
 		return errorsmod.Wrapf(types.ErrProposalExpired, "%d ≥ %d", ctx.BlockHeight(), com.StartHeight)
@@ -308,12 +308,12 @@ func (k Keeper) AddVote(ctx sdk.Context, committeeID uint64, voter sdk.ValAddres
 	// TODO: verify whether ballots are valid or not
 
 	// Store vote, overwriting any prior vote
-	k.SetVote(ctx, types.NewVote(committeeID, voter, ballots))
+	k.SetVote(ctx, types.NewVote(councilID, voter, ballots))
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			types.EventTypeVote,
-			sdk.NewAttribute(types.AttributeKeyCommitteeID, fmt.Sprintf("%d", com.ID)),
+			sdk.NewAttribute(types.AttributeKeyCouncilID, fmt.Sprintf("%d", com.ID)),
 			sdk.NewAttribute(types.AttributeKeyVoter, voter.String()),
 			// TODO: types.AttributeKeyBallots
 		),

@@ -3,22 +3,22 @@ package keeper
 import (
 	"context"
 
-	"github.com/0glabs/0g-chain/x/committee/v1/types"
+	"github.com/0glabs/0g-chain/x/council/v1/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 var _ types.QueryServer = Keeper{}
 
-func (k Keeper) CurrentCommitteeID(
+func (k Keeper) CurrentCouncilID(
 	c context.Context,
-	_ *types.QueryCurrentCommitteeIDRequest,
-) (*types.QueryCurrentCommitteeIDResponse, error) {
+	_ *types.QueryCurrentCouncilIDRequest,
+) (*types.QueryCurrentCouncilIDResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	currentCommitteeID, err := k.GetCurrentCommitteeID(ctx)
+	currentCouncilID, err := k.GetCurrentCouncilID(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return &types.QueryCurrentCommitteeIDResponse{CurrentCommitteeID: currentCommitteeID}, nil
+	return &types.QueryCurrentCouncilIDResponse{CurrentCouncilID: currentCouncilID}, nil
 }
 
 func (k Keeper) RegisteredVoters(

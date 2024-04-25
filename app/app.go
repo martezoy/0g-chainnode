@@ -108,9 +108,9 @@ import (
 	evmutilkeeper "github.com/0glabs/0g-chain/x/evmutil/keeper"
 	evmutiltypes "github.com/0glabs/0g-chain/x/evmutil/types"
 
-	committee "github.com/0glabs/0g-chain/x/committee/v1"
-	committeekeeper "github.com/0glabs/0g-chain/x/committee/v1/keeper"
-	committeetypes "github.com/0glabs/0g-chain/x/committee/v1/types"
+	council "github.com/0glabs/0g-chain/x/council/v1"
+	councilkeeper "github.com/0glabs/0g-chain/x/council/v1/keeper"
+	counciltypes "github.com/0glabs/0g-chain/x/council/v1/types"
 	das "github.com/0glabs/0g-chain/x/das/v1"
 	daskeeper "github.com/0glabs/0g-chain/x/das/v1/keeper"
 	dastypes "github.com/0glabs/0g-chain/x/das/v1/types"
@@ -154,7 +154,7 @@ var (
 		evmutil.AppModuleBasic{},
 		mint.AppModuleBasic{},
 		consensus.AppModuleBasic{},
-		committee.AppModuleBasic{},
+		council.AppModuleBasic{},
 		das.AppModuleBasic{},
 	)
 
@@ -232,7 +232,7 @@ type App struct {
 	transferKeeper        ibctransferkeeper.Keeper
 	mintKeeper            mintkeeper.Keeper
 	consensusParamsKeeper consensusparamkeeper.Keeper
-	CommitteeKeeper       committeekeeper.Keeper
+	CouncilKeeper         councilkeeper.Keeper
 	DasKeeper             daskeeper.Keeper
 
 	// make scoped keepers public for test purposes
@@ -289,7 +289,7 @@ func NewApp(
 		minttypes.StoreKey,
 		consensusparamtypes.StoreKey,
 		crisistypes.StoreKey,
-		committeetypes.StoreKey,
+		counciltypes.StoreKey,
 		dastypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey, feemarkettypes.TransientKey)
@@ -510,7 +510,7 @@ func NewApp(
 		))
 
 	// create gov keeper with router
-	// NOTE this must be done after any keepers referenced in the gov router (ie committee) are defined
+	// NOTE this must be done after any keepers referenced in the gov router (ie council) are defined
 	govRouter := govv1beta1.NewRouter()
 	govRouter.
 		AddRoute(govtypes.RouterKey, govv1beta1.ProposalHandler).
@@ -532,8 +532,8 @@ func NewApp(
 	govKeeper.SetLegacyRouter(govRouter)
 	app.govKeeper = *govKeeper
 
-	app.CommitteeKeeper = committeekeeper.NewKeeper(
-		keys[committeetypes.StoreKey], appCodec, app.stakingKeeper,
+	app.CouncilKeeper = councilkeeper.NewKeeper(
+		keys[counciltypes.StoreKey], appCodec, app.stakingKeeper,
 	)
 	app.DasKeeper = daskeeper.NewKeeper(keys[dastypes.StoreKey], appCodec, app.stakingKeeper)
 
@@ -597,7 +597,7 @@ func NewApp(
 		consensusparamtypes.ModuleName,
 		packetforwardtypes.ModuleName,
 
-		committeetypes.ModuleName,
+		counciltypes.ModuleName,
 		dastypes.ModuleName,
 	)
 
@@ -628,7 +628,7 @@ func NewApp(
 		minttypes.ModuleName,
 		consensusparamtypes.ModuleName,
 		packetforwardtypes.ModuleName,
-		committeetypes.ModuleName,
+		counciltypes.ModuleName,
 		dastypes.ModuleName,
 	)
 
@@ -658,7 +658,7 @@ func NewApp(
 		consensusparamtypes.ModuleName,
 		packetforwardtypes.ModuleName,
 		crisistypes.ModuleName, // runs the invariants at genesis, should run after other modules
-		committeetypes.ModuleName,
+		counciltypes.ModuleName,
 		dastypes.ModuleName,
 	)
 
