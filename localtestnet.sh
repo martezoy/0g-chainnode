@@ -68,7 +68,7 @@ relayerKeyName="relayer"
 printf "$relayerMnemonic\n" | $BINARY keys add $relayerKeyName --eth --recover
 $BINARY add-genesis-account $relayerKeyName 1000000000000000000000neuron
 
-storageContractAcc="0g1l0j9dqdvd3fatfqywhm4y6avrln4jracrfy9hk"
+storageContractAcc="0g1vsjpjgw8p5f4x0nwp8ernl9lkszewcqqss7r5d"
 $BINARY add-genesis-account $storageContractAcc 1000000000000000000000neuron
 
 # Create a delegation tx for the validator and add to genesis
@@ -76,7 +76,7 @@ $BINARY gentx $validatorKeyName 1000000000000000000000neuron --keyring-backend t
 $BINARY collect-gentxs
 
 # Replace stake with ukava
-# sed -in-place='' 's/stake/ukava/g' $DATA/config/genesis.json
+sed -in-place='' 's/stake/neuron/g' $DATA/config/genesis.json
 
 # Replace the default evm denom of aphoton with neuron
 sed -in-place='' 's/aphoton/neuron/g' $DATA/config/genesis.json
