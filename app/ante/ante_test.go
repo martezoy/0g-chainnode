@@ -22,8 +22,8 @@ import (
 
 	"github.com/0glabs/0g-chain/app"
 	"github.com/0glabs/0g-chain/chaincfg"
-	// bep3types "github.com/0glabs/0g-chain/x/bep3/types"
-	// pricefeedtypes "github.com/0glabs/0g-chain/x/pricefeed/types"
+	bep3types "github.com/0glabs/0g-chain/x/bep3/types"
+	pricefeedtypes "github.com/0glabs/0g-chain/x/pricefeed/types"
 )
 
 func TestMain(m *testing.M) {
@@ -35,10 +35,10 @@ func TestAppAnteHandler_AuthorizedMempool(t *testing.T) {
 	testPrivKeys, testAddresses := app.GeneratePrivKeyAddressPairs(10)
 	unauthed := testAddresses[0:2]
 	unauthedKeys := testPrivKeys[0:2]
-	// deputy := testAddresses[2]
-	// deputyKey := testPrivKeys[2]
-	// oracles := testAddresses[3:6]
-	// oraclesKeys := testPrivKeys[3:6]
+	deputy := testAddresses[2]
+	deputyKey := testPrivKeys[2]
+	oracles := testAddresses[3:6]
+	oraclesKeys := testPrivKeys[3:6]
 	manual := testAddresses[6:]
 	manualKeys := testPrivKeys[6:]
 
@@ -69,8 +69,8 @@ func TestAppAnteHandler_AuthorizedMempool(t *testing.T) {
 			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 1e9)),
 			testAddresses,
 		),
-		// newBep3GenStateMulti(tApp.AppCodec(), deputy),
-		// newPricefeedGenStateMulti(tApp.AppCodec(), oracles),
+		newBep3GenStateMulti(tApp.AppCodec(), deputy),
+		newPricefeedGenStateMulti(tApp.AppCodec(), oracles),
 	)
 
 	testcases := []struct {
@@ -85,18 +85,18 @@ func TestAppAnteHandler_AuthorizedMempool(t *testing.T) {
 			privKey:    unauthedKeys[1],
 			expectPass: false,
 		},
-		// {
-		// 	name:       "oracle",
-		// 	address:    oracles[1],
-		// 	privKey:    oraclesKeys[1],
-		// 	expectPass: true,
-		// },
-		// {
-		// 	name:       "deputy",
-		// 	address:    deputy,
-		// 	privKey:    deputyKey,
-		// 	expectPass: true,
-		// },
+		{
+			name:       "oracle",
+			address:    oracles[1],
+			privKey:    oraclesKeys[1],
+			expectPass: true,
+		},
+		{
+			name:       "deputy",
+			address:    deputy,
+			privKey:    deputyKey,
+			expectPass: true,
+		},
 		{
 			name:       "manual",
 			address:    manual[1],
@@ -144,53 +144,53 @@ func TestAppAnteHandler_AuthorizedMempool(t *testing.T) {
 	}
 }
 
-// func newPricefeedGenStateMulti(cdc codec.JSONCodec, oracles []sdk.AccAddress) app.GenesisState {
-// 	pfGenesis := pricefeedtypes.GenesisState{
-// 		Params: pricefeedtypes.Params{
-// 			Markets: []pricefeedtypes.Market{
-// 				{MarketID: "btc:usd", BaseAsset: "btc", QuoteAsset: "usd", Oracles: oracles, Active: true},
-// 			},
-// 		},
-// 	}
-// 	return app.GenesisState{pricefeedtypes.ModuleName: cdc.MustMarshalJSON(&pfGenesis)}
-// }
+func newPricefeedGenStateMulti(cdc codec.JSONCodec, oracles []sdk.AccAddress) app.GenesisState {
+	pfGenesis := pricefeedtypes.GenesisState{
+		Params: pricefeedtypes.Params{
+			Markets: []pricefeedtypes.Market{
+				{MarketID: "btc:usd", BaseAsset: "btc", QuoteAsset: "usd", Oracles: oracles, Active: true},
+			},
+		},
+	}
+	return app.GenesisState{pricefeedtypes.ModuleName: cdc.MustMarshalJSON(&pfGenesis)}
+}
 
-// func newBep3GenStateMulti(cdc codec.JSONCodec, deputyAddress sdk.AccAddress) app.GenesisState {
-// 	bep3Genesis := bep3types.GenesisState{
-// 		Params: bep3types.Params{
-// 			AssetParams: bep3types.AssetParams{
-// 				bep3types.AssetParam{
-// 					Denom:  "bnb",
-// 					CoinID: 714,
-// 					SupplyLimit: bep3types.SupplyLimit{
-// 						Limit:          sdkmath.NewInt(350000000000000),
-// 						TimeLimited:    false,
-// 						TimeBasedLimit: sdk.ZeroInt(),
-// 						TimePeriod:     time.Hour,
-// 					},
-// 					Active:        true,
-// 					DeputyAddress: deputyAddress,
-// 					FixedFee:      sdkmath.NewInt(1000),
-// 					MinSwapAmount: sdk.OneInt(),
-// 					MaxSwapAmount: sdkmath.NewInt(1000000000000),
-// 					MinBlockLock:  bep3types.DefaultMinBlockLock,
-// 					MaxBlockLock:  bep3types.DefaultMaxBlockLock,
-// 				},
-// 			},
-// 		},
-// 		Supplies: bep3types.AssetSupplies{
-// 			bep3types.NewAssetSupply(
-// 				sdk.NewCoin("bnb", sdk.ZeroInt()),
-// 				sdk.NewCoin("bnb", sdk.ZeroInt()),
-// 				sdk.NewCoin("bnb", sdk.ZeroInt()),
-// 				sdk.NewCoin("bnb", sdk.ZeroInt()),
-// 				time.Duration(0),
-// 			),
-// 		},
-// 		PreviousBlockTime: bep3types.DefaultPreviousBlockTime,
-// 	}
-// 	return app.GenesisState{bep3types.ModuleName: cdc.MustMarshalJSON(&bep3Genesis)}
-// }
+func newBep3GenStateMulti(cdc codec.JSONCodec, deputyAddress sdk.AccAddress) app.GenesisState {
+	bep3Genesis := bep3types.GenesisState{
+		Params: bep3types.Params{
+			AssetParams: bep3types.AssetParams{
+				bep3types.AssetParam{
+					Denom:  "bnb",
+					CoinID: 714,
+					SupplyLimit: bep3types.SupplyLimit{
+						Limit:          sdkmath.NewInt(350000000000000),
+						TimeLimited:    false,
+						TimeBasedLimit: sdk.ZeroInt(),
+						TimePeriod:     time.Hour,
+					},
+					Active:        true,
+					DeputyAddress: deputyAddress,
+					FixedFee:      sdkmath.NewInt(1000),
+					MinSwapAmount: sdk.OneInt(),
+					MaxSwapAmount: sdkmath.NewInt(1000000000000),
+					MinBlockLock:  bep3types.DefaultMinBlockLock,
+					MaxBlockLock:  bep3types.DefaultMaxBlockLock,
+				},
+			},
+		},
+		Supplies: bep3types.AssetSupplies{
+			bep3types.NewAssetSupply(
+				sdk.NewCoin("bnb", sdk.ZeroInt()),
+				sdk.NewCoin("bnb", sdk.ZeroInt()),
+				sdk.NewCoin("bnb", sdk.ZeroInt()),
+				sdk.NewCoin("bnb", sdk.ZeroInt()),
+				time.Duration(0),
+			),
+		},
+		PreviousBlockTime: bep3types.DefaultPreviousBlockTime,
+	}
+	return app.GenesisState{bep3types.ModuleName: cdc.MustMarshalJSON(&bep3Genesis)}
+}
 
 func TestAppAnteHandler_RejectMsgsInAuthz(t *testing.T) {
 	testPrivKeys, testAddresses := app.GeneratePrivKeyAddressPairs(10)

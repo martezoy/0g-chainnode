@@ -103,17 +103,29 @@ import (
 	"github.com/0glabs/0g-chain/app/ante"
 	chainparams "github.com/0glabs/0g-chain/app/params"
 	"github.com/0glabs/0g-chain/chaincfg"
-
+	"github.com/0glabs/0g-chain/x/bep3"
+	bep3keeper "github.com/0glabs/0g-chain/x/bep3/keeper"
+	bep3types "github.com/0glabs/0g-chain/x/bep3/types"
 	evmutil "github.com/0glabs/0g-chain/x/evmutil"
 	evmutilkeeper "github.com/0glabs/0g-chain/x/evmutil/keeper"
 	evmutiltypes "github.com/0glabs/0g-chain/x/evmutil/types"
 
+	"github.com/0glabs/0g-chain/x/committee"
+	committeeclient "github.com/0glabs/0g-chain/x/committee/client"
+	committeekeeper "github.com/0glabs/0g-chain/x/committee/keeper"
+	committeetypes "github.com/0glabs/0g-chain/x/committee/types"
 	council "github.com/0glabs/0g-chain/x/council/v1"
 	councilkeeper "github.com/0glabs/0g-chain/x/council/v1/keeper"
 	counciltypes "github.com/0glabs/0g-chain/x/council/v1/types"
 	das "github.com/0glabs/0g-chain/x/das/v1"
 	daskeeper "github.com/0glabs/0g-chain/x/das/v1/keeper"
 	dastypes "github.com/0glabs/0g-chain/x/das/v1/types"
+	issuance "github.com/0glabs/0g-chain/x/issuance"
+	issuancekeeper "github.com/0glabs/0g-chain/x/issuance/keeper"
+	issuancetypes "github.com/0glabs/0g-chain/x/issuance/types"
+	pricefeed "github.com/0glabs/0g-chain/x/pricefeed"
+	pricefeedkeeper "github.com/0glabs/0g-chain/x/pricefeed/keeper"
+	pricefeedtypes "github.com/0glabs/0g-chain/x/pricefeed/types"
 	validatorvesting "github.com/0glabs/0g-chain/x/validator-vesting"
 	validatorvestingrest "github.com/0glabs/0g-chain/x/validator-vesting/client/rest"
 	validatorvestingtypes "github.com/0glabs/0g-chain/x/validator-vesting/types"
@@ -135,6 +147,7 @@ var (
 			upgradeclient.LegacyCancelProposalHandler,
 			ibcclientclient.UpdateClientProposalHandler,
 			ibcclientclient.UpgradeProposalHandler,
+			committeeclient.ProposalHandler,
 		}),
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},
@@ -154,6 +167,10 @@ var (
 		evmutil.AppModuleBasic{},
 		mint.AppModuleBasic{},
 		consensus.AppModuleBasic{},
+		issuance.AppModuleBasic{},
+		bep3.AppModuleBasic{},
+		pricefeed.AppModuleBasic{},
+		committee.AppModuleBasic{},
 		council.AppModuleBasic{},
 		das.AppModuleBasic{},
 	)
@@ -162,15 +179,17 @@ var (
 	// If these are changed, the permissions stored in accounts
 	// must also be migrated during a chain upgrade.
 	mAccPerms = map[string][]string{
-		authtypes.FeeCollectorName:     nil,
-		distrtypes.ModuleName:          nil,
-		stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
-		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
-		govtypes.ModuleName:            {authtypes.Burner},
-		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
-		evmtypes.ModuleName:            {authtypes.Minter, authtypes.Burner}, // used for secure addition and subtraction of balance using module account
-		evmutiltypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
-		minttypes.ModuleName:           {authtypes.Minter},
+		authtypes.FeeCollectorName:      nil,
+		distrtypes.ModuleName:           nil,
+		stakingtypes.BondedPoolName:     {authtypes.Burner, authtypes.Staking},
+		stakingtypes.NotBondedPoolName:  {authtypes.Burner, authtypes.Staking},
+		govtypes.ModuleName:             {authtypes.Burner},
+		ibctransfertypes.ModuleName:     {authtypes.Minter, authtypes.Burner},
+		evmtypes.ModuleName:             {authtypes.Minter, authtypes.Burner}, // used for secure addition and subtraction of balance using module account
+		evmutiltypes.ModuleName:         {authtypes.Minter, authtypes.Burner},
+		minttypes.ModuleName:            {authtypes.Minter},
+		issuancetypes.ModuleAccountName: {authtypes.Minter, authtypes.Burner},
+		bep3types.ModuleName:            {authtypes.Burner, authtypes.Minter},
 	}
 )
 
@@ -234,6 +253,10 @@ type App struct {
 	consensusParamsKeeper consensusparamkeeper.Keeper
 	CouncilKeeper         councilkeeper.Keeper
 	DasKeeper             daskeeper.Keeper
+	issuanceKeeper        issuancekeeper.Keeper
+	bep3Keeper            bep3keeper.Keeper
+	pricefeedKeeper       pricefeedkeeper.Keeper
+	committeeKeeper       committeekeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
@@ -291,6 +314,10 @@ func NewApp(
 		crisistypes.StoreKey,
 		counciltypes.StoreKey,
 		dastypes.StoreKey,
+		issuancetypes.StoreKey,
+		bep3types.StoreKey,
+		pricefeedtypes.StoreKey,
+		committeetypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey, feemarkettypes.TransientKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -323,6 +350,9 @@ func NewApp(
 	slashingSubspace := app.paramsKeeper.Subspace(slashingtypes.ModuleName)
 	govSubspace := app.paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(govv1.ParamKeyTable())
 	crisisSubspace := app.paramsKeeper.Subspace(crisistypes.ModuleName)
+	issuanceSubspace := app.paramsKeeper.Subspace(issuancetypes.ModuleName)
+	bep3Subspace := app.paramsKeeper.Subspace(bep3types.ModuleName)
+	pricefeedSubspace := app.paramsKeeper.Subspace(pricefeedtypes.ModuleName)
 	ibcSubspace := app.paramsKeeper.Subspace(ibcexported.ModuleName)
 	ibctransferSubspace := app.paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	packetforwardSubspace := app.paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
@@ -491,6 +521,26 @@ func NewApp(
 	ibcRouter := ibcporttypes.NewRouter()
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferStack)
 	app.ibcKeeper.SetRouter(ibcRouter)
+	app.issuanceKeeper = issuancekeeper.NewKeeper(
+		appCodec,
+		keys[issuancetypes.StoreKey],
+		issuanceSubspace,
+		app.accountKeeper,
+		app.bankKeeper,
+	)
+	app.bep3Keeper = bep3keeper.NewKeeper(
+		appCodec,
+		keys[bep3types.StoreKey],
+		app.bankKeeper,
+		app.accountKeeper,
+		bep3Subspace,
+		app.ModuleAccountAddrs(),
+	)
+	app.pricefeedKeeper = pricefeedkeeper.NewKeeper(
+		appCodec,
+		keys[pricefeedtypes.StoreKey],
+		pricefeedSubspace,
+	)
 
 	app.mintKeeper = mintkeeper.NewKeeper(
 		appCodec,
@@ -501,7 +551,16 @@ func NewApp(
 		authtypes.FeeCollectorName,
 		govAuthAddrStr,
 	)
-
+	// create committee keeper with router
+	committeeGovRouter := govv1beta1.NewRouter()
+	app.committeeKeeper = committeekeeper.NewKeeper(
+		appCodec,
+		keys[committeetypes.StoreKey],
+		committeeGovRouter,
+		app.paramsKeeper,
+		app.accountKeeper,
+		app.bankKeeper,
+	)
 	// register the staking hooks
 	app.stakingKeeper.SetHooks(
 		stakingtypes.NewMultiStakingHooks(
@@ -516,7 +575,8 @@ func NewApp(
 		AddRoute(govtypes.RouterKey, govv1beta1.ProposalHandler).
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.paramsKeeper)).
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(&app.upgradeKeeper)).
-		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.ibcKeeper.ClientKeeper))
+		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.ibcKeeper.ClientKeeper)).
+		AddRoute(committeetypes.RouterKey, committee.NewProposalHandler(app.committeeKeeper))
 
 	govConfig := govtypes.DefaultConfig()
 	govKeeper := govkeeper.NewKeeper(
@@ -560,6 +620,10 @@ func NewApp(
 		transferModule,
 		vesting.NewAppModule(app.accountKeeper, app.bankKeeper),
 		authzmodule.NewAppModule(appCodec, app.authzKeeper, app.accountKeeper, app.bankKeeper, app.interfaceRegistry),
+		issuance.NewAppModule(app.issuanceKeeper, app.accountKeeper, app.bankKeeper),
+		bep3.NewAppModule(app.bep3Keeper, app.accountKeeper, app.bankKeeper),
+		pricefeed.NewAppModule(app.pricefeedKeeper, app.accountKeeper),
+		committee.NewAppModule(app.committeeKeeper, app.accountKeeper),
 		validatorvesting.NewAppModule(app.bankKeeper),
 		evmutil.NewAppModule(app.evmutilKeeper, app.bankKeeper, app.accountKeeper),
 		mint.NewAppModule(appCodec, app.mintKeeper, app.accountKeeper, nil, mintSubspace),
@@ -571,6 +635,9 @@ func NewApp(
 		upgradetypes.ModuleName,
 		// Capability begin blocker runs non state changing initialization.
 		capabilitytypes.ModuleName,
+		// Committee begin blocker changes module params by enacting proposals.
+		// Run before to ensure params are updated together before state changes.
+		committeetypes.ModuleName,
 		minttypes.ModuleName,
 		distrtypes.ModuleName,
 		// During begin block slashing happens after distr.BeginBlocker so that
@@ -581,6 +648,9 @@ func NewApp(
 		stakingtypes.ModuleName,
 		feemarkettypes.ModuleName,
 		evmtypes.ModuleName,
+		bep3types.ModuleName,
+		issuancetypes.ModuleName,
+		pricefeedtypes.ModuleName,
 		ibcexported.ModuleName,
 		// Add all remaining modules with an empty begin blocker below since cosmos 0.45.0 requires it
 		vestingtypes.ModuleName,
@@ -609,10 +679,14 @@ func NewApp(
 		evmtypes.ModuleName,
 		// fee market module must go after evm module in order to retrieve the block gas used.
 		feemarkettypes.ModuleName,
+		pricefeedtypes.ModuleName,
 		// Add all remaining modules with an empty end blocker below since cosmos 0.45.0 requires it
 		capabilitytypes.ModuleName,
+		issuancetypes.ModuleName,
 		slashingtypes.ModuleName,
 		distrtypes.ModuleName,
+		bep3types.ModuleName,
+		committeetypes.ModuleName,
 		upgradetypes.ModuleName,
 		evidencetypes.ModuleName,
 		vestingtypes.ModuleName,
@@ -648,6 +722,10 @@ func NewApp(
 		ibctransfertypes.ModuleName,
 		evmtypes.ModuleName,
 		feemarkettypes.ModuleName,
+		issuancetypes.ModuleName,
+		bep3types.ModuleName,
+		pricefeedtypes.ModuleName,
+		committeetypes.ModuleName,
 		evmutiltypes.ModuleName,
 		genutiltypes.ModuleName, // runs arbitrary txs included in genisis state, so run after modules have been initialized
 		// Add all remaining modules with an empty InitGenesis below since cosmos 0.45.0 requires it
@@ -698,6 +776,8 @@ func NewApp(
 	if options.MempoolEnableAuth {
 		fetchers = append(fetchers,
 			func(sdk.Context) []sdk.AccAddress { return options.MempoolAuthAddresses },
+			app.bep3Keeper.GetAuthorizedAddresses,
+			app.pricefeedKeeper.GetAuthorizedAddresses,
 		)
 	}
 
