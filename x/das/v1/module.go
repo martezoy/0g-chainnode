@@ -21,7 +21,7 @@ import (
 	"github.com/0glabs/0g-chain/x/das/v1/types"
 )
 
-// consensusVersion defines the current x/committee module consensus version.
+// consensusVersion defines the current x/council module consensus version.
 const consensusVersion = 1
 
 // type check to ensure the interface is properly implemented

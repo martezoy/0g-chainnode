@@ -32,6 +32,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
 
+	"github.com/0glabs/0g-chain/x/bep3"
+	"github.com/0glabs/0g-chain/x/committee"
+	"github.com/0glabs/0g-chain/x/pricefeed"
 	validatorvesting "github.com/0glabs/0g-chain/x/validator-vesting"
 )
 
@@ -180,6 +183,7 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[pricefeed.StoreKey], newApp.keys[pricefeed.StoreKey], [][]byte{}},
 		{app.keys[validatorvesting.StoreKey], newApp.keys[validatorvesting.StoreKey], [][]byte{}},
 		{app.keys[committee.StoreKey], newApp.keys[committee.StoreKey], [][]byte{}},
+		{app.keys[council.StoreKey], newApp.keys[council.StoreKey], [][]byte{}},
 		{app.keys[swap.StoreKey], newApp.keys[swap.StoreKey], [][]byte{}},
 	}
 

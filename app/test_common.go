@@ -42,7 +42,11 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/0glabs/0g-chain/chaincfg"
+	bep3keeper "github.com/0glabs/0g-chain/x/bep3/keeper"
+	committeekeeper "github.com/0glabs/0g-chain/x/committee/keeper"
 	evmutilkeeper "github.com/0glabs/0g-chain/x/evmutil/keeper"
+	issuancekeeper "github.com/0glabs/0g-chain/x/issuance/keeper"
+	pricefeedkeeper "github.com/0glabs/0g-chain/x/pricefeed/keeper"
 )
 
 var (
@@ -103,9 +107,12 @@ func (tApp TestApp) GetDistrKeeper() distkeeper.Keeper          { return tApp.di
 func (tApp TestApp) GetGovKeeper() govkeeper.Keeper             { return tApp.govKeeper }
 func (tApp TestApp) GetCrisisKeeper() crisiskeeper.Keeper       { return tApp.crisisKeeper }
 func (tApp TestApp) GetParamsKeeper() paramskeeper.Keeper       { return tApp.paramsKeeper }
-
-func (tApp TestApp) GetEvmutilKeeper() evmutilkeeper.Keeper { return tApp.evmutilKeeper }
-func (tApp TestApp) GetEvmKeeper() *evmkeeper.Keeper        { return tApp.evmKeeper }
+func (tApp TestApp) GetIssuanceKeeper() issuancekeeper.Keeper   { return tApp.issuanceKeeper }
+func (tApp TestApp) GetBep3Keeper() bep3keeper.Keeper           { return tApp.bep3Keeper }
+func (tApp TestApp) GetPriceFeedKeeper() pricefeedkeeper.Keeper { return tApp.pricefeedKeeper }
+func (tApp TestApp) GetCommitteeKeeper() committeekeeper.Keeper { return tApp.committeeKeeper }
+func (tApp TestApp) GetEvmutilKeeper() evmutilkeeper.Keeper     { return tApp.evmutilKeeper }
+func (tApp TestApp) GetEvmKeeper() *evmkeeper.Keeper            { return tApp.evmKeeper }
 
 func (tApp TestApp) GetFeeMarketKeeper() feemarketkeeper.Keeper { return tApp.feeMarketKeeper }
 

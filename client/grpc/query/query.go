@@ -24,7 +24,7 @@ import (
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
 	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
 
-	committeetypes "github.com/0glabs/0g-chain/x/committee/v1/types"
+	counciltypes "github.com/0glabs/0g-chain/x/council/v1/types"
 	dastypes "github.com/0glabs/0g-chain/x/das/v1/types"
 	evmutiltypes "github.com/0glabs/0g-chain/x/evmutil/types"
 )
@@ -58,9 +58,9 @@ type QueryClient struct {
 
 	// 0g-chain module query clients
 
-	Committee committeetypes.QueryClient
-	Das       dastypes.QueryClient
-	Evmutil   evmutiltypes.QueryClient
+	Council counciltypes.QueryClient
+	Das     dastypes.QueryClient
+	Evmutil evmutiltypes.QueryClient
 }
 
 // NewQueryClient creates a new QueryClient and initializes all the module query clients
@@ -91,9 +91,9 @@ func NewQueryClient(grpcEndpoint string) (*QueryClient, error) {
 		IbcClient:   ibcclienttypes.NewQueryClient(conn),
 		IbcTransfer: ibctransfertypes.NewQueryClient(conn),
 
-		Committee: committeetypes.NewQueryClient(conn),
-		Das:       dastypes.NewQueryClient(conn),
-		Evmutil:   evmutiltypes.NewQueryClient(conn),
+		Council: counciltypes.NewQueryClient(conn),
+		Das:     dastypes.NewQueryClient(conn),
+		Evmutil: evmutiltypes.NewQueryClient(conn),
 	}
 	return client, nil
 }

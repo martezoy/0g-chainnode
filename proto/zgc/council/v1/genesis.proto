@@ -1,0 +1,52 @@
+syntax = "proto3";
+package zgc.council.v1;
+
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/0glabs/0g-chain/x/council/v1/types";
+
+message Params {
+  uint64 council_size = 1;
+}
+
+// GenesisState defines the council module's genesis state.
+message GenesisState {
+  option (gogoproto.goproto_getters) = false;
+
+  Params params = 1 [(gogoproto.nullable) = false];
+  uint64 voting_start_height = 2;
+  uint64 voting_period = 3;
+  uint64 current_council_id = 4 [(gogoproto.customname) = "CurrentCouncilID"];
+  repeated Council councils = 5 [(gogoproto.nullable) = false];
+}
+
+message Council {
+  uint64 id = 1 [(gogoproto.customname) = "ID"];
+  uint64 voting_start_height = 2;
+  uint64 start_height = 3;
+  uint64 end_height = 4;
+  repeated Vote votes = 5 [(gogoproto.nullable) = false];  
+  repeated bytes members = 6 [
+    (cosmos_proto.scalar) = "cosmos.AddressBytes",
+    (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"
+  ];
+}
+
+message Vote {
+  option (gogoproto.goproto_getters) = false;
+
+  uint64 council_id = 1 [(gogoproto.customname) = "CouncilID"];
+  bytes voter = 2 [
+    (cosmos_proto.scalar) = "cosmos.AddressBytes",
+    (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"
+  ];
+  repeated Ballot ballots = 3;
+}
+
+message Ballot {
+  uint64 id = 1 [(gogoproto.customname) = "ID"];
+  bytes content = 2;
+}

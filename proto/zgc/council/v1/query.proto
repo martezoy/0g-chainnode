@@ -1,0 +1,34 @@
+syntax = "proto3";
+package zgc.council.v1;
+
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "zgc/council/v1/genesis.proto";
+
+option go_package = "github.com/0glabs/0g-chain/x/council/v1/types";
+option (gogoproto.goproto_getters_all) = false;
+
+// Query defines the gRPC querier service for council module
+service Query {
+  rpc CurrentCouncilID(QueryCurrentCouncilIDRequest) returns (QueryCurrentCouncilIDResponse) {
+    option (google.api.http).get = "/0gchain/council/v1/current-council-id";
+  }
+  rpc RegisteredVoters(QueryRegisteredVotersRequest) returns (QueryRegisteredVotersResponse) {
+    option (google.api.http).get = "/0gchain/council/v1/registered-voters";
+  }
+}
+
+message QueryCurrentCouncilIDRequest {}
+
+message QueryCurrentCouncilIDResponse {
+  uint64 current_council_id = 1 [(gogoproto.customname) = "CurrentCouncilID"];
+}
+
+message QueryRegisteredVotersRequest {}
+
+message QueryRegisteredVotersResponse {
+  repeated string voters = 1;
+}

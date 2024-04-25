@@ -56,7 +56,7 @@ func TestNewQueryClient_ValidClient(t *testing.T) {
 
 		// validate 0gChain clients
 		require.NotNil(t, client.Evmutil)
-		require.NotNil(t, client.Committee)
+		require.NotNil(t, client.Council)
 		require.NotNil(t, client.Das)
 	})
 }
