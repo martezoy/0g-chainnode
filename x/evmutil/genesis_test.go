@@ -6,10 +6,10 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	sdkmath "cosmossdk.io/math"
+	"github.com/0glabs/0g-chain/x/evmutil"
+	"github.com/0glabs/0g-chain/x/evmutil/testutil"
+	"github.com/0glabs/0g-chain/x/evmutil/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/kava-labs/kava/x/evmutil"
-	"github.com/kava-labs/kava/x/evmutil/testutil"
-	"github.com/kava-labs/kava/x/evmutil/types"
 )
 
 type genesisTestSuite struct {
@@ -40,8 +40,8 @@ func (s *genesisTestSuite) TestInitGenesis_SetAccounts() {
 func (s *genesisTestSuite) TestInitGenesis_SetParams() {
 	params := types.DefaultParams()
 	conversionPair := types.ConversionPair{
-		KavaERC20Address: testutil.MustNewInternalEVMAddressFromString("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2").Bytes(),
-		Denom:            "weth",
+		ZgchainERC20Address: testutil.MustNewInternalEVMAddressFromString("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2").Bytes(),
+		Denom:               "weth",
 	}
 	params.EnabledConversionPairs = []types.ConversionPair{conversionPair}
 	gs := types.NewGenesisState(
@@ -92,13 +92,13 @@ func (s *genesisTestSuite) TestExportGenesis() {
 	params := types.DefaultParams()
 	params.EnabledConversionPairs = []types.ConversionPair{
 		{
-			KavaERC20Address: testutil.MustNewInternalEVMAddressFromString("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2").Bytes(),
-			Denom:            "weth"},
+			ZgchainERC20Address: testutil.MustNewInternalEVMAddressFromString("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2").Bytes(),
+			Denom:               "weth"},
 	}
 	params.AllowedCosmosDenoms = []types.AllowedCosmosCoinERC20Token{
 		{
 			CosmosDenom: "hard",
-			Name:        "Kava EVM HARD",
+			Name:        "0gChain EVM HARD",
 			Symbol:      "HARD",
 			Decimals:    6,
 		},

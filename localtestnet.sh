@@ -20,11 +20,11 @@ relayerMnemonic="never reject sniff east arctic funny twin feed upper series sta
 # 0xa2F728F997f62F47D4262a70947F6c36885dF9fa
 # kava15tmj37vh7ch504px9fcfglmvx6y9m70646ev8t
 
-DATA=~/.kava
+DATA=~/.0gchain
 # remove any old state and config
 rm -rf $DATA
 
-BINARY=kava
+BINARY=0gchaind
 
 # Create new data directory, overwriting any that alread existed
 chainID="zgchain_8888-1"
@@ -49,37 +49,37 @@ $BINARY config keyring-backend test
 # Create validator keys and add account to genesis
 validatorKeyName="validator"
 printf "$validatorMnemonic\n" | $BINARY keys add $validatorKeyName --recover
-$BINARY add-genesis-account $validatorKeyName 2000000000ukava
+$BINARY add-genesis-account $validatorKeyName 2000000000000000000000neuron
 
 # Create faucet keys and add account to genesis
 faucetKeyName="faucet"
 printf "$faucetMnemonic\n" | $BINARY keys add $faucetKeyName --recover
-$BINARY add-genesis-account $faucetKeyName 1000000000ukava
+$BINARY add-genesis-account $faucetKeyName 1000000000000000000000neuron
 
 evmFaucetKeyName="evm-faucet"
 printf "$evmFaucetMnemonic\n" | $BINARY keys add $evmFaucetKeyName --eth --recover
-$BINARY add-genesis-account $evmFaucetKeyName 1000000000ukava
+$BINARY add-genesis-account $evmFaucetKeyName 1000000000000000000000neuron
 
 userKeyName="user"
 printf "$userMnemonic\n" | $BINARY keys add $userKeyName --eth --recover
-$BINARY add-genesis-account $userKeyName 1000000000ukava,1000000000usdx
+$BINARY add-genesis-account $userKeyName 1000000000000000000000neuron,1000000000usdx
 
 relayerKeyName="relayer"
 printf "$relayerMnemonic\n" | $BINARY keys add $relayerKeyName --eth --recover
-$BINARY add-genesis-account $relayerKeyName 1000000000ukava
+$BINARY add-genesis-account $relayerKeyName 1000000000000000000000neuron
 
-storageContractAcc="kava1l0j9dqdvd3fatfqywhm4y6avrln4jracrfy9hk"
-$BINARY add-genesis-account $storageContractAcc 1000000000ukava
+storageContractAcc="0g1vsjpjgw8p5f4x0nwp8ernl9lkszewcqqss7r5d"
+$BINARY add-genesis-account $storageContractAcc 1000000000000000000000neuron
 
 # Create a delegation tx for the validator and add to genesis
-$BINARY gentx $validatorKeyName 1000000000ukava --keyring-backend test --chain-id $chainID
+$BINARY gentx $validatorKeyName 1000000000000000000000neuron --keyring-backend test --chain-id $chainID
 $BINARY collect-gentxs
 
 # Replace stake with ukava
-sed -in-place='' 's/stake/ukava/g' $DATA/config/genesis.json
+sed -in-place='' 's/stake/neuron/g' $DATA/config/genesis.json
 
-# Replace the default evm denom of aphoton with ukava
-sed -in-place='' 's/aphoton/akava/g' $DATA/config/genesis.json
+# Replace the default evm denom of aphoton with neuron
+sed -in-place='' 's/aphoton/neuron/g' $DATA/config/genesis.json
 
 GENESIS=$DATA/config/genesis.json
 TMP_GENESIS=$DATA/config/tmp_genesis.json
@@ -101,17 +101,17 @@ cat $GENESIS | jq '.app_state.evm.params.chain_config.shanghai_block = null' >$T
 cat $GENESIS | jq '.app_state.evm.params.chain_config.cancun_block = null' >$TMP_GENESIS && mv $TMP_GENESIS $GENESIS
 
 # Add earn vault
-cat $GENESIS | jq '.app_state.earn.params.allowed_vaults =  [
-    {
-        denom: "usdx",
-        strategies: ["STRATEGY_TYPE_HARD"],
-    },
-    {
-        denom: "bkava",
-        strategies: ["STRATEGY_TYPE_SAVINGS"],
-    }]' >$TMP_GENESIS && mv $TMP_GENESIS $GENESIS
+# cat $GENESIS | jq '.app_state.earn.params.allowed_vaults =  [
+#     {
+#         denom: "usdx",
+#         strategies: ["STRATEGY_TYPE_HARD"],
+#     },
+#     {
+#         denom: "bkava",
+#         strategies: ["STRATEGY_TYPE_SAVINGS"],
+#     }]' >$TMP_GENESIS && mv $TMP_GENESIS $GENESIS
 
-cat $GENESIS | jq '.app_state.savings.params.supported_denoms = ["bkava-kavavaloper1ffv7nhd3z6sych2qpqkk03ec6hzkmufyz4scd0"]' >$TMP_GENESIS && mv $TMP_GENESIS $GENESIS
+# cat $GENESIS | jq '.app_state.savings.params.supported_denoms = ["bkava-kavavaloper1ffv7nhd3z6sych2qpqkk03ec6hzkmufyz4scd0"]' >$TMP_GENESIS && mv $TMP_GENESIS $GENESIS
 
 
 $BINARY config broadcast-mode sync

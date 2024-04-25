@@ -13,6 +13,6 @@ func (suite *IntegrationTestSuite) TestUpgradeHandler() {
 	suite.True(true)
 
 	// Uncomment & use these contexts to compare chain state before & after the upgrade occurs.
-	// beforeUpgradeCtx := suite.Kava.Grpc.CtxAtHeight(suite.UpgradeHeight - 1)
-	// afterUpgradeCtx := suite.Kava.Grpc.CtxAtHeight(suite.UpgradeHeight)
+	// beforeUpgradeCtx := suite.ZgChain.Grpc.CtxAtHeight(suite.UpgradeHeight - 1)
+	// afterUpgradeCtx := suite.ZgChain.Grpc.CtxAtHeight(suite.UpgradeHeight)
 }

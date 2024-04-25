@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/0glabs/0g-chain/chaincfg"
 	db "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/libs/log"
@@ -25,11 +26,11 @@ import (
 )
 
 func TestNewApp(t *testing.T) {
-	SetSDKConfig()
+	chaincfg.SetSDKConfig()
 	NewApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)),
 		db.NewMemDB(),
-		DefaultNodeHome,
+		chaincfg.DefaultNodeHome,
 		nil,
 		MakeEncodingConfig(),
 		DefaultOptions,
@@ -37,9 +38,9 @@ func TestNewApp(t *testing.T) {
 }
 
 func TestExport(t *testing.T) {
-	SetSDKConfig()
+	chaincfg.SetSDKConfig()
 	db := db.NewMemDB()
-	app := NewApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, DefaultNodeHome, nil, MakeEncodingConfig(), DefaultOptions, baseapp.SetChainID(TestChainId))
+	app := NewApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, chaincfg.DefaultNodeHome, nil, MakeEncodingConfig(), DefaultOptions, baseapp.SetChainID(TestChainId))
 
 	genesisState := GenesisStateWithSingleValidator(&TestApp{App: *app}, NewDefaultGenesisState())
 

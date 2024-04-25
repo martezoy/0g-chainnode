@@ -24,24 +24,12 @@ import (
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
 	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
 
-	auctiontypes "github.com/kava-labs/kava/x/auction/types"
-	bep3types "github.com/kava-labs/kava/x/bep3/types"
-	cdptypes "github.com/kava-labs/kava/x/cdp/types"
-	committeetypes "github.com/kava-labs/kava/x/committee/types"
-	communitytypes "github.com/kava-labs/kava/x/community/types"
-	earntypes "github.com/kava-labs/kava/x/earn/types"
-	evmutiltypes "github.com/kava-labs/kava/x/evmutil/types"
-	hardtypes "github.com/kava-labs/kava/x/hard/types"
-	incentivetypes "github.com/kava-labs/kava/x/incentive/types"
-	issuancetypes "github.com/kava-labs/kava/x/issuance/types"
-	kavadisttypes "github.com/kava-labs/kava/x/kavadist/types"
-	liquidtypes "github.com/kava-labs/kava/x/liquid/types"
-	pricefeedtypes "github.com/kava-labs/kava/x/pricefeed/types"
-	savingstypes "github.com/kava-labs/kava/x/savings/types"
-	swaptypes "github.com/kava-labs/kava/x/swap/types"
+	committeetypes "github.com/0glabs/0g-chain/x/committee/v1/types"
+	dastypes "github.com/0glabs/0g-chain/x/das/v1/types"
+	evmutiltypes "github.com/0glabs/0g-chain/x/evmutil/types"
 )
 
-// QueryClient is a wrapper with all Cosmos and Kava grpc query clients
+// QueryClient is a wrapper with all Cosmos and 0gChain grpc query clients
 type QueryClient struct {
 	// cosmos-sdk query clients
 
@@ -68,23 +56,11 @@ type QueryClient struct {
 	IbcClient   ibcclienttypes.QueryClient
 	IbcTransfer ibctransfertypes.QueryClient
 
-	// kava module query clients
+	// 0g-chain module query clients
 
-	Auction   auctiontypes.QueryClient
-	Bep3      bep3types.QueryClient
-	Cdp       cdptypes.QueryClient
 	Committee committeetypes.QueryClient
-	Community communitytypes.QueryClient
-	Earn      earntypes.QueryClient
+	Das       dastypes.QueryClient
 	Evmutil   evmutiltypes.QueryClient
-	Hard      hardtypes.QueryClient
-	Incentive incentivetypes.QueryClient
-	Issuance  issuancetypes.QueryClient
-	Kavadist  kavadisttypes.QueryClient
-	Liquid    liquidtypes.QueryClient
-	Pricefeed pricefeedtypes.QueryClient
-	Savings   savingstypes.QueryClient
-	Swap      swaptypes.QueryClient
 }
 
 // NewQueryClient creates a new QueryClient and initializes all the module query clients
@@ -115,21 +91,9 @@ func NewQueryClient(grpcEndpoint string) (*QueryClient, error) {
 		IbcClient:   ibcclienttypes.NewQueryClient(conn),
 		IbcTransfer: ibctransfertypes.NewQueryClient(conn),
 
-		Auction:   auctiontypes.NewQueryClient(conn),
-		Bep3:      bep3types.NewQueryClient(conn),
-		Cdp:       cdptypes.NewQueryClient(conn),
 		Committee: committeetypes.NewQueryClient(conn),
-		Community: communitytypes.NewQueryClient(conn),
-		Earn:      earntypes.NewQueryClient(conn),
+		Das:       dastypes.NewQueryClient(conn),
 		Evmutil:   evmutiltypes.NewQueryClient(conn),
-		Hard:      hardtypes.NewQueryClient(conn),
-		Incentive: incentivetypes.NewQueryClient(conn),
-		Issuance:  issuancetypes.NewQueryClient(conn),
-		Kavadist:  kavadisttypes.NewQueryClient(conn),
-		Liquid:    liquidtypes.NewQueryClient(conn),
-		Pricefeed: pricefeedtypes.NewQueryClient(conn),
-		Savings:   savingstypes.NewQueryClient(conn),
-		Swap:      swaptypes.NewQueryClient(conn),
 	}
 	return client, nil
 }

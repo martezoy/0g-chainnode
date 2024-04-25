@@ -9,9 +9,9 @@ import (
 
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/evmutil/testutil"
-	"github.com/kava-labs/kava/x/evmutil/types"
+	"github.com/0glabs/0g-chain/chaincfg"
+	"github.com/0glabs/0g-chain/x/evmutil/testutil"
+	"github.com/0glabs/0g-chain/x/evmutil/types"
 )
 
 type ParamsTestSuite struct {
@@ -19,7 +19,7 @@ type ParamsTestSuite struct {
 }
 
 func (suite *ParamsTestSuite) SetupTest() {
-	app.SetSDKConfig()
+	chaincfg.SetSDKConfig()
 }
 
 func (suite *ParamsTestSuite) TestDefault() {
@@ -107,11 +107,11 @@ func (suite *ParamsTestSuite) TestParams_Validate() {
 	invalidConversionPairs := types.NewConversionPairs(
 		types.NewConversionPair(
 			testutil.MustNewInternalEVMAddressFromString("0x000000000000000000000000000000000000000A"),
-			"kava",
+			chaincfg.DisplayDenom,
 		),
 		types.NewConversionPair(
 			testutil.MustNewInternalEVMAddressFromString("0x000000000000000000000000000000000000000B"),
-			"kava", // duplicate denom!
+			chaincfg.DisplayDenom, // duplicate denom!
 		),
 	)
 	validAllowedCosmosDenoms := types.NewAllowedCosmosCoinERC20Tokens(

@@ -12,9 +12,9 @@ import (
 
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 
-	"github.com/kava-labs/kava/tests/e2e/testutil"
-	"github.com/kava-labs/kava/tests/util"
-	evmutiltypes "github.com/kava-labs/kava/x/evmutil/types"
+	"github.com/0glabs/0g-chain/tests/e2e/testutil"
+	"github.com/0glabs/0g-chain/tests/util"
+	evmutiltypes "github.com/0glabs/0g-chain/x/evmutil/types"
 )
 
 const initialCosmosCoinConversionDenomFunds = int64(1e4)
@@ -24,24 +24,24 @@ func setupConvertToCoinTest(
 ) (denom string, initialFunds sdk.Coins, user *testutil.SigningAccount) {
 	// we expect a denom to be registered to the allowed denoms param
 	// and for the funded account to have a balance for that denom
-	params, err := suite.Kava.Grpc.Query.Evmutil.Params(
+	params, err := suite.ZgChain.Grpc.Query.Evmutil.Params(
 		context.Background(),
 		&evmutiltypes.QueryParamsRequest{},
 	)
 	suite.NoError(err)
 	suite.GreaterOrEqual(
 		len(params.Params.AllowedCosmosDenoms), 1,
-		"kava chain expected to have at least one AllowedCosmosDenom for ERC20 conversion",
+		"0g-chain expected to have at least one AllowedCosmosDenom for ERC20 conversion",
 	)
 
 	tokenInfo := params.Params.AllowedCosmosDenoms[0]
 	denom = tokenInfo.CosmosDenom
 	initialFunds = sdk.NewCoins(
-		sdk.NewInt64Coin(suite.Kava.StakingDenom, 1e5),                 // gas money
+		sdk.NewInt64Coin(suite.ZgChain.StakingDenom, 1e5),              // gas money
 		sdk.NewInt64Coin(denom, initialCosmosCoinConversionDenomFunds), // conversion-enabled cosmos coin
 	)
 
-	user = suite.Kava.NewFundedAccount(accountName, initialFunds)
+	user = suite.ZgChain.NewFundedAccount(accountName, initialFunds)
 
 	return denom, initialFunds, user
 }
@@ -63,20 +63,20 @@ func (suite *IntegrationTestSuite) setupAccountWithCosmosCoinERC20Balance(
 		user.EvmAddress.Hex(),
 		convertAmount,
 	)
-	tx := util.KavaMsgRequest{
+	tx := util.ZgChainMsgRequest{
 		Msgs:      []sdk.Msg{&msg},
 		GasLimit:  4e5,
-		FeeAmount: sdk.NewCoins(ukava(400)),
+		FeeAmount: sdk.NewCoins(a0gi(big.NewInt(400))),
 		Data:      "converting sdk coin to erc20",
 	}
-	res := user.SignAndBroadcastKavaTx(tx)
+	res := user.SignAndBroadcastZgChainTx(tx)
 	suite.NoError(res.Err)
 
 	// adjust sdk balance
 	sdkBalance = sdkBalance.Sub(convertAmount)
 
 	// query for the deployed contract
-	deployedContracts, err := suite.Kava.Grpc.Query.Evmutil.DeployedCosmosCoinContracts(
+	deployedContracts, err := suite.ZgChain.Grpc.Query.Evmutil.DeployedCosmosCoinContracts(
 		context.Background(),
 		&evmutiltypes.QueryDeployedCosmosCoinContractsRequest{CosmosDenoms: []string{denom}},
 	)
@@ -92,7 +92,7 @@ func (suite *IntegrationTestSuite) TestConvertCosmosCoinsToFromERC20() {
 	denom, initialFunds, user := setupConvertToCoinTest(suite, "cosmo-coin-converter")
 
 	convertAmount := int64(5e3)
-	initialModuleBalance := suite.Kava.GetModuleBalances(evmutiltypes.ModuleName).AmountOf(denom)
+	initialModuleBalance := suite.ZgChain.GetModuleBalances(evmutiltypes.ModuleName).AmountOf(denom)
 
 	///////////////////////////////
 	// CONVERT COSMOS COIN -> ERC20
@@ -102,17 +102,17 @@ func (suite *IntegrationTestSuite) TestConvertCosmosCoinsToFromERC20() {
 		user.EvmAddress.Hex(),
 		sdk.NewInt64Coin(denom, convertAmount),
 	)
-	tx := util.KavaMsgRequest{
+	tx := util.ZgChainMsgRequest{
 		Msgs:      []sdk.Msg{&convertToErc20Msg},
 		GasLimit:  2e6,
-		FeeAmount: sdk.NewCoins(ukava(2000)),
+		FeeAmount: sdk.NewCoins(a0gi(big.NewInt(2000))),
 		Data:      "converting sdk coin to erc20",
 	}
-	res := user.SignAndBroadcastKavaTx(tx)
+	res := user.SignAndBroadcastZgChainTx(tx)
 	suite.NoError(res.Err)
 
 	// query for the deployed contract
-	deployedContracts, err := suite.Kava.Grpc.Query.Evmutil.DeployedCosmosCoinContracts(
+	deployedContracts, err := suite.ZgChain.Grpc.Query.Evmutil.DeployedCosmosCoinContracts(
 		context.Background(),
 		&evmutiltypes.QueryDeployedCosmosCoinContractsRequest{CosmosDenoms: []string{denom}},
 	)
@@ -122,17 +122,17 @@ func (suite *IntegrationTestSuite) TestConvertCosmosCoinsToFromERC20() {
 	contractAddress := deployedContracts.DeployedCosmosCoinContracts[0].Address
 
 	// check erc20 balance
-	erc20Balance := suite.Kava.GetErc20Balance(contractAddress.Address, user.EvmAddress)
+	erc20Balance := suite.ZgChain.GetErc20Balance(contractAddress.Address, user.EvmAddress)
 	suite.BigIntsEqual(big.NewInt(convertAmount), erc20Balance, "unexpected erc20 balance post-convert")
 
 	// check cosmos coin is deducted from account
 	expectedFunds := initialFunds.AmountOf(denom).SubRaw(convertAmount)
-	balance := suite.Kava.QuerySdkForBalances(user.SdkAddress).AmountOf(denom)
+	balance := suite.ZgChain.QuerySdkForBalances(user.SdkAddress).AmountOf(denom)
 	suite.Equal(expectedFunds, balance)
 
 	// check that module account has sdk coins
 	expectedModuleBalance := initialModuleBalance.AddRaw(convertAmount)
-	actualModuleBalance := suite.Kava.GetModuleBalances(evmutiltypes.ModuleName).AmountOf(denom)
+	actualModuleBalance := suite.ZgChain.GetModuleBalances(evmutiltypes.ModuleName).AmountOf(denom)
 	suite.Equal(expectedModuleBalance, actualModuleBalance)
 
 	///////////////////////////////
@@ -144,26 +144,26 @@ func (suite *IntegrationTestSuite) TestConvertCosmosCoinsToFromERC20() {
 		sdk.NewInt64Coin(denom, convertAmount),
 	)
 
-	tx = util.KavaMsgRequest{
+	tx = util.ZgChainMsgRequest{
 		Msgs:      []sdk.Msg{&convertFromErc20Msg},
 		GasLimit:  2e5,
-		FeeAmount: sdk.NewCoins(ukava(200)),
+		FeeAmount: sdk.NewCoins(a0gi(big.NewInt(200))),
 		Data:      "converting erc20 to cosmos coin",
 	}
-	res = user.SignAndBroadcastKavaTx(tx)
+	res = user.SignAndBroadcastZgChainTx(tx)
 	suite.NoError(res.Err)
 
 	// check erc20 balance
-	erc20Balance = suite.Kava.GetErc20Balance(contractAddress.Address, user.EvmAddress)
+	erc20Balance = suite.ZgChain.GetErc20Balance(contractAddress.Address, user.EvmAddress)
 	suite.BigIntsEqual(big.NewInt(0), erc20Balance, "expected all erc20 to be converted back")
 
 	// check cosmos coin is added back to account
 	expectedFunds = initialFunds.AmountOf(denom)
-	balance = suite.Kava.QuerySdkForBalances(user.SdkAddress).AmountOf(denom)
+	balance = suite.ZgChain.QuerySdkForBalances(user.SdkAddress).AmountOf(denom)
 	suite.Equal(expectedFunds, balance)
 
 	// check that module account has sdk coins deducted
-	actualModuleBalance = suite.Kava.GetModuleBalances(evmutiltypes.ModuleName).AmountOf(denom)
+	actualModuleBalance = suite.ZgChain.GetModuleBalances(evmutiltypes.ModuleName).AmountOf(denom)
 	suite.Equal(initialModuleBalance, actualModuleBalance)
 }
 
@@ -172,7 +172,7 @@ func (suite *IntegrationTestSuite) TestEIP712ConvertCosmosCoinsToFromERC20() {
 	denom, initialFunds, user := setupConvertToCoinTest(suite, "cosmo-coin-converter-eip712")
 
 	convertAmount := int64(5e3)
-	initialModuleBalance := suite.Kava.GetModuleBalances(evmutiltypes.ModuleName).AmountOf(denom)
+	initialModuleBalance := suite.ZgChain.GetModuleBalances(evmutiltypes.ModuleName).AmountOf(denom)
 
 	///////////////////////////////
 	// CONVERT COSMOS COIN -> ERC20
@@ -184,28 +184,28 @@ func (suite *IntegrationTestSuite) TestEIP712ConvertCosmosCoinsToFromERC20() {
 	)
 	tx := suite.NewEip712TxBuilder(
 		user,
-		suite.Kava,
+		suite.ZgChain,
 		2e6,
-		sdk.NewCoins(ukava(1e4)),
+		sdk.NewCoins(a0gi(big.NewInt(1e4))),
 		[]sdk.Msg{&convertToErc20Msg},
 		"this is a memo",
 	).GetTx()
-	txBytes, err := suite.Kava.EncodingConfig.TxConfig.TxEncoder()(tx)
+	txBytes, err := suite.ZgChain.EncodingConfig.TxConfig.TxEncoder()(tx)
 	suite.NoError(err)
 
 	// submit the eip712 message to the chain.
-	res, err := suite.Kava.Grpc.Query.Tx.BroadcastTx(context.Background(), &txtypes.BroadcastTxRequest{
+	res, err := suite.ZgChain.Grpc.Query.Tx.BroadcastTx(context.Background(), &txtypes.BroadcastTxRequest{
 		TxBytes: txBytes,
 		Mode:    txtypes.BroadcastMode_BROADCAST_MODE_SYNC,
 	})
 	suite.NoError(err)
 	suite.Equal(sdkerrors.SuccessABCICode, res.TxResponse.Code)
 
-	_, err = util.WaitForSdkTxCommit(suite.Kava.Grpc.Query.Tx, res.TxResponse.TxHash, 12*time.Second)
+	_, err = util.WaitForSdkTxCommit(suite.ZgChain.Grpc.Query.Tx, res.TxResponse.TxHash, 12*time.Second)
 	suite.Require().NoError(err)
 
 	// query for the deployed contract
-	deployedContracts, err := suite.Kava.Grpc.Query.Evmutil.DeployedCosmosCoinContracts(
+	deployedContracts, err := suite.ZgChain.Grpc.Query.Evmutil.DeployedCosmosCoinContracts(
 		context.Background(),
 		&evmutiltypes.QueryDeployedCosmosCoinContractsRequest{CosmosDenoms: []string{denom}},
 	)
@@ -215,17 +215,17 @@ func (suite *IntegrationTestSuite) TestEIP712ConvertCosmosCoinsToFromERC20() {
 	contractAddress := deployedContracts.DeployedCosmosCoinContracts[0].Address
 
 	// check erc20 balance
-	erc20Balance := suite.Kava.GetErc20Balance(contractAddress.Address, user.EvmAddress)
+	erc20Balance := suite.ZgChain.GetErc20Balance(contractAddress.Address, user.EvmAddress)
 	suite.BigIntsEqual(big.NewInt(convertAmount), erc20Balance, "unexpected erc20 balance post-convert")
 
 	// check cosmos coin is deducted from account
 	expectedFunds := initialFunds.AmountOf(denom).SubRaw(convertAmount)
-	balance := suite.Kava.QuerySdkForBalances(user.SdkAddress).AmountOf(denom)
+	balance := suite.ZgChain.QuerySdkForBalances(user.SdkAddress).AmountOf(denom)
 	suite.Equal(expectedFunds, balance)
 
 	// check that module account has sdk coins
 	expectedModuleBalance := initialModuleBalance.AddRaw(convertAmount)
-	actualModuleBalance := suite.Kava.GetModuleBalances(evmutiltypes.ModuleName).AmountOf(denom)
+	actualModuleBalance := suite.ZgChain.GetModuleBalances(evmutiltypes.ModuleName).AmountOf(denom)
 	suite.Equal(expectedModuleBalance, actualModuleBalance)
 
 	///////////////////////////////
@@ -238,37 +238,37 @@ func (suite *IntegrationTestSuite) TestEIP712ConvertCosmosCoinsToFromERC20() {
 	)
 	tx = suite.NewEip712TxBuilder(
 		user,
-		suite.Kava,
+		suite.ZgChain,
 		2e5,
-		sdk.NewCoins(ukava(200)),
+		sdk.NewCoins(a0gi(big.NewInt(200))),
 		[]sdk.Msg{&convertFromErc20Msg},
 		"",
 	).GetTx()
-	txBytes, err = suite.Kava.EncodingConfig.TxConfig.TxEncoder()(tx)
+	txBytes, err = suite.ZgChain.EncodingConfig.TxConfig.TxEncoder()(tx)
 	suite.NoError(err)
 
 	// submit the eip712 message to the chain
-	res, err = suite.Kava.Grpc.Query.Tx.BroadcastTx(context.Background(), &txtypes.BroadcastTxRequest{
+	res, err = suite.ZgChain.Grpc.Query.Tx.BroadcastTx(context.Background(), &txtypes.BroadcastTxRequest{
 		TxBytes: txBytes,
 		Mode:    txtypes.BroadcastMode_BROADCAST_MODE_SYNC,
 	})
 	suite.NoError(err)
 	suite.Equal(sdkerrors.SuccessABCICode, res.TxResponse.Code)
 
-	_, err = util.WaitForSdkTxCommit(suite.Kava.Grpc.Query.Tx, res.TxResponse.TxHash, 6*time.Second)
+	_, err = util.WaitForSdkTxCommit(suite.ZgChain.Grpc.Query.Tx, res.TxResponse.TxHash, 6*time.Second)
 	suite.NoError(err)
 
 	// check erc20 balance
-	erc20Balance = suite.Kava.GetErc20Balance(contractAddress.Address, user.EvmAddress)
+	erc20Balance = suite.ZgChain.GetErc20Balance(contractAddress.Address, user.EvmAddress)
 	suite.BigIntsEqual(big.NewInt(0), erc20Balance, "expected all erc20 to be converted back")
 
 	// check cosmos coin is added back to account
 	expectedFunds = initialFunds.AmountOf(denom)
-	balance = suite.Kava.QuerySdkForBalances(user.SdkAddress).AmountOf(denom)
+	balance = suite.ZgChain.QuerySdkForBalances(user.SdkAddress).AmountOf(denom)
 	suite.Equal(expectedFunds, balance)
 
 	// check that module account has sdk coins deducted
-	actualModuleBalance = suite.Kava.GetModuleBalances(evmutiltypes.ModuleName).AmountOf(denom)
+	actualModuleBalance = suite.ZgChain.GetModuleBalances(evmutiltypes.ModuleName).AmountOf(denom)
 	suite.Equal(initialModuleBalance, actualModuleBalance)
 }
 
@@ -334,8 +334,8 @@ func (suite *IntegrationTestSuite) TestConvertCosmosCoins_ERC20Magic() {
 		"cosmo-coin-converter-complex-alice", initialAliceAmount,
 	)
 
-	gasMoney := sdk.NewCoins(ukava(1e5))
-	bob := suite.Kava.NewFundedAccount("cosmo-coin-converter-complex-bob", gasMoney)
+	gasMoney := sdk.NewCoins(a0gi(big.NewInt(1e5)))
+	bob := suite.ZgChain.NewFundedAccount("cosmo-coin-converter-complex-bob", gasMoney)
 	amount := big.NewInt(1e3) // test assumes this is half of alice's balance.
 
 	// bob can't move alice's funds
@@ -400,10 +400,10 @@ func (suite *IntegrationTestSuite) TestConvertCosmosCoins_ERC20Magic() {
 	suite.Require().NoError(res.Err)
 
 	// alice should have amount deducted
-	erc20Balance := suite.Kava.GetErc20Balance(contractAddress.Address, alice.EvmAddress)
+	erc20Balance := suite.ZgChain.GetErc20Balance(contractAddress.Address, alice.EvmAddress)
 	suite.BigIntsEqual(big.NewInt(initialAliceAmount-amount.Int64()), erc20Balance, "alice has unexpected erc20 balance")
 	// bob should have amount added
-	erc20Balance = suite.Kava.GetErc20Balance(contractAddress.Address, bob.EvmAddress)
+	erc20Balance = suite.ZgChain.GetErc20Balance(contractAddress.Address, bob.EvmAddress)
 	suite.BigIntsEqual(amount, erc20Balance, "bob has unexpected erc20 balance")
 
 	// convert bob's new funds back to an sdk.Coin
@@ -412,24 +412,24 @@ func (suite *IntegrationTestSuite) TestConvertCosmosCoins_ERC20Magic() {
 		bob.SdkAddress.String(),
 		sdk.NewInt64Coin(denom, amount.Int64()),
 	)
-	convertTx := util.KavaMsgRequest{
+	convertTx := util.ZgChainMsgRequest{
 		Msgs:      []sdk.Msg{&convertMsg},
 		GasLimit:  2e5,
-		FeeAmount: sdk.NewCoins(ukava(200)),
+		FeeAmount: sdk.NewCoins(a0gi(big.NewInt(200))),
 		Data:      "bob converts his new erc20 to an sdk.Coin",
 	}
-	convertRes := bob.SignAndBroadcastKavaTx(convertTx)
+	convertRes := bob.SignAndBroadcastZgChainTx(convertTx)
 	suite.NoError(convertRes.Err)
 
 	// bob should have no more erc20 balance
-	erc20Balance = suite.Kava.GetErc20Balance(contractAddress.Address, bob.EvmAddress)
+	erc20Balance = suite.ZgChain.GetErc20Balance(contractAddress.Address, bob.EvmAddress)
 	suite.BigIntsEqual(big.NewInt(0), erc20Balance, "expected no erc20 balance for bob")
 	// bob should have sdk balance
-	balance := suite.Kava.QuerySdkForBalances(bob.SdkAddress).AmountOf(denom)
+	balance := suite.ZgChain.QuerySdkForBalances(bob.SdkAddress).AmountOf(denom)
 	suite.Equal(sdk.NewIntFromBigInt(amount), balance)
 
 	// alice should have the remaining balance
-	erc20Balance = suite.Kava.GetErc20Balance(contractAddress.Address, alice.EvmAddress)
+	erc20Balance = suite.ZgChain.GetErc20Balance(contractAddress.Address, alice.EvmAddress)
 	suite.BigIntsEqual(amount, erc20Balance, "expected alice to have half initial funds remaining")
 
 	// convert alice's remaining balance back to sdk coins
@@ -438,6 +438,6 @@ func (suite *IntegrationTestSuite) TestConvertCosmosCoins_ERC20Magic() {
 		alice.SdkAddress.String(),
 		sdk.NewInt64Coin(denom, amount.Int64()),
 	)
-	convertRes = alice.SignAndBroadcastKavaTx(convertTx)
+	convertRes = alice.SignAndBroadcastZgChainTx(convertTx)
 	suite.NoError(convertRes.Err)
 }

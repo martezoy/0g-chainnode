@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/kava-labs/kava/app/params"
+	"github.com/0glabs/0g-chain/app/params"
 	"google.golang.org/grpc/codes"
 	grpcstatus "google.golang.org/grpc/status"
 
@@ -27,18 +27,18 @@ var (
 	ErrUnsuccessfulTx      = errors.New("tx committed but returned nonzero code")
 )
 
-type KavaMsgRequest struct {
+type ZgChainMsgRequest struct {
 	Msgs      []sdk.Msg
 	GasLimit  uint64
 	FeeAmount sdk.Coins
 	Memo      string
-	// Arbitrary data to be referenced in the corresponding KavaMsgResponse, unused
-	// in signing. This is mostly useful to match KavaMsgResponses with KavaMsgRequests.
+	// Arbitrary data to be referenced in the corresponding ZgChainMsgResponse, unused
+	// in signing. This is mostly useful to match ZgChainMsgResponses with ZgChainMsgRequests.
 	Data interface{}
 }
 
-type KavaMsgResponse struct {
-	Request KavaMsgRequest
+type ZgChainMsgResponse struct {
+	Request ZgChainMsgRequest
 	Tx      authsigning.Tx
 	TxBytes []byte
 	Result  sdk.TxResponse
@@ -55,8 +55,8 @@ const (
 	txResetSequence
 )
 
-// KavaSigner broadcasts msgs to a single kava node
-type KavaSigner struct {
+// ZgChainSigner broadcasts msgs to a single 0g-chain node
+type ZgChainSigner struct {
 	chainID         string
 	encodingConfig  params.EncodingConfig
 	authClient      authtypes.QueryClient
@@ -65,15 +65,15 @@ type KavaSigner struct {
 	inflightTxLimit uint64
 }
 
-func NewKavaSigner(
+func NewZgChainSigner(
 	chainID string,
 	encodingConfig params.EncodingConfig,
 	authClient authtypes.QueryClient,
 	txClient txtypes.ServiceClient,
 	privKey cryptotypes.PrivKey,
-	inflightTxLimit uint64) *KavaSigner {
+	inflightTxLimit uint64) *ZgChainSigner {
 
-	return &KavaSigner{
+	return &ZgChainSigner{
 		chainID:         chainID,
 		encodingConfig:  encodingConfig,
 		authClient:      authClient,
@@ -83,7 +83,7 @@ func NewKavaSigner(
 	}
 }
 
-func (s *KavaSigner) pollAccountState() <-chan authtypes.AccountI {
+func (s *ZgChainSigner) pollAccountState() <-chan authtypes.AccountI {
 	accountState := make(chan authtypes.AccountI)
 
 	go func() {
@@ -109,7 +109,7 @@ func (s *KavaSigner) pollAccountState() <-chan authtypes.AccountI {
 	return accountState
 }
 
-func (s *KavaSigner) Run(requests <-chan KavaMsgRequest) (<-chan KavaMsgResponse, error) {
+func (s *ZgChainSigner) Run(requests <-chan ZgChainMsgRequest) (<-chan ZgChainMsgResponse, error) {
 	// poll account state in it's own goroutine
 	// and send status updates to the signing goroutine
 	//
@@ -117,15 +117,15 @@ func (s *KavaSigner) Run(requests <-chan KavaMsgRequest) (<-chan KavaMsgResponse
 	// websocket events with a fallback to polling
 	accountState := s.pollAccountState()
 
-	responses := make(chan KavaMsgResponse)
+	responses := make(chan ZgChainMsgResponse)
 	go func() {
 		// wait until account is loaded to start signing
 		account := <-accountState
 		// store current request waiting to be broadcasted
-		var currentRequest *KavaMsgRequest
+		var currentRequest *ZgChainMsgRequest
 		// keep track of all successfully broadcasted txs
 		// index is sequence % inflightTxLimit
-		inflight := make([]*KavaMsgResponse, s.inflightTxLimit)
+		inflight := make([]*ZgChainMsgResponse, s.inflightTxLimit)
 		// used for confirming sent txs only
 		prevDeliverTxSeq := account.GetSequence()
 		// tx sequence of already signed messages
@@ -252,7 +252,7 @@ func (s *KavaSigner) Run(requests <-chan KavaMsgRequest) (<-chan KavaMsgResponse
 
 					tx, txBytes, err := Sign(s.encodingConfig.TxConfig, s.privKey, txBuilder, signerData)
 
-					response = &KavaMsgResponse{
+					response = &ZgChainMsgResponse{
 						Request: *currentRequest,
 						Tx:      tx,
 						TxBytes: txBytes,
@@ -376,7 +376,7 @@ func (s *KavaSigner) Run(requests <-chan KavaMsgRequest) (<-chan KavaMsgResponse
 }
 
 // Address returns the address of the Signer
-func (s *KavaSigner) Address() sdk.AccAddress {
+func (s *ZgChainSigner) Address() sdk.AccAddress {
 	return GetAccAddress(s.privKey)
 }
 

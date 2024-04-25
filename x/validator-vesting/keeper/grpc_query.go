@@ -5,8 +5,9 @@ import (
 	"time"
 
 	sdkmath "cosmossdk.io/math"
+	"github.com/0glabs/0g-chain/chaincfg"
+	"github.com/0glabs/0g-chain/x/validator-vesting/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/kava-labs/kava/x/validator-vesting/types"
 )
 
 type queryServer struct {
@@ -20,23 +21,23 @@ func NewQueryServerImpl(bk types.BankKeeper) types.QueryServer {
 	return &queryServer{bk: bk}
 }
 
-// CirculatingSupply implements the gRPC service handler for querying the circulating supply of the kava token.
+// CirculatingSupply implements the gRPC service handler for querying the circulating supply of the 0g token.
 func (s queryServer) CirculatingSupply(c context.Context, req *types.QueryCirculatingSupplyRequest) (*types.
 	QueryCirculatingSupplyResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
 
-	totalSupply := s.bk.GetSupply(ctx, "ukava").Amount
+	totalSupply := s.bk.GetSupply(ctx, chaincfg.DisplayDenom).Amount
 	supplyInt := getCirculatingSupply(ctx.BlockTime(), totalSupply)
 	return &types.QueryCirculatingSupplyResponse{
 		Amount: supplyInt,
 	}, nil
 }
 
-// TotalSupply returns the total amount of ukava tokens
+// TotalSupply returns the total amount of a0gi tokens
 func (s queryServer) TotalSupply(c context.Context, req *types.QueryTotalSupplyRequest) (*types.QueryTotalSupplyResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
 
-	totalSupply := s.bk.GetSupply(ctx, "ukava").Amount
+	totalSupply := s.bk.GetSupply(ctx, chaincfg.DisplayDenom).Amount
 	supplyInt := sdk.NewDecFromInt(totalSupply).Mul(sdk.MustNewDecFromStr("0.000001")).TruncateInt()
 	return &types.QueryTotalSupplyResponse{
 		Amount: supplyInt,
@@ -255,7 +256,7 @@ func (s queryServer) CirculatingSupplySWP(c context.Context, req *types.QueryCir
 	monthlyStakersSwp := int64(520_833)
 	monthlyLPIncentivesSwp := int64(2_343_750)
 
-	// []{Ecosystem, Team, Treasury, Kava Stakers, LP Incentives}
+	// []{Ecosystem, Team, Treasury, 0gChain Stakers, LP Incentives}
 	scheduleAmounts := [][]int64{
 		{12_500_000, 0, 15_625_000, monthlyStakersSwp, monthlyLPIncentivesSwp},  // *** Year ONE ***
 		{0, 0, 0, monthlyStakersSwp, monthlyLPIncentivesSwp},                    // 1

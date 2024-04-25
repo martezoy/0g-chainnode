@@ -2,14 +2,14 @@
 swagger: "2.0"
 info:
   version: "3.0"
-  title: Kava Light Client RPC
+  title: 0g-chain Light Client RPC
   description: A REST interface for state queries, transaction generation and broadcasting.
 tags:
   - name: Vesting
     description: Validator vesting module APIs
 schemes:
   - https
-host: api.data.kava.io
+host: api.data.0g-chain.io
 securityDefinitions:
   kms:
     type: basic
@@ -17,14 +17,14 @@ paths:
   /vesting/circulatingsupply:
     get:
       deprecated: true
-      summary: Get the current circulating supply of KAVA
+      summary: Get the current circulating supply of 0g-chain
       tags:
         - Vesting
       produces:
         - application/json
       responses:
         200:
-          description: KAVA circulating supply
+          description: 0g-chain circulating supply
           schema:
             properties:
               height:
@@ -38,14 +38,14 @@ paths:
   /vesting/totalsupply:
     get:
       deprecated: true
-      summary: Get the total supply of KAVA
+      summary: Get the total supply of 0g-chain
       tags:
         - Vesting
       produces:
         - application/json
       responses:
         200:
-          description: KAVA total supply
+          description: 0g-chain total supply
           schema:
             properties:
               height:

@@ -6,7 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/kava-labs/kava/x/evmutil/types"
+	"github.com/0glabs/0g-chain/x/evmutil/types"
 )
 
 type msgServer struct {
@@ -26,7 +26,7 @@ var _ types.MsgServer = msgServer{}
 ////////////////////////////
 
 // ConvertCoinToERC20 handles a MsgConvertCoinToERC20 message to convert
-// sdk.Coin to Kava EVM tokens.
+// sdk.Coin to 0gChain EVM tokens.
 func (s msgServer) ConvertCoinToERC20(
 	goCtx context.Context,
 	msg *types.MsgConvertCoinToERC20,
@@ -64,7 +64,7 @@ func (s msgServer) ConvertCoinToERC20(
 }
 
 // ConvertERC20ToCoin handles a MsgConvertERC20ToCoin message to convert
-// sdk.Coin to Kava EVM tokens.
+// sdk.Coin to 0gChain EVM tokens.
 func (s msgServer) ConvertERC20ToCoin(
 	goCtx context.Context,
 	msg *types.MsgConvertERC20ToCoin,
@@ -81,7 +81,7 @@ func (s msgServer) ConvertERC20ToCoin(
 		return nil, fmt.Errorf("invalid receiver address: %w", err)
 	}
 
-	contractAddr, err := types.NewInternalEVMAddressFromString(msg.KavaERC20Address)
+	contractAddr, err := types.NewInternalEVMAddressFromString(msg.ZgchainERC20Address)
 	if err != nil {
 		return nil, fmt.Errorf("invalid contract address: %w", err)
 	}

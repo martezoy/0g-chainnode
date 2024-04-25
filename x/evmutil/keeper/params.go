@@ -6,7 +6,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/kava-labs/kava/x/evmutil/types"
+	"github.com/0glabs/0g-chain/x/evmutil/types"
 )
 
 // GetParams returns the total set of evm parameters.
@@ -39,7 +39,7 @@ func (k Keeper) GetEnabledConversionPairFromERC20Address(
 ) (types.ConversionPair, error) {
 	params := k.GetParams(ctx)
 	for _, pair := range params.EnabledConversionPairs {
-		if bytes.Equal(pair.KavaERC20Address, address.Bytes()) {
+		if bytes.Equal(pair.ZgchainERC20Address, address.Bytes()) {
 			return pair, nil
 		}
 	}

@@ -4,12 +4,12 @@ import (
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/kava-labs/kava/x/evmutil/testutil"
-	"github.com/kava-labs/kava/x/evmutil/types"
+	"github.com/0glabs/0g-chain/x/evmutil/testutil"
+	"github.com/0glabs/0g-chain/x/evmutil/types"
 )
 
 func (suite *MsgServerSuite) TestConvertCoinToERC20_Bep3() {
-	invoker, err := sdk.AccAddressFromBech32("kava123fxg0l602etulhhcdm0vt7l57qya5wjcrwhzz")
+	invoker, err := sdk.AccAddressFromBech32("0g123fxg0l602etulhhcdm0vt7l57qya5wjcrwhzz")
 	receiverAddr := testutil.MustNewInternalEVMAddressFromString("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2")
 	suite.Require().NoError(err)
 
@@ -198,10 +198,10 @@ func (suite *MsgServerSuite) TestConvertERC20ToCoin_Bep3() {
 		{
 			name: "invalid - invalid initiator address",
 			msg: types.MsgConvertERC20ToCoin{
-				Initiator:        "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc",
-				Receiver:         invokerCosmosAddr.String(),
-				KavaERC20Address: contractAddr.String(),
-				Amount:           sdkmath.NewInt(12e8),
+				Initiator:           "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc",
+				Receiver:            invokerCosmosAddr.String(),
+				ZgchainERC20Address: contractAddr.String(),
+				Amount:              sdkmath.NewInt(12e8),
 			},
 			userErc20Balance: sdkmath.NewInt(2e18),
 			errArgs: errArgs{
@@ -212,10 +212,10 @@ func (suite *MsgServerSuite) TestConvertERC20ToCoin_Bep3() {
 		{
 			name: "invalid - invalid receiver address",
 			msg: types.MsgConvertERC20ToCoin{
-				Initiator:        invoker.String(),
-				Receiver:         "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc",
-				KavaERC20Address: contractAddr.String(),
-				Amount:           sdkmath.NewInt(12e8),
+				Initiator:           invoker.String(),
+				Receiver:            "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc",
+				ZgchainERC20Address: contractAddr.String(),
+				Amount:              sdkmath.NewInt(12e8),
 			},
 			userErc20Balance: sdkmath.NewInt(2e18),
 			errArgs: errArgs{
@@ -226,10 +226,10 @@ func (suite *MsgServerSuite) TestConvertERC20ToCoin_Bep3() {
 		{
 			name: "invalid - invalid contract address",
 			msg: types.MsgConvertERC20ToCoin{
-				Initiator:        invoker.String(),
-				Receiver:         invokerCosmosAddr.String(),
-				KavaERC20Address: invokerCosmosAddr.String(),
-				Amount:           sdkmath.NewInt(12e8),
+				Initiator:           invoker.String(),
+				Receiver:            invokerCosmosAddr.String(),
+				ZgchainERC20Address: invokerCosmosAddr.String(),
+				Amount:              sdkmath.NewInt(12e8),
 			},
 			userErc20Balance: sdkmath.NewInt(2e18),
 			errArgs: errArgs{

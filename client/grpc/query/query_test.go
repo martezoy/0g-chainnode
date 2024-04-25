@@ -3,7 +3,7 @@ package query_test
 import (
 	"testing"
 
-	"github.com/kava-labs/kava/client/grpc/query"
+	"github.com/0glabs/0g-chain/client/grpc/query"
 	"github.com/stretchr/testify/require"
 )
 
@@ -54,21 +54,9 @@ func TestNewQueryClient_ValidClient(t *testing.T) {
 		require.NotNil(t, client.IbcClient)
 		require.NotNil(t, client.IbcTransfer)
 
-		// validate kava clients
-		require.NotNil(t, client.Auction)
-		require.NotNil(t, client.Bep3)
-		require.NotNil(t, client.Cdp)
-		require.NotNil(t, client.Committee)
-		require.NotNil(t, client.Community)
-		require.NotNil(t, client.Earn)
+		// validate 0gChain clients
 		require.NotNil(t, client.Evmutil)
-		require.NotNil(t, client.Hard)
-		require.NotNil(t, client.Incentive)
-		require.NotNil(t, client.Issuance)
-		require.NotNil(t, client.Kavadist)
-		require.NotNil(t, client.Liquid)
-		require.NotNil(t, client.Pricefeed)
-		require.NotNil(t, client.Savings)
-		require.NotNil(t, client.Swap)
+		require.NotNil(t, client.Committee)
+		require.NotNil(t, client.Das)
 	})
 }

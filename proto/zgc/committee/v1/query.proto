@@ -1,0 +1,34 @@
+syntax = "proto3";
+package zgc.committee.v1;
+
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "zgc/committee/v1/genesis.proto";
+
+option go_package = "github.com/0glabs/0g-chain/x/committee/v1/types";
+option (gogoproto.goproto_getters_all) = false;
+
+// Query defines the gRPC querier service for committee module
+service Query {
+  rpc CurrentCommitteeID(QueryCurrentCommitteeIDRequest) returns (QueryCurrentCommitteeIDResponse) {
+    option (google.api.http).get = "/0gchain/committee/v1/current-committee-id";
+  }
+  rpc RegisteredVoters(QueryRegisteredVotersRequest) returns (QueryRegisteredVotersResponse) {
+    option (google.api.http).get = "/0gchain/committee/v1/registered-voters";
+  }
+}
+
+message QueryCurrentCommitteeIDRequest {}
+
+message QueryCurrentCommitteeIDResponse {
+  uint64 current_committee_id = 1 [(gogoproto.customname) = "CurrentCommitteeID"];
+}
+
+message QueryRegisteredVotersRequest {}
+
+message QueryRegisteredVotersResponse {
+  repeated string voters = 1;
+}

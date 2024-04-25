@@ -8,10 +8,10 @@ import (
 
 	"github.com/gorilla/mux"
 
+	"github.com/0glabs/0g-chain/client/rest"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/kava-labs/kava/client/rest"
 
-	"github.com/kava-labs/kava/x/validator-vesting/types"
+	"github.com/0glabs/0g-chain/x/validator-vesting/types"
 )
 
 func registerQueryRoutes(cliCtx client.Context, r *mux.Router) {

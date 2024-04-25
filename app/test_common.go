@@ -41,22 +41,8 @@ import (
 	feemarketkeeper "github.com/evmos/ethermint/x/feemarket/keeper"
 	"github.com/stretchr/testify/require"
 
-	auctionkeeper "github.com/kava-labs/kava/x/auction/keeper"
-	bep3keeper "github.com/kava-labs/kava/x/bep3/keeper"
-	cdpkeeper "github.com/kava-labs/kava/x/cdp/keeper"
-	committeekeeper "github.com/kava-labs/kava/x/committee/keeper"
-	communitykeeper "github.com/kava-labs/kava/x/community/keeper"
-	earnkeeper "github.com/kava-labs/kava/x/earn/keeper"
-	evmutilkeeper "github.com/kava-labs/kava/x/evmutil/keeper"
-	hardkeeper "github.com/kava-labs/kava/x/hard/keeper"
-	incentivekeeper "github.com/kava-labs/kava/x/incentive/keeper"
-	issuancekeeper "github.com/kava-labs/kava/x/issuance/keeper"
-	kavadistkeeper "github.com/kava-labs/kava/x/kavadist/keeper"
-	liquidkeeper "github.com/kava-labs/kava/x/liquid/keeper"
-	pricefeedkeeper "github.com/kava-labs/kava/x/pricefeed/keeper"
-	routerkeeper "github.com/kava-labs/kava/x/router/keeper"
-	savingskeeper "github.com/kava-labs/kava/x/savings/keeper"
-	swapkeeper "github.com/kava-labs/kava/x/swap/keeper"
+	"github.com/0glabs/0g-chain/chaincfg"
+	evmutilkeeper "github.com/0glabs/0g-chain/x/evmutil/keeper"
 )
 
 var (
@@ -64,7 +50,7 @@ var (
 	defaultInitialHeight int64 = 1
 )
 
-const TestChainId = "kavatest_2221-1"
+const TestChainId = "0gchaintest_2221-1"
 
 // TestApp is a simple wrapper around an App. It exposes internal keepers for use in integration tests.
 // This file also contains test helpers. Ideally they would be in separate package.
@@ -89,7 +75,7 @@ type TestApp struct {
 //
 // Note, it also sets the sdk config with the app's address prefix, coin type, etc.
 func NewTestApp() TestApp {
-	SetSDKConfig()
+	chaincfg.SetSDKConfig()
 
 	return NewTestAppFromSealed()
 }
@@ -101,7 +87,7 @@ func NewTestAppFromSealed() TestApp {
 	encCfg := MakeEncodingConfig()
 
 	app := NewApp(
-		log.NewNopLogger(), db, DefaultNodeHome, nil,
+		log.NewNopLogger(), db, chaincfg.DefaultNodeHome, nil,
 		encCfg, DefaultOptions, baseapp.SetChainID(TestChainId),
 	)
 	return TestApp{App: *app}
@@ -117,24 +103,11 @@ func (tApp TestApp) GetDistrKeeper() distkeeper.Keeper          { return tApp.di
 func (tApp TestApp) GetGovKeeper() govkeeper.Keeper             { return tApp.govKeeper }
 func (tApp TestApp) GetCrisisKeeper() crisiskeeper.Keeper       { return tApp.crisisKeeper }
 func (tApp TestApp) GetParamsKeeper() paramskeeper.Keeper       { return tApp.paramsKeeper }
-func (tApp TestApp) GetKavadistKeeper() kavadistkeeper.Keeper   { return tApp.kavadistKeeper }
-func (tApp TestApp) GetAuctionKeeper() auctionkeeper.Keeper     { return tApp.auctionKeeper }
-func (tApp TestApp) GetIssuanceKeeper() issuancekeeper.Keeper   { return tApp.issuanceKeeper }
-func (tApp TestApp) GetBep3Keeper() bep3keeper.Keeper           { return tApp.bep3Keeper }
-func (tApp TestApp) GetPriceFeedKeeper() pricefeedkeeper.Keeper { return tApp.pricefeedKeeper }
-func (tApp TestApp) GetSwapKeeper() swapkeeper.Keeper           { return tApp.swapKeeper }
-func (tApp TestApp) GetCDPKeeper() cdpkeeper.Keeper             { return tApp.cdpKeeper }
-func (tApp TestApp) GetHardKeeper() hardkeeper.Keeper           { return tApp.hardKeeper }
-func (tApp TestApp) GetCommitteeKeeper() committeekeeper.Keeper { return tApp.committeeKeeper }
-func (tApp TestApp) GetIncentiveKeeper() incentivekeeper.Keeper { return tApp.incentiveKeeper }
-func (tApp TestApp) GetEvmutilKeeper() evmutilkeeper.Keeper     { return tApp.evmutilKeeper }
-func (tApp TestApp) GetEvmKeeper() *evmkeeper.Keeper            { return tApp.evmKeeper }
-func (tApp TestApp) GetSavingsKeeper() savingskeeper.Keeper     { return tApp.savingsKeeper }
+
+func (tApp TestApp) GetEvmutilKeeper() evmutilkeeper.Keeper { return tApp.evmutilKeeper }
+func (tApp TestApp) GetEvmKeeper() *evmkeeper.Keeper        { return tApp.evmKeeper }
+
 func (tApp TestApp) GetFeeMarketKeeper() feemarketkeeper.Keeper { return tApp.feeMarketKeeper }
-func (tApp TestApp) GetLiquidKeeper() liquidkeeper.Keeper       { return tApp.liquidKeeper }
-func (tApp TestApp) GetEarnKeeper() earnkeeper.Keeper           { return tApp.earnKeeper }
-func (tApp TestApp) GetRouterKeeper() routerkeeper.Keeper       { return tApp.routerKeeper }
-func (tApp TestApp) GetCommunityKeeper() communitykeeper.Keeper { return tApp.communityKeeper }
 
 func (tApp TestApp) GetKVStoreKey(key string) *storetypes.KVStoreKey {
 	return tApp.keys[key]
@@ -174,7 +147,7 @@ func GenesisStateWithSingleValidator(
 	balances := []banktypes.Balance{
 		{
 			Address: acc.GetAddress().String(),
-			Coins:   sdk.NewCoins(sdk.NewCoin("ukava", sdkmath.NewInt(100000000000000))),
+			Coins:   sdk.NewCoins(sdk.NewCoin(chaincfg.DisplayDenom, sdkmath.NewInt(100000000000000))),
 		},
 	}
 
@@ -237,7 +210,7 @@ func genesisStateWithValSet(
 	}
 	// set validators and delegations
 	currentStakingGenesis := stakingtypes.GetGenesisStateFromAppState(app.appCodec, genesisState)
-	currentStakingGenesis.Params.BondDenom = "ukava"
+	currentStakingGenesis.Params.BondDenom = chaincfg.DisplayDenom
 
 	stakingGenesis := stakingtypes.NewGenesisState(
 		currentStakingGenesis.Params,
@@ -257,13 +230,13 @@ func genesisStateWithValSet(
 
 	for range delegations {
 		// add delegated tokens to total supply
-		totalSupply = totalSupply.Add(sdk.NewCoin("ukava", bondAmt))
+		totalSupply = totalSupply.Add(sdk.NewCoin(chaincfg.DisplayDenom, bondAmt))
 	}
 
 	// add bonded amount to bonded pool module account
 	balances = append(balances, banktypes.Balance{
 		Address: authtypes.NewModuleAddress(stakingtypes.BondedPoolName).String(),
-		Coins:   sdk.Coins{sdk.NewCoin("ukava", bondAmt)},
+		Coins:   sdk.Coins{sdk.NewCoin(chaincfg.DisplayDenom, bondAmt)},
 	})
 
 	bankGenesis := banktypes.NewGenesisState(

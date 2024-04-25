@@ -16,7 +16,7 @@ The Kava gRPC client is a tool for making gRPC queries on a Kava chain.
 package main
 
 import (
-  kavaGrpc "github.com/kava-labs/kava/client/grpc"
+  kavaGrpc "github.com/0glabs/0g-chain/client/grpc"
 )
 grpcUrl := "https://grpc.kava.io:443"
 client, err := kavaGrpc.NewClient(grpcUrl)
@@ -46,7 +46,7 @@ Example: Query Kava module `x/evmutil` for params
 
 ```go
 import (
-  evmutiltypes "github.com/kava-labs/kava/x/evmutil/types"
+  evmutiltypes "github.com/0glabs/0g-chain/x/evmutil/types"
 )
 
 rsp, err := client.Query.Evmutil.Params(
