@@ -8,6 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/config"
 	"github.com/cosmos/cosmos-sdk/client/debug"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/cosmos/cosmos-sdk/server"
 
 	tmcfg "github.com/cometbft/cometbft/config"
@@ -28,7 +29,15 @@ import (
 	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/cmd/opendb"
 	"github.com/0glabs/0g-chain/cmd/rocksdb"
+	"github.com/0glabs/0g-chain/crypto/vrf"
 )
+
+func customKeyringOptions() keyring.Option {
+	return func(options *keyring.Options) {
+		options.SupportedAlgos = append(hd.SupportedAlgorithms, vrf.VrfAlgo)
+		options.SupportedAlgosLedger = append(hd.SupportedAlgorithmsLedger, vrf.VrfAlgo)
+	}
+}
 
 // NewRootCmd creates a new root command for the 0g-chain blockchain.
 func NewRootCmd() *cobra.Command {
@@ -42,7 +51,7 @@ func NewRootCmd() *cobra.Command {
 		WithAccountRetriever(types.AccountRetriever{}).
 		WithBroadcastMode(flags.FlagBroadcastMode).
 		WithHomeDir(chaincfg.DefaultNodeHome).
-		WithKeyringOptions(hd.EthSecp256k1Option()).
+		WithKeyringOptions(customKeyringOptions()).
 		WithViper(chaincfg.EnvPrefix)
 	rootCmd := &cobra.Command{
 		Use:   chaincfg.AppName,
