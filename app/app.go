@@ -627,6 +627,8 @@ func NewApp(
 		validatorvesting.NewAppModule(app.bankKeeper),
 		evmutil.NewAppModule(app.evmutilKeeper, app.bankKeeper, app.accountKeeper),
 		mint.NewAppModule(appCodec, app.mintKeeper, app.accountKeeper, nil, mintSubspace),
+		council.NewAppModule(app.CouncilKeeper, app.stakingKeeper),
+		das.NewAppModule(app.DasKeeper),
 	)
 
 	// Warning: Some begin blockers must run before others. Ensure the dependencies are understood before modifying this list.

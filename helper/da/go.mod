@@ -1,4 +1,4 @@
-module github.com/0glabs/0g-evmos/helper/da
+module github.com/0glabs/0g-chain/helper/da
 
 go 1.20
 

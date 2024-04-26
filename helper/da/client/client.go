@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/0glabs/0g-evmos/helper/da/light"
+	"github.com/0glabs/0g-chain/helper/da/light"
 
 	"github.com/pkg/errors"
 )
