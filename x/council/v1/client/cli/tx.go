@@ -166,13 +166,15 @@ func NewVoteCmd() *cobra.Command {
 			var tokens sdkmath.Int
 			for _, val := range rsp.Hist.Valset {
 				thisValAddr := val.GetOperator()
+
 				if thisValAddr.Equals(valAddr) {
 					tokens = val.GetTokens()
 				}
 			}
-
+			// the denom of token is neuron, need to convert to A0GI
+			a0gi := tokens.Quo(sdk.NewInt(1_000_000_000_000_000_000))
 			// 1_000 0AGI token / vote
-			numBallots := tokens.Quo(sdk.NewInt(1_000_000_000_000_000_000)).Quo(sdk.NewInt(1_000)).Uint64()
+			numBallots := a0gi.Quo(sdk.NewInt(1_000)).Uint64()
 			ballots := make([]*types.Ballot, numBallots)
 			for i := range ballots {
 				ballotID := uint64(i)

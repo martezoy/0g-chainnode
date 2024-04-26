@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/0glabs/0g-evmos/helper/da/client"
-	"github.com/0glabs/0g-evmos/helper/da/types"
-	"github.com/0glabs/0g-evmos/helper/da/utils/sizedw8grp"
+	"github.com/0glabs/0g-chain/helper/da/client"
+	"github.com/0glabs/0g-chain/helper/da/types"
+	"github.com/0glabs/0g-chain/helper/da/utils/sizedw8grp"
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/lesismal/nbio/nbhttp/websocket"
@@ -165,20 +165,20 @@ func runEvmosdCliReportDasResult(ctx context.Context, requestId uint64, result b
 		strconv.FormatUint(requestId, 10),
 		strconv.FormatBool(result),
 		"--from", account.(string),
-		"--gas-prices", "767812500aevmos", // TODO:  use args to set gas prices
+		"--gas-prices", "7678500neuron", // TODO:  use args to set gas prices
 	}
 
 	homePath := ctx.Value(types.NODE_HOME_PATH)
-	if homePath != nil {
+	if len(homePath.(string)) > 0 {
 		args = append(args, "--home", homePath.(string))
 	}
 
 	keyring := ctx.Value(types.NODE_CLI_EXEC_KEYRING)
-	if keyring != nil {
+	if len(keyring.(string)) > 0 {
 		args = append(args, "--keyring-backend", keyring.(string))
 	}
 
-	cmdStr := relativePath.(string) + "evmosd"
+	cmdStr := relativePath.(string) + "0gchaind"
 	cmd := exec.Command(cmdStr, append(args, "-y")...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

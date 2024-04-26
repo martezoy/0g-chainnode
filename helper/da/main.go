@@ -11,8 +11,8 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/0glabs/0g-evmos/helper/da/service"
-	"github.com/0glabs/0g-evmos/helper/da/types"
+	"github.com/0glabs/0g-chain/helper/da/service"
+	"github.com/0glabs/0g-chain/helper/da/types"
 
 	"github.com/lesismal/nbio/nbhttp"
 	"github.com/lesismal/nbio/nbhttp/websocket"
