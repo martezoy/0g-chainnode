@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 
+	sdkmath "cosmossdk.io/math"
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
 	tmjson "github.com/cometbft/cometbft/libs/json"
@@ -270,6 +271,12 @@ type App struct {
 
 	// configurator
 	configurator module.Configurator
+}
+
+func init() {
+	// 1stake = 1 ukava = 1_000_000_000_000 akava = 1_000_000_000_000 neuron
+	conversionMultiplier := sdkmath.NewIntFromUint64(1_000_000_000_000)
+	sdk.DefaultPowerReduction = sdk.DefaultPowerReduction.Mul(conversionMultiplier)
 }
 
 // NewApp returns a reference to an initialized App.
