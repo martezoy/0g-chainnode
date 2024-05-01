@@ -15,27 +15,27 @@ option go_package = "github.com/0glabs/0g-chain/x/bep3/types";
 service Query {
   // Params queries module params
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/0g-chain/bep3/v1beta1/params";
+    option (google.api.http).get = "/0g/bep3/v1beta1/params";
   }
 
   // AssetSupply queries info about an asset's supply
   rpc AssetSupply(QueryAssetSupplyRequest) returns (QueryAssetSupplyResponse) {
-    option (google.api.http).get = "/0g-chain/bep3/v1beta1/assetsupply/{denom}";
+    option (google.api.http).get = "/0g/bep3/v1beta1/assetsupply/{denom}";
   }
 
   // AssetSupplies queries a list of asset supplies
   rpc AssetSupplies(QueryAssetSuppliesRequest) returns (QueryAssetSuppliesResponse) {
-    option (google.api.http).get = "/0g-chain/bep3/v1beta1/assetsupplies";
+    option (google.api.http).get = "/0g/bep3/v1beta1/assetsupplies";
   }
 
   // AtomicSwap queries info about an atomic swap
   rpc AtomicSwap(QueryAtomicSwapRequest) returns (QueryAtomicSwapResponse) {
-    option (google.api.http).get = "/0g-chain/bep3/v1beta1/atomicswap/{swap_id}";
+    option (google.api.http).get = "/0g/bep3/v1beta1/atomicswap/{swap_id}";
   }
 
   // AtomicSwaps queries a list of atomic swaps
   rpc AtomicSwaps(QueryAtomicSwapsRequest) returns (QueryAtomicSwapsResponse) {
-    option (google.api.http).get = "/0g-chain/bep3/v1beta1/atomicswaps";
+    option (google.api.http).get = "/0g/bep3/v1beta1/atomicswaps";
   }
 }
 

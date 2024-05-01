@@ -479,15 +479,15 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"0g-chain", "bep3", "v1beta1", "params"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"0g", "bep3", "v1beta1", "params"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_AssetSupply_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"0g-chain", "bep3", "v1beta1", "assetsupply", "denom"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_AssetSupply_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"0g", "bep3", "v1beta1", "assetsupply", "denom"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_AssetSupplies_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"0g-chain", "bep3", "v1beta1", "assetsupplies"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_AssetSupplies_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"0g", "bep3", "v1beta1", "assetsupplies"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_AtomicSwap_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"0g-chain", "bep3", "v1beta1", "atomicswap", "swap_id"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_AtomicSwap_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"0g", "bep3", "v1beta1", "atomicswap", "swap_id"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_AtomicSwaps_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"0g-chain", "bep3", "v1beta1", "atomicswaps"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_AtomicSwaps_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"0g", "bep3", "v1beta1", "atomicswaps"}, "", runtime.AssumeColonVerbOpt(false)))
 )
 
 var (

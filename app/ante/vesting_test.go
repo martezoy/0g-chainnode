@@ -34,7 +34,7 @@ func TestVestingMempoolDecorator_MsgCreateVestingAccount_Unauthorized(t *testing
 			"MsgCreateVestingAccount",
 			vesting.NewMsgCreateVestingAccount(
 				testAddresses[0], testAddresses[1],
-				sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 100_000_000)),
+				sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 100)),
 				time.Date(1998, 1, 1, 0, 0, 0, 0, time.UTC).Unix(),
 				false,
 			),
@@ -45,7 +45,7 @@ func TestVestingMempoolDecorator_MsgCreateVestingAccount_Unauthorized(t *testing
 			"MsgCreateVestingAccount",
 			vesting.NewMsgCreatePermanentLockedAccount(
 				testAddresses[0], testAddresses[1],
-				sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 100_000_000)),
+				sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 100)),
 			),
 			true,
 			"MsgTypeURL /cosmos.vesting.v1beta1.MsgCreatePermanentLockedAccount not supported",
@@ -64,7 +64,7 @@ func TestVestingMempoolDecorator_MsgCreateVestingAccount_Unauthorized(t *testing
 			"other messages not affected",
 			banktypes.NewMsgSend(
 				testAddresses[0], testAddresses[1],
-				sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 100_000_000)),
+				sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 100)),
 			),
 			false,
 			"",

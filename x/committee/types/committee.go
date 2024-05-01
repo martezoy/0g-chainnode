@@ -15,9 +15,9 @@ import (
 const MaxCommitteeDescriptionLength int = 512
 
 const (
-	BaseCommitteeType   = "0g-chain/BaseCommittee"
-	MemberCommitteeType = "0g-chain/MemberCommittee" // Committee is composed of member addresses that vote to enact proposals within their permissions
-	TokenCommitteeType  = "0g-chain/TokenCommittee"  // Committee is composed of token holders with voting power determined by total token balance
+	BaseCommitteeType   = "0g/BaseCommittee"
+	MemberCommitteeType = "0g/MemberCommittee" // Committee is composed of member addresses that vote to enact proposals within their permissions
+	TokenCommitteeType  = "0g/TokenCommittee"  // Committee is composed of token holders with voting power determined by total token balance
 	BondDenom           = "neuron"
 )
 

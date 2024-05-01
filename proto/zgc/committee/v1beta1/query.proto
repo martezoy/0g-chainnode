@@ -16,39 +16,39 @@ option (gogoproto.goproto_getters_all) = false;
 service Query {
   // Committees queries all committess of the committee module.
   rpc Committees(QueryCommitteesRequest) returns (QueryCommitteesResponse) {
-    option (google.api.http).get = "/0g-chain/committee/v1beta1/committees";
+    option (google.api.http).get = "/0g/committee/v1beta1/committees";
   }
   // Committee queries a committee based on committee ID.
   rpc Committee(QueryCommitteeRequest) returns (QueryCommitteeResponse) {
-    option (google.api.http).get = "/0g-chain/committee/v1beta1/committees/{committee_id}";
+    option (google.api.http).get = "/0g/committee/v1beta1/committees/{committee_id}";
   }
   // Proposals queries proposals based on committee ID.
   rpc Proposals(QueryProposalsRequest) returns (QueryProposalsResponse) {
-    option (google.api.http).get = "/0g-chain/committee/v1beta1/proposals";
+    option (google.api.http).get = "/0g/committee/v1beta1/proposals";
   }
   // Deposits queries a proposal based on proposal ID.
   rpc Proposal(QueryProposalRequest) returns (QueryProposalResponse) {
-    option (google.api.http).get = "/0g-chain/committee/v1beta1/proposals/{proposal_id}";
+    option (google.api.http).get = "/0g/committee/v1beta1/proposals/{proposal_id}";
   }
   // NextProposalID queries the next proposal ID of the committee module.
   rpc NextProposalID(QueryNextProposalIDRequest) returns (QueryNextProposalIDResponse) {
-    option (google.api.http).get = "/0g-chain/committee/v1beta1/next-proposal-id";
+    option (google.api.http).get = "/0g/committee/v1beta1/next-proposal-id";
   }
   // Votes queries all votes for a single proposal ID.
   rpc Votes(QueryVotesRequest) returns (QueryVotesResponse) {
-    option (google.api.http).get = "/0g-chain/committee/v1beta1/proposals/{proposal_id}/votes";
+    option (google.api.http).get = "/0g/committee/v1beta1/proposals/{proposal_id}/votes";
   }
   // Vote queries the vote of a single voter for a single proposal ID.
   rpc Vote(QueryVoteRequest) returns (QueryVoteResponse) {
-    option (google.api.http).get = "/0g-chain/committee/v1beta1/proposals/{proposal_id}/votes/{voter}";
+    option (google.api.http).get = "/0g/committee/v1beta1/proposals/{proposal_id}/votes/{voter}";
   }
   // Tally queries the tally of a single proposal ID.
   rpc Tally(QueryTallyRequest) returns (QueryTallyResponse) {
-    option (google.api.http).get = "/0g-chain/committee/v1beta1/proposals/{proposal_id}/tally";
+    option (google.api.http).get = "/0g/committee/v1beta1/proposals/{proposal_id}/tally";
   }
   // RawParams queries the raw params data of any subspace and key.
   rpc RawParams(QueryRawParamsRequest) returns (QueryRawParamsResponse) {
-    option (google.api.http).get = "/0g-chain/committee/v1beta1/raw-params";
+    option (google.api.http).get = "/0g/committee/v1beta1/raw-params";
   }
 }
 

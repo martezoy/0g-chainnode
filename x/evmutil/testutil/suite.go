@@ -89,7 +89,7 @@ func (suite *Suite) SetupTest() {
 	feemarketGenesis.Params.NoBaseFee = false
 
 	cdc := suite.App.AppCodec()
-	coins := sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 1000_000_000_000_000_000))
+	coins := sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 1000_000_000_000))
 	authGS := app.NewFundedGenStateWithSameCoins(cdc, coins, []sdk.AccAddress{
 		sdk.AccAddress(suite.Key1.PubKey().Address()),
 		sdk.AccAddress(suite.Key2.PubKey().Address()),

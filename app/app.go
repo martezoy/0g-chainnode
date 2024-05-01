@@ -868,7 +868,7 @@ func RegisterAPIRouteRewrites(router *mux.Router) {
 	// Eg: querying /cosmos/distribution/v1beta1/community_pool will return
 	// the same response as querying /kava/community/v1beta1/total_balance
 	routeMap := map[string]string{
-		"/cosmos/distribution/v1beta1/community_pool": "/0g-chain/community/v1beta1/total_balance",
+		"/cosmos/distribution/v1beta1/community_pool": "/0g/community/v1beta1/total_balance",
 	}
 
 	for clientPath, backendPath := range routeMap {

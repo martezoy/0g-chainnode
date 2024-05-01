@@ -191,7 +191,7 @@ func (suite *invariantTestSuite) TestSendToModuleAccountNotAllowed() {
 		ToAddress:   maccAddress.String(),
 		Amount:      coins,
 	})
-	suite.ErrorContains(err, "0g1w9vxuke5dz6hyza2j932qgmxltnfxwl78u920k is not allowed to receive funds: unauthorized")
+	suite.ErrorContains(err, "0g1w9vxuke5dz6hyza2j932qgmxltnfxwl7l7mdnf is not allowed to receive funds: unauthorized")
 }
 
 func (suite *invariantTestSuite) TestCosmosCoinsFullyBackedInvariant() {
