@@ -6,9 +6,11 @@ require (
 	cosmossdk.io/errors v1.0.0-beta.7
 	cosmossdk.io/math v1.0.0-beta.6.0.20230216172121-959ce49135e4
 	github.com/cenkalti/backoff/v4 v4.1.3
+	github.com/coniks-sys/coniks-go v0.0.0-20180722014011-11acf4819b71
 	github.com/cosmos/cosmos-proto v1.0.0-beta.3
 	github.com/cosmos/cosmos-sdk v0.46.11
 	github.com/cosmos/go-bip39 v1.0.0
+	github.com/cosmos/gogoproto v1.4.6
 	github.com/cosmos/ibc-go/v6 v6.1.1
 	github.com/ethereum/go-ethereum v1.10.26
 	github.com/evmos/ethermint v0.21.0
@@ -65,7 +67,6 @@ require (
 	github.com/cometbft/cometbft-db v0.7.0 // indirect
 	github.com/confio/ics23/go v0.9.0 // indirect
 	github.com/cosmos/btcutil v1.0.5 // indirect
-	github.com/cosmos/gogoproto v1.4.6 // indirect
 	github.com/cosmos/iavl v0.19.5 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.13.1 // indirect
 	github.com/creachadair/taskgroup v0.3.2 // indirect
