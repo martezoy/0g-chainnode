@@ -1,8 +1,10 @@
 ################################################################################
 ###                             Project Info                                 ###
 ################################################################################
-PROJECT_NAME := kava# unique namespace for project
-
+PROJECT_NAME := 0g-chain# unique namespace for project
+BINARY_NAME := 0gchaind
+MAIN_ENTRY := ./cmd/$(BINARY_NAME)
+DOCKER_IMAGE_NAME := 0glabs/$(PROJECT_NAME)
 GO_BIN ?= go
 
 GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
@@ -37,7 +39,7 @@ print-git-info:
 
 .PHONY: print-version
 print-version:
-	@echo "kava $(VERSION)\ntendermint $(TENDERMINT_VERSION)\ncosmos $(COSMOS_SDK_VERSION)"
+	@echo "$(BINARY_NAME) $(VERSION)\ntendermint $(TENDERMINT_VERSION)\ncosmos $(COSMOS_SDK_VERSION)"
 
 ################################################################################
 ###                             Project Settings                             ###
@@ -142,8 +144,8 @@ build_tags_comma_sep := $(subst $(whitespace),$(comma),$(build_tags))
 
 # process linker flags
 
-ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=kava \
-		  -X github.com/cosmos/cosmos-sdk/version.AppName=kava \
+ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=$(PROJECT_NAME) \
+		  -X github.com/cosmos/cosmos-sdk/version.AppName=$(PROJECT_NAME) \
 		  -X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION_NUMBER) \
 		  -X github.com/cosmos/cosmos-sdk/version.Commit=$(GIT_COMMIT) \
 		  -X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)" \
@@ -188,16 +190,16 @@ all: install
 
 build: go.sum
 ifeq ($(OS), Windows_NT)
-	$(GO_BIN) build -mod=readonly $(BUILD_FLAGS) -o out/$(shell $(GO_BIN) env GOOS)/kava.exe ./cmd/kava
+	$(GO_BIN) build -mod=readonly $(BUILD_FLAGS) -o out/$(shell $(GO_BIN) env GOOS)/$(BINARY_NAME).exe $(MAIN_ENTRY)
 else
-	$(GO_BIN) build -mod=readonly $(BUILD_FLAGS) -o out/$(shell $(GO_BIN) env GOOS)/kava ./cmd/kava
+	$(GO_BIN) build -mod=readonly $(BUILD_FLAGS) -o out/$(shell $(GO_BIN) env GOOS)/$(BINARY_NAME) $(MAIN_ENTRY)
 endif
 
 build-linux: go.sum
 	LEDGER_ENABLED=false GOOS=linux GOARCH=amd64 $(MAKE) build
 
 install: go.sum
-	$(GO_BIN) install -mod=readonly $(BUILD_FLAGS) ./cmd/kava
+	$(GO_BIN) install -mod=readonly $(BUILD_FLAGS) $(MAIN_ENTRY)
 
 ########################################
 ### Tools & dependencies
@@ -219,6 +221,7 @@ go.sum: go.mod
 # Set to exclude riot links as they trigger false positives
 link-check:
 	@$(GO_BIN) get -u github.com/raviqqe/liche@f57a5d1c5be4856454cb26de155a65a4fd856ee3
+	# TODO: replace kava in following line with project name
 	liche -r . --exclude "^http://127.*|^https://riot.im/app*|^http://kava-testnet*|^https://testnet-dex*|^https://kava3.data.kava.io*|^https://ipfs.io*|^https://apps.apple.com*|^https://kava.quicksync.io*"
 
 
@@ -240,19 +243,19 @@ format:
 ###                                Localnet                                 ###
 ###############################################################################
 
-# Build docker image and tag as kava/kava:local
+# Build docker image and tag as 0glabs/0g-chain:local
 docker-build:
-	DOCKER_BUILDKIT=1 $(DOCKER) build -t kava/kava:local .
+	DOCKER_BUILDKIT=1 $(DOCKER) build -t $(DOCKER_IMAGE_NAME):local .
 
 docker-build-rocksdb:
-	DOCKER_BUILDKIT=1 $(DOCKER) build -f Dockerfile-rocksdb -t kava/kava:local .
+	DOCKER_BUILDKIT=1 $(DOCKER) build -f Dockerfile-rocksdb -t $(DOCKER_IMAGE_NAME):local .
 
-build-docker-local-kava:
+build-docker-local-0gchain:
 	@$(MAKE) -C networks/local
 
 # Run a 4-node testnet locally
 localnet-start: build-linux localnet-stop
-	@if ! [ -f build/node0/kvd/config/genesis.json ]; then docker run --rm -v $(CURDIR)/build:/kvd:Z kava/kavanode testnet --v 4 -o . --starting-ip-address 192.168.10.2 --keyring-backend=test ; fi
+	@if ! [ -f build/node0/kvd/config/genesis.json ]; then docker run --rm -v $(CURDIR)/build:/kvd:Z $(DOCKER_IMAGE_NAME)-node testnet --v 4 -o . --starting-ip-address 192.168.10.2 --keyring-backend=test ; fi
 	docker-compose up -d
 
 localnet-stop:
@@ -261,7 +264,7 @@ localnet-stop:
 # Launch a new single validator chain
 start:
 	./contrib/devnet/init-new-chain.sh
-	kava start
+	$(BINARY_NAME) start
 
 #proto-format:
 #@echo "Formatting Protobuf files"
@@ -302,7 +305,7 @@ test:
 	@$(GO_BIN) test $$($(GO_BIN) list ./... | grep -v 'contrib' | grep -v 'tests/e2e')
 
 test-rocksdb:
-	@go test -tags=rocksdb ./cmd/kava/opendb
+	@go test -tags=rocksdb $(MAIN_ENTRY)/opendb
 
 # Run cli integration tests
 # `-p 4` to use 4 cores, `-tags cli_test` to tell $(GO_BIN) not to ignore the cli package
@@ -318,15 +321,15 @@ test-migrate:
 # This submits an AWS Batch job to run a lot of sims, each within a docker image. Results are uploaded to S3
 start-remote-sims:
 	# build the image used for running sims in, and tag it
-	docker build -f simulations/Dockerfile -t kava/kava-sim:master .
+	docker build -f simulations/Dockerfile -t $(DOCKER_IMAGE_NAME)-sim:master .
 	# push that image to the hub
-	docker push kava/kava-sim:master
+	docker push $(DOCKER_IMAGE_NAME)-sim:master
 	# submit an array job on AWS Batch, using 1000 seeds, spot instances
 	aws batch submit-job \
 		-—job-name "master-$(VERSION)" \
 		-—job-queue “simulation-1-queue-spot" \
 		-—array-properties size=1000 \
-		-—job-definition kava-sim-master \
+		-—job-definition $(BINARY_NAME)-sim-master \
 		-—container-override environment=[{SIM_NAME=master-$(VERSION)}]
 
 update-kvtool:
