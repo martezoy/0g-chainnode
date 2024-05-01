@@ -8,7 +8,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/0glabs/0g-chain/tests/e2e/contracts/greeter"
-	"github.com/0glabs/0g-chain/x/cdp/types"
 	evmutiltypes "github.com/0glabs/0g-chain/x/evmutil/types"
 )
 
@@ -44,23 +43,6 @@ func (suite *E2eTestSuite) InitKavaEvmData() {
 		panic(fmt.Sprintf("erc20 %s must be enabled for conversion to cosmos coin", erc20Addr))
 	}
 	suite.Kava.RegisterErc20(suite.DeployedErc20.Address)
-
-	// expect the erc20's cosmos denom to be a supported cdp collateral type
-	cdpParams, err := suite.Kava.Cdp.Params(context.Background(), &types.QueryParamsRequest{})
-	suite.Require().NoError(err)
-	found = false
-	for _, cp := range cdpParams.Params.CollateralParams {
-		if cp.Denom == suite.DeployedErc20.CosmosDenom {
-			found = true
-			suite.DeployedErc20.CdpCollateralType = cp.Type
-		}
-	}
-	if !found {
-		panic(fmt.Sprintf(
-			"erc20's cosmos denom %s must be valid cdp collateral type",
-			suite.DeployedErc20.CosmosDenom),
-		)
-	}
 
 	// deploy an example contract
 	greeterAddr, _, _, err := greeter.DeployGreeter(

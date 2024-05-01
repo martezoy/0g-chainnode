@@ -2,20 +2,13 @@ package app
 
 import (
 	"fmt"
-	"time"
 
 	sdkmath "cosmossdk.io/math"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/authz"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-
-	communitytypes "github.com/0glabs/0g-chain/x/community/types"
-	kavadisttypes "github.com/0glabs/0g-chain/x/kavadist/types"
 )
 
 const (
@@ -30,33 +23,33 @@ var (
 	secondsPerYear       = sdk.NewInt(365 * 24 * 60 * 60)
 
 	// 10 Million KAVA per year in staking rewards, inflation disable time 2024-01-01T00:00:00 UTC
-	CommunityParams_Mainnet = communitytypes.NewParams(
-		time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
-		// before switchover
-		sdkmath.LegacyZeroDec(),
-		// after switchover - 10M KAVA to ukava per year / seconds per year
-		sdkmath.LegacyNewDec(10_000_000).
-			MulInt(kavaConversionFactor).
-			QuoInt(secondsPerYear),
-	)
+	// CommunityParams_Mainnet = communitytypes.NewParams(
+	// 	time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
+	// 	// before switchover
+	// 	sdkmath.LegacyZeroDec(),
+	// 	// after switchover - 10M KAVA to ukava per year / seconds per year
+	// 	sdkmath.LegacyNewDec(10_000_000).
+	// 		MulInt(kavaConversionFactor).
+	// 		QuoInt(secondsPerYear),
+	// )
 
 	// Testnet -- 15 Trillion KAVA per year in staking rewards, inflation disable time 2023-11-16T00:00:00 UTC
-	CommunityParams_Testnet = communitytypes.NewParams(
-		time.Date(2023, 11, 16, 0, 0, 0, 0, time.UTC),
-		// before switchover
-		sdkmath.LegacyZeroDec(),
-		// after switchover
-		sdkmath.LegacyNewDec(15_000_000).
-			MulInt64(1_000_000). // 15M * 1M = 15T
-			MulInt(kavaConversionFactor).
-			QuoInt(secondsPerYear),
-	)
+	// CommunityParams_Testnet = communitytypes.NewParams(
+	// 	time.Date(2023, 11, 16, 0, 0, 0, 0, time.UTC),
+	// 	// before switchover
+	// 	sdkmath.LegacyZeroDec(),
+	// 	// after switchover
+	// 	sdkmath.LegacyNewDec(15_000_000).
+	// 		MulInt64(1_000_000). // 15M * 1M = 15T
+	// 		MulInt(kavaConversionFactor).
+	// 		QuoInt(secondsPerYear),
+	// )
 
-	CommunityParams_E2E = communitytypes.NewParams(
-		time.Now().Add(10*time.Second).UTC(), // relative time for testing
-		sdkmath.LegacyNewDec(0),              // stakingRewardsPerSecond
-		sdkmath.LegacyNewDec(1000),           // upgradeTimeSetstakingRewardsPerSecond
-	)
+	// CommunityParams_E2E = communitytypes.NewParams(
+	// 	time.Now().Add(10*time.Second).UTC(), // relative time for testing
+	// 	sdkmath.LegacyNewDec(0),              // stakingRewardsPerSecond
+	// 	sdkmath.LegacyNewDec(1000),           // upgradeTimeSetstakingRewardsPerSecond
+	// )
 
 	// ValidatorMinimumCommission is the new 5% minimum commission rate for validators
 	ValidatorMinimumCommission = sdk.NewDecWithPrec(5, 2)
@@ -64,18 +57,18 @@ var (
 
 // RegisterUpgradeHandlers registers the upgrade handlers for the app.
 func (app App) RegisterUpgradeHandlers() {
-	app.upgradeKeeper.SetUpgradeHandler(
-		UpgradeName_Mainnet,
-		upgradeHandler(app, UpgradeName_Mainnet, CommunityParams_Mainnet),
-	)
-	app.upgradeKeeper.SetUpgradeHandler(
-		UpgradeName_Testnet,
-		upgradeHandler(app, UpgradeName_Testnet, CommunityParams_Testnet),
-	)
-	app.upgradeKeeper.SetUpgradeHandler(
-		UpgradeName_E2ETest,
-		upgradeHandler(app, UpgradeName_Testnet, CommunityParams_E2E),
-	)
+	// app.upgradeKeeper.SetUpgradeHandler(
+	// 	UpgradeName_Mainnet,
+	// 	upgradeHandler(app, UpgradeName_Mainnet, CommunityParams_Mainnet),
+	// )
+	// app.upgradeKeeper.SetUpgradeHandler(
+	// 	UpgradeName_Testnet,
+	// 	upgradeHandler(app, UpgradeName_Testnet, CommunityParams_Testnet),
+	// )
+	// app.upgradeKeeper.SetUpgradeHandler(
+	// 	UpgradeName_E2ETest,
+	// 	upgradeHandler(app, UpgradeName_Testnet, CommunityParams_E2E),
+	// )
 
 	upgradeInfo, err := app.upgradeKeeper.ReadUpgradeInfoFromDisk()
 	if err != nil {
@@ -90,7 +83,7 @@ func (app App) RegisterUpgradeHandlers() {
 		storeUpgrades := storetypes.StoreUpgrades{
 			Added: []string{
 				// x/community added store
-				communitytypes.ModuleName,
+				// communitytypes.ModuleName,
 			},
 		}
 
@@ -103,7 +96,7 @@ func (app App) RegisterUpgradeHandlers() {
 func upgradeHandler(
 	app App,
 	name string,
-	communityParams communitytypes.Params,
+	// communityParams communitytypes.Params,
 ) upgradetypes.UpgradeHandler {
 	return func(
 		ctx sdk.Context,
@@ -125,31 +118,31 @@ func upgradeHandler(
 		//
 		// Community Params
 		//
-		app.communityKeeper.SetParams(ctx, communityParams)
-		app.Logger().Info(
-			"initialized x/community params",
-			"UpgradeTimeDisableInflation", communityParams.UpgradeTimeDisableInflation,
-			"StakingRewardsPerSecond", communityParams.StakingRewardsPerSecond,
-			"UpgradeTimeSetStakingRewardsPerSecond", communityParams.UpgradeTimeSetStakingRewardsPerSecond,
-		)
+		// app.communityKeeper.SetParams(ctx, communityParams)
+		// app.Logger().Info(
+		// 	"initialized x/community params",
+		// 	"UpgradeTimeDisableInflation", communityParams.UpgradeTimeDisableInflation,
+		// 	"StakingRewardsPerSecond", communityParams.StakingRewardsPerSecond,
+		// 	"UpgradeTimeSetStakingRewardsPerSecond", communityParams.UpgradeTimeSetStakingRewardsPerSecond,
+		// )
 
 		//
 		// Kavadist gov grant
 		//
-		msgGrant, err := authz.NewMsgGrant(
-			app.accountKeeper.GetModuleAddress(kavadisttypes.ModuleName),        // granter
-			app.accountKeeper.GetModuleAddress(govtypes.ModuleName),             // grantee
-			authz.NewGenericAuthorization(sdk.MsgTypeURL(&banktypes.MsgSend{})), // authorization
-			nil, // expiration
-		)
-		if err != nil {
-			return toVM, err
-		}
-		_, err = app.authzKeeper.Grant(ctx, msgGrant)
-		if err != nil {
-			return toVM, err
-		}
-		app.Logger().Info("created gov grant for kavadist funds")
+		// msgGrant, err := authz.NewMsgGrant(
+		// 	app.accountKeeper.GetModuleAddress(kavadisttypes.ModuleName),        // granter
+		// 	app.accountKeeper.GetModuleAddress(govtypes.ModuleName),             // grantee
+		// 	authz.NewGenericAuthorization(sdk.MsgTypeURL(&banktypes.MsgSend{})), // authorization
+		// 	nil, // expiration
+		// )
+		// if err != nil {
+		// 	return toVM, err
+		// }
+		// _, err = app.authzKeeper.Grant(ctx, msgGrant)
+		// if err != nil {
+		// 	return toVM, err
+		// }
+		// app.Logger().Info("created gov grant for kavadist funds")
 
 		//
 		// Gov Quorum
@@ -242,24 +235,24 @@ func UpdateIncentiveParams(
 	ctx sdk.Context,
 	app App,
 ) {
-	incentiveParams := app.incentiveKeeper.GetParams(ctx)
+	// incentiveParams := app.incentiveKeeper.GetParams(ctx)
 
 	// bkava annualized rewards: 600K KAVA
-	newAmount := sdkmath.LegacyNewDec(600_000).
-		MulInt(kavaConversionFactor).
-		QuoInt(secondsPerYear).
-		TruncateInt()
+	// newAmount := sdkmath.LegacyNewDec(600_000).
+	// 	MulInt(kavaConversionFactor).
+	// 	QuoInt(secondsPerYear).
+	// 	TruncateInt()
 
-	for i := range incentiveParams.EarnRewardPeriods {
-		if incentiveParams.EarnRewardPeriods[i].CollateralType != "bkava" {
-			continue
-		}
+	// for i := range incentiveParams.EarnRewardPeriods {
+	// 	if incentiveParams.EarnRewardPeriods[i].CollateralType != "bkava" {
+	// 		continue
+	// 	}
 
-		// Update rewards per second via index
-		incentiveParams.EarnRewardPeriods[i].RewardsPerSecond = sdk.NewCoins(
-			sdk.NewCoin("ukava", newAmount),
-		)
-	}
+	// 	// Update rewards per second via index
+	// 	incentiveParams.EarnRewardPeriods[i].RewardsPerSecond = sdk.NewCoins(
+	// 		sdk.NewCoin("ukava", newAmount),
+	// 	)
+	// }
 
-	app.incentiveKeeper.SetParams(ctx, incentiveParams)
+	// app.incentiveKeeper.SetParams(ctx, incentiveParams)
 }

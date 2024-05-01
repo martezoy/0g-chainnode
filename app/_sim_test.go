@@ -32,14 +32,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
 
-	"github.com/0glabs/0g-chain/x/auction"
 	"github.com/0glabs/0g-chain/x/bep3"
-	"github.com/0glabs/0g-chain/x/cdp"
 	"github.com/0glabs/0g-chain/x/committee"
-	"github.com/0glabs/0g-chain/x/incentive"
-	"github.com/0glabs/0g-chain/x/kavadist"
 	"github.com/0glabs/0g-chain/x/pricefeed"
-	"github.com/0glabs/0g-chain/x/swap"
 	validatorvesting "github.com/0glabs/0g-chain/x/validator-vesting"
 )
 

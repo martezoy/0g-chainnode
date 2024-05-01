@@ -11,7 +11,6 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	"github.com/0glabs/0g-chain/app"
-	cdptypes "github.com/0glabs/0g-chain/x/cdp/types"
 	evmutiltypes "github.com/0glabs/0g-chain/x/evmutil/types"
 
 	"github.com/0glabs/0g-chain/tests/e2e/contracts/greeter"
@@ -111,7 +110,7 @@ func (suite *IntegrationTestSuite) TestEip712BasicMessageAuthorization() {
 func (suite *IntegrationTestSuite) TestEip712ConvertToCoinAndDepositToLend() {
 	// cdp requires minimum of $11 collateral
 	amount := sdk.NewInt(11e6) // 11 USDT
-	principal := sdk.NewCoin("usdx", sdk.NewInt(10e6))
+
 	sdkDenom := suite.DeployedErc20.CosmosDenom
 
 	// create new funded account
@@ -127,17 +126,9 @@ func (suite *IntegrationTestSuite) TestEip712ConvertToCoinAndDepositToLend() {
 		evmutiltypes.NewInternalEVMAddress(suite.DeployedErc20.Address),
 		amount,
 	)
-	depositMsg := cdptypes.NewMsgCreateCDP(
-		depositor.SdkAddress,
-		sdk.NewCoin(sdkDenom, amount),
-		principal,
-		suite.DeployedErc20.CdpCollateralType,
-	)
 	msgs := []sdk.Msg{
 		// convert to coin
 		&convertMsg,
-		// deposit into cdp (Mint), take out USDX
-		&depositMsg,
 	}
 
 	// create tx
@@ -168,28 +159,15 @@ func (suite *IntegrationTestSuite) TestEip712ConvertToCoinAndDepositToLend() {
 	balance := suite.Kava.GetErc20Balance(suite.DeployedErc20.Address, depositor.EvmAddress)
 	suite.BigIntsEqual(big.NewInt(0), balance, "expected no erc20 balance")
 
-	// check that account has cdp
-	cdpRes, err := suite.Kava.Cdp.Cdp(context.Background(), &cdptypes.QueryCdpRequest{
-		CollateralType: suite.DeployedErc20.CdpCollateralType,
-		Owner:          depositor.SdkAddress.String(),
-	})
-	suite.NoError(err)
-	suite.True(cdpRes.Cdp.Collateral.Amount.Equal(amount))
-	suite.True(cdpRes.Cdp.Principal.Equal(principal))
-
 	// withdraw deposit & convert back to erc20 (this allows refund to recover erc20s used in test)
-	withdraw := cdptypes.NewMsgRepayDebt(
-		depositor.SdkAddress,
-		suite.DeployedErc20.CdpCollateralType,
-		principal,
-	)
+
 	convertBack := evmutiltypes.NewMsgConvertCoinToERC20(
 		depositor.SdkAddress.String(),
 		depositor.EvmAddress.Hex(),
 		sdk.NewCoin(sdkDenom, amount),
 	)
 	withdrawAndConvertBack := util.KavaMsgRequest{
-		Msgs:      []sdk.Msg{&withdraw, &convertBack},
+		Msgs:      []sdk.Msg{&convertBack},
 		GasLimit:  1e6,
 		FeeAmount: sdk.NewCoins(ukava(1000)),
 		Data:      "withdrawing from mint & converting back to erc20",

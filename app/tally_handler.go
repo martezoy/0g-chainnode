@@ -2,10 +2,6 @@ package app
 
 import (
 	sdkmath "cosmossdk.io/math"
-	earnkeeper "github.com/0glabs/0g-chain/x/earn/keeper"
-	liquidkeeper "github.com/0glabs/0g-chain/x/liquid/keeper"
-	liquidtypes "github.com/0glabs/0g-chain/x/liquid/types"
-	savingskeeper "github.com/0glabs/0g-chain/x/savings/keeper"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
@@ -20,23 +16,16 @@ var _ govv1.TallyHandler = TallyHandler{}
 type TallyHandler struct {
 	gk  govkeeper.Keeper
 	stk stakingkeeper.Keeper
-	svk savingskeeper.Keeper
-	ek  earnkeeper.Keeper
-	lk  liquidkeeper.Keeper
 	bk  bankkeeper.Keeper
 }
 
 // NewTallyHandler creates a new tally handler.
 func NewTallyHandler(
-	gk govkeeper.Keeper, stk stakingkeeper.Keeper, svk savingskeeper.Keeper,
-	ek earnkeeper.Keeper, lk liquidkeeper.Keeper, bk bankkeeper.Keeper,
+	gk govkeeper.Keeper, stk stakingkeeper.Keeper, bk bankkeeper.Keeper,
 ) TallyHandler {
 	return TallyHandler{
 		gk:  gk,
 		stk: stk,
-		svk: svk,
-		ek:  ek,
-		lk:  lk,
 		bk:  bk,
 	}
 }
@@ -105,34 +94,34 @@ func (th TallyHandler) Tally(
 		})
 
 		// get voter bkava and update total voting power and results
-		addrBkava := th.getAddrBkava(ctx, voter).toCoins()
-		for _, coin := range addrBkava {
-			valAddr, err := liquidtypes.ParseLiquidStakingTokenDenom(coin.Denom)
-			if err != nil {
-				break
-			}
+		// addrBkava := th.getAddrBkava(ctx, voter).toCoins()
+		// for _, coin := range addrBkava {
+		// 	valAddr, err := liquidtypes.ParseLiquidStakingTokenDenom(coin.Denom)
+		// 	if err != nil {
+		// 		break
+		// 	}
 
-			// reduce delegator shares by the amount of voter bkava for the validator
-			valAddrStr := valAddr.String()
-			if val, ok := currValidators[valAddrStr]; ok {
-				val.DelegatorDeductions = val.DelegatorDeductions.Add(sdk.NewDecFromInt(coin.Amount))
-				currValidators[valAddrStr] = val
-			}
+		// 	// reduce delegator shares by the amount of voter bkava for the validator
+		// 	valAddrStr := valAddr.String()
+		// 	if val, ok := currValidators[valAddrStr]; ok {
+		// 		val.DelegatorDeductions = val.DelegatorDeductions.Add(sdk.NewDecFromInt(coin.Amount))
+		// 		currValidators[valAddrStr] = val
+		// 	}
 
-			// votingPower = amount of ukava coin
-			stakedCoins, err := th.lk.GetStakedTokensForDerivatives(ctx, sdk.NewCoins(coin))
-			if err != nil {
-				// error is returned only if the bkava denom is incorrect, which should never happen here.
-				panic(err)
-			}
-			votingPower := sdk.NewDecFromInt(stakedCoins.Amount)
+		// 	// votingPower = amount of ukava coin
+		// 	stakedCoins, err := th.lk.GetStakedTokensForDerivatives(ctx, sdk.NewCoins(coin))
+		// 	if err != nil {
+		// 		// error is returned only if the bkava denom is incorrect, which should never happen here.
+		// 		panic(err)
+		// 	}
+		// 	votingPower := sdk.NewDecFromInt(stakedCoins.Amount)
 
-			for _, option := range vote.Options {
-				subPower := votingPower.Mul(sdk.MustNewDecFromStr(option.Weight))
-				results[option.Option] = results[option.Option].Add(subPower)
-			}
-			totalVotingPower = totalVotingPower.Add(votingPower)
-		}
+		// 	for _, option := range vote.Options {
+		// 		subPower := votingPower.Mul(sdk.MustNewDecFromStr(option.Weight))
+		// 		results[option.Option] = results[option.Option].Add(subPower)
+		// 	}
+		// 	totalVotingPower = totalVotingPower.Add(votingPower)
+		// }
 
 		th.gk.DeleteVote(ctx, vote.ProposalId, voter)
 		return false
@@ -219,38 +208,38 @@ func (th TallyHandler) getAddrBkava(ctx sdk.Context, addr sdk.AccAddress) bkavaB
 
 // addBkavaFromWallet adds all addr balances of bkava in x/bank.
 func (th TallyHandler) addBkavaFromWallet(ctx sdk.Context, addr sdk.AccAddress, bkava bkavaByDenom) {
-	coins := th.bk.GetAllBalances(ctx, addr)
-	for _, coin := range coins {
-		if th.lk.IsDerivativeDenom(ctx, coin.Denom) {
-			bkava.add(coin)
-		}
-	}
+	// coins := th.bk.GetAllBalances(ctx, addr)
+	// for _, coin := range coins {
+	// 	if th.lk.IsDerivativeDenom(ctx, coin.Denom) {
+	// 		bkava.add(coin)
+	// 	}
+	// }
 }
 
 // addBkavaFromSavings adds all addr deposits of bkava in x/savings.
 func (th TallyHandler) addBkavaFromSavings(ctx sdk.Context, addr sdk.AccAddress, bkava bkavaByDenom) {
-	deposit, found := th.svk.GetDeposit(ctx, addr)
-	if !found {
-		return
-	}
-	for _, coin := range deposit.Amount {
-		if th.lk.IsDerivativeDenom(ctx, coin.Denom) {
-			bkava.add(coin)
-		}
-	}
+	// deposit, found := th.svk.GetDeposit(ctx, addr)
+	// if !found {
+	// 	return
+	// }
+	// for _, coin := range deposit.Amount {
+	// 	if th.lk.IsDerivativeDenom(ctx, coin.Denom) {
+	// 		bkava.add(coin)
+	// 	}
+	// }
 }
 
 // addBkavaFromEarn adds all addr deposits of bkava in x/earn.
 func (th TallyHandler) addBkavaFromEarn(ctx sdk.Context, addr sdk.AccAddress, bkava bkavaByDenom) {
-	shares, found := th.ek.GetVaultAccountShares(ctx, addr)
-	if !found {
-		return
-	}
-	for _, share := range shares {
-		if th.lk.IsDerivativeDenom(ctx, share.Denom) {
-			if coin, err := th.ek.ConvertToAssets(ctx, share); err == nil {
-				bkava.add(coin)
-			}
-		}
-	}
+	// shares, found := th.ek.GetVaultAccountShares(ctx, addr)
+	// if !found {
+	// 	return
+	// }
+	// for _, share := range shares {
+	// 	if th.lk.IsDerivativeDenom(ctx, share.Denom) {
+	// 		if coin, err := th.ek.ConvertToAssets(ctx, share); err == nil {
+	// 			bkava.add(coin)
+	// 		}
+	// 	}
+	// }
 }

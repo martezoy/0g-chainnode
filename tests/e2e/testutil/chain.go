@@ -35,13 +35,8 @@ import (
 	kavaparams "github.com/0glabs/0g-chain/app/params"
 	"github.com/0glabs/0g-chain/tests/e2e/runner"
 	"github.com/0glabs/0g-chain/tests/util"
-	cdptypes "github.com/0glabs/0g-chain/x/cdp/types"
 	committeetypes "github.com/0glabs/0g-chain/x/committee/types"
-	communitytypes "github.com/0glabs/0g-chain/x/community/types"
-	earntypes "github.com/0glabs/0g-chain/x/earn/types"
 	evmutiltypes "github.com/0glabs/0g-chain/x/evmutil/types"
-	incentivetypes "github.com/0glabs/0g-chain/x/incentive/types"
-	kavadisttypes "github.com/0glabs/0g-chain/x/kavadist/types"
 )
 
 // Chain wraps query clients & accounts for a network
@@ -62,13 +57,8 @@ type Chain struct {
 	Auth         authtypes.QueryClient
 	Authz        authz.QueryClient
 	Bank         banktypes.QueryClient
-	Cdp          cdptypes.QueryClient
 	Committee    committeetypes.QueryClient
-	Community    communitytypes.QueryClient
 	Distribution distrtypes.QueryClient
-	Incentive    incentivetypes.QueryClient
-	Kavadist     kavadisttypes.QueryClient
-	Earn         earntypes.QueryClient
 	Evm          evmtypes.QueryClient
 	Evmutil      evmutiltypes.QueryClient
 	Gov          govv1types.QueryClient
@@ -126,13 +116,9 @@ func NewChain(t *testing.T, details *runner.ChainDetails, fundedAccountMnemonic 
 	chain.Auth = authtypes.NewQueryClient(grpcConn)
 	chain.Authz = authz.NewQueryClient(grpcConn)
 	chain.Bank = banktypes.NewQueryClient(grpcConn)
-	chain.Cdp = cdptypes.NewQueryClient(grpcConn)
+
 	chain.Committee = committeetypes.NewQueryClient(grpcConn)
-	chain.Community = communitytypes.NewQueryClient(grpcConn)
 	chain.Distribution = distrtypes.NewQueryClient(grpcConn)
-	chain.Incentive = incentivetypes.NewQueryClient(grpcConn)
-	chain.Kavadist = kavadisttypes.NewQueryClient(grpcConn)
-	chain.Earn = earntypes.NewQueryClient(grpcConn)
 	chain.Evm = evmtypes.NewQueryClient(grpcConn)
 	chain.Evmutil = evmutiltypes.NewQueryClient(grpcConn)
 	chain.Gov = govv1types.NewQueryClient(grpcConn)

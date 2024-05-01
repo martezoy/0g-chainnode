@@ -1,8 +1,6 @@
 package types
 
 import (
-	communitytypes "github.com/0glabs/0g-chain/x/community/types"
-	kavadisttypes "github.com/0glabs/0g-chain/x/kavadist/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/legacy"
 	"github.com/cosmos/cosmos-sdk/codec/types"
@@ -48,10 +46,6 @@ func init() {
 	RegisterProposalTypeCodec(govv1beta1.TextProposal{}, "cosmos-sdk/TextProposal")
 	RegisterProposalTypeCodec(upgradetypes.SoftwareUpgradeProposal{}, "cosmos-sdk/SoftwareUpgradeProposal")
 	RegisterProposalTypeCodec(upgradetypes.CancelSoftwareUpgradeProposal{}, "cosmos-sdk/CancelSoftwareUpgradeProposal")
-	RegisterProposalTypeCodec(communitytypes.CommunityCDPRepayDebtProposal{}, "kava/CommunityCDPRepayDebtProposal")
-	RegisterProposalTypeCodec(communitytypes.CommunityCDPWithdrawCollateralProposal{}, "kava/CommunityCDPWithdrawCollateralProposal")
-	RegisterProposalTypeCodec(communitytypes.CommunityPoolLendWithdrawProposal{}, "kava/CommunityPoolLendWithdrawProposal")
-	RegisterProposalTypeCodec(kavadisttypes.CommunityPoolMultiSpendProposal{}, "kava/CommunityPoolMultiSpendProposal")
 }
 
 // RegisterLegacyAminoCodec registers all the necessary types and interfaces for the module.
@@ -124,13 +118,9 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&Proposal{},
 		&distrtypes.CommunityPoolSpendProposal{},
 		&govv1beta1.TextProposal{},
-		&kavadisttypes.CommunityPoolMultiSpendProposal{},
 		&proposaltypes.ParameterChangeProposal{},
 		&upgradetypes.SoftwareUpgradeProposal{},
 		&upgradetypes.CancelSoftwareUpgradeProposal{},
-		&communitytypes.CommunityCDPRepayDebtProposal{},
-		&communitytypes.CommunityCDPWithdrawCollateralProposal{},
-		&communitytypes.CommunityPoolLendWithdrawProposal{},
 	)
 
 	registry.RegisterImplementations(
