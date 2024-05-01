@@ -224,9 +224,9 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"0g-chain", "evmutil", "v1beta1", "params"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"0g", "evmutil", "v1beta1", "params"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_DeployedCosmosCoinContracts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"0g-chain", "evmutil", "v1beta1", "deployed_cosmos_coin_contracts"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_DeployedCosmosCoinContracts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"0g", "evmutil", "v1beta1", "deployed_cosmos_coin_contracts"}, "", runtime.AssumeColonVerbOpt(false)))
 )
 
 var (

@@ -1,22 +1,21 @@
 package keeper_test
 
 import (
+	"math/big"
 	"testing"
 	"time"
 
 	sdkmath "cosmossdk.io/math"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/suite"
-	tmtime "github.com/tendermint/tendermint/types/time"
-
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	vesting "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
-	evmtypes "github.com/evmos/ethermint/x/evm/types"
-
 	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/evmutil/keeper"
 	"github.com/0glabs/0g-chain/x/evmutil/testutil"
 	"github.com/0glabs/0g-chain/x/evmutil/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	vesting "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
+	evmtypes "github.com/evmos/ethermint/x/evm/types"
+	"github.com/stretchr/testify/suite"
+	tmtime "github.com/tendermint/tendermint/types/time"
 )
 
 type evmBankKeeperTestSuite struct {
@@ -47,9 +46,8 @@ func (suite *evmBankKeeperTestSuite) TestGetBalance_ReturnsSpendable() {
 
 	ctx := suite.Ctx.WithBlockTime(now.Add(12 * time.Hour))
 	coin = suite.EvmBankKeeper.GetBalance(ctx, suite.Addrs[0], chaincfg.BaseDenom)
-	suite.Require().Equal(sdkmath.NewIntFromUint64(5_000_000_000_100), coin.Amount)
+	suite.Require().Equal(sdkmath.NewIntFromUint64(5_000_000_000_000_000_100), coin.Amount)
 }
-
 func (suite *evmBankKeeperTestSuite) TestGetBalance_NotEvmDenom() {
 	suite.Require().Panics(func() {
 		suite.EvmBankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.DisplayDenom)
@@ -58,7 +56,6 @@ func (suite *evmBankKeeperTestSuite) TestGetBalance_NotEvmDenom() {
 		suite.EvmBankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], "busd")
 	})
 }
-
 func (suite *evmBankKeeperTestSuite) TestGetBalance() {
 	tests := []struct {
 		name           string
@@ -71,7 +68,7 @@ func (suite *evmBankKeeperTestSuite) TestGetBalance() {
 				sdk.NewInt64Coin(chaincfg.BaseDenom, 100),
 				sdk.NewInt64Coin(chaincfg.DisplayDenom, 10),
 			),
-			sdkmath.NewInt(10_000_000_000_100),
+			sdk.NewIntFromBigInt(makeBigIntByString("10000000000000000100")),
 		},
 		{
 			"just neuron",
@@ -87,7 +84,7 @@ func (suite *evmBankKeeperTestSuite) TestGetBalance() {
 				sdk.NewInt64Coin(chaincfg.DisplayDenom, 10),
 				sdk.NewInt64Coin("busd", 100),
 			),
-			sdkmath.NewInt(10_000_000_000_000),
+			sdk.NewIntFromBigInt(makeBigIntByString("10000000000000000000")),
 		},
 		{
 			"no a0gi or neuron",
@@ -97,10 +94,10 @@ func (suite *evmBankKeeperTestSuite) TestGetBalance() {
 		{
 			"with avaka that is more than 1 a0gi",
 			sdk.NewCoins(
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 20_000_000_000_220),
+				sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("20000000000000000220"))),
 				sdk.NewInt64Coin(chaincfg.DisplayDenom, 11),
 			),
-			sdkmath.NewInt(31_000_000_000_220),
+			sdk.NewIntFromBigInt(makeBigIntByString("31000000000000000220")),
 		},
 	}
 
@@ -114,7 +111,6 @@ func (suite *evmBankKeeperTestSuite) TestGetBalance() {
 		})
 	}
 }
-
 func (suite *evmBankKeeperTestSuite) TestSendCoinsFromModuleToAccount() {
 	startingModuleCoins := sdk.NewCoins(
 		sdk.NewInt64Coin(chaincfg.BaseDenom, 200),
@@ -129,7 +125,7 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromModuleToAccount() {
 	}{
 		{
 			"send more than 1 a0gi",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 12_000_000_000_010)),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("12000000000000000010")))),
 			sdk.Coins{},
 			sdk.NewCoins(
 				sdk.NewInt64Coin(chaincfg.BaseDenom, 10),
@@ -149,10 +145,10 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromModuleToAccount() {
 		},
 		{
 			"send an exact amount of a0gi",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 98_000_000_000_000)),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("98000000000000000000")))),
 			sdk.Coins{},
 			sdk.NewCoins(
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 0o0),
+				sdk.NewInt64Coin(chaincfg.BaseDenom, 0),
 				sdk.NewInt64Coin(chaincfg.DisplayDenom, 98),
 			),
 			false,
@@ -176,36 +172,36 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromModuleToAccount() {
 		},
 		{
 			"errors if not enough total neuron to cover",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 100_000_000_001_000)),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("100000000000000001000")))),
 			sdk.Coins{},
 			sdk.Coins{},
 			true,
 		},
 		{
 			"errors if not enough a0gi to cover",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 200_000_000_000_000)),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("200000000000000000000")))),
 			sdk.Coins{},
 			sdk.Coins{},
 			true,
 		},
 		{
 			"converts receiver's neuron to a0gi if there's enough neuron after the transfer",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 99_000_000_000_200)),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("99000000000200000000")))),
 			sdk.NewCoins(
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 999_999_999_900),
+				sdk.NewInt64Coin(chaincfg.BaseDenom, 999_999_999_900_000_000),
 				sdk.NewInt64Coin(chaincfg.DisplayDenom, 1),
 			),
 			sdk.NewCoins(
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 100),
+				sdk.NewInt64Coin(chaincfg.BaseDenom, 100000000),
 				sdk.NewInt64Coin(chaincfg.DisplayDenom, 101),
 			),
 			false,
 		},
 		{
 			"converts all of receiver's neuron to a0gi even if somehow receiver has more than 1a0gi of neuron",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 12_000_000_000_100)),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("12000000000000000100")))),
 			sdk.NewCoins(
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 5_999_999_999_990),
+				sdk.NewInt64Coin(chaincfg.BaseDenom, 5_999_999_999_999_999_990),
 				sdk.NewInt64Coin(chaincfg.DisplayDenom, 1),
 			),
 			sdk.NewCoins(
@@ -216,7 +212,7 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromModuleToAccount() {
 		},
 		{
 			"swap 1 a0gi for neuron if module account doesn't have enough neuron",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 99_000_000_001_000)),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("99000000000000001000")))),
 			sdk.NewCoins(
 				sdk.NewInt64Coin(chaincfg.BaseDenom, 200),
 				sdk.NewInt64Coin(chaincfg.DisplayDenom, 1),
@@ -257,7 +253,6 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromModuleToAccount() {
 		})
 	}
 }
-
 func (suite *evmBankKeeperTestSuite) TestSendCoinsFromAccountToModule() {
 	startingAccCoins := sdk.NewCoins(
 		sdk.NewInt64Coin(chaincfg.BaseDenom, 200),
@@ -275,7 +270,7 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromAccountToModule() {
 	}{
 		{
 			"send more than 1 a0gi",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 12_000_000_000_010)),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("12000000000000000010")))),
 			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 190), sdk.NewInt64Coin(chaincfg.DisplayDenom, 88)),
 			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 100_000_000_010), sdk.NewInt64Coin(chaincfg.DisplayDenom, 12)),
 			false,
@@ -289,7 +284,7 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromAccountToModule() {
 		},
 		{
 			"send an exact amount of a0gi",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 98_000_000_000_000)),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("98000000000000000000")))),
 			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 200), sdk.NewInt64Coin(chaincfg.DisplayDenom, 2)),
 			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 100_000_000_000), sdk.NewInt64Coin(chaincfg.DisplayDenom, 98)),
 			false,
@@ -320,30 +315,30 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromAccountToModule() {
 		},
 		{
 			"errors if not enough total neuron to cover",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 100_000_000_001_000)),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("100000000001000000000")))),
 			sdk.Coins{},
 			sdk.Coins{},
 			true,
 		},
 		{
 			"errors if not enough a0gi to cover",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 200_000_000_000_000)),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("200000000000000000000")))),
 			sdk.Coins{},
 			sdk.Coins{},
 			true,
 		},
 		{
 			"converts 1 a0gi to neuron if not enough neuron to cover",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 99_001_000_000_000)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 999_000_000_200), sdk.NewInt64Coin(chaincfg.DisplayDenom, 0)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 101_000_000_000), sdk.NewInt64Coin(chaincfg.DisplayDenom, 99)),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("99001000000000000000")))),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 999_000_000_000_000_200), sdk.NewInt64Coin(chaincfg.DisplayDenom, 0)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 1_000_100_000_000_000), sdk.NewInt64Coin(chaincfg.DisplayDenom, 99)),
 			false,
 		},
 		{
 			"converts receiver's neuron to a0gi if there's enough neuron after the transfer",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 5_900_000_000_200)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 100_000_000_000), sdk.NewInt64Coin(chaincfg.DisplayDenom, 94)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 200), sdk.NewInt64Coin(chaincfg.DisplayDenom, 6)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 5_900_000_000_000_000_200)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 100_000_000_000_000_000), sdk.NewInt64Coin(chaincfg.DisplayDenom, 94)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 900_000_100_000_000_200), sdk.NewInt64Coin(chaincfg.DisplayDenom, 5)),
 			false,
 		},
 	}
@@ -377,24 +372,23 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromAccountToModule() {
 		})
 	}
 }
-
 func (suite *evmBankKeeperTestSuite) TestBurnCoins() {
 	startingA0gi := sdkmath.NewInt(100)
 	tests := []struct {
-		name       string
-		burnCoins  sdk.Coins
+		name        string
+		burnCoins   sdk.Coins
 		expA0gi     sdkmath.Int
 		expNeuron   sdkmath.Int
-		hasErr     bool
+		hasErr      bool
 		neuronStart sdkmath.Int
 	}{
 		{
 			"burn more than 1 a0gi",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 12_021_000_000_002)),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("12021000000002000000")))),
 			sdkmath.NewInt(88),
-			sdkmath.NewInt(100_000_000_000),
+			sdkmath.NewInt(100_000_000_000_000_000),
 			false,
-			sdkmath.NewInt(121_000_000_002),
+			sdk.NewIntFromBigInt(makeBigIntByString("121000000002000000")),
 		},
 		{
 			"burn less than 1 a0gi",
@@ -406,7 +400,7 @@ func (suite *evmBankKeeperTestSuite) TestBurnCoins() {
 		},
 		{
 			"burn an exact amount of a0gi",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 98_000_000_000_000)),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("98000000000000000000")))),
 			sdkmath.NewInt(2),
 			sdkmath.NewInt(10),
 			false,
@@ -449,15 +443,15 @@ func (suite *evmBankKeeperTestSuite) TestBurnCoins() {
 		},
 		{
 			"errors if not enough neuron to cover burn",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 100_999_000_000_000)),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("100999000000000000000")))),
 			sdkmath.NewInt(0),
-			sdkmath.NewInt(99_000_000_000),
+			sdkmath.NewInt(99_000_000_000_000_000),
 			true,
-			sdkmath.NewInt(99_000_000_000),
+			sdkmath.NewInt(99_000_000_000_000_000),
 		},
 		{
 			"errors if not enough a0gi to cover burn",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 200_000_000_000_000)),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("200000000000000000000")))),
 			sdkmath.NewInt(100),
 			sdk.ZeroInt(),
 			true,
@@ -465,11 +459,11 @@ func (suite *evmBankKeeperTestSuite) TestBurnCoins() {
 		},
 		{
 			"converts 1 a0gi to neuron if not enough neuron to cover",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 12_021_000_000_002)),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("12021000000002000000")))),
 			sdkmath.NewInt(87),
-			sdkmath.NewInt(980_000_000_000),
+			sdkmath.NewInt(980_000_000_000_000_000),
 			false,
-			sdkmath.NewInt(1_000_000_002),
+			sdkmath.NewInt(1_000_000_002_000_000),
 		},
 	}
 
@@ -500,21 +494,20 @@ func (suite *evmBankKeeperTestSuite) TestBurnCoins() {
 		})
 	}
 }
-
 func (suite *evmBankKeeperTestSuite) TestMintCoins() {
 	tests := []struct {
-		name       string
-		mintCoins  sdk.Coins
+		name        string
+		mintCoins   sdk.Coins
 		a0gi        sdkmath.Int
 		neuron      sdkmath.Int
-		hasErr     bool
+		hasErr      bool
 		neuronStart sdkmath.Int
 	}{
 		{
 			"mint more than 1 a0gi",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 12_021_000_000_002)),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("12021000000002000000")))),
 			sdkmath.NewInt(12),
-			sdkmath.NewInt(21_000_000_002),
+			sdkmath.NewInt(21_000_000_002_000_000),
 			false,
 			sdk.ZeroInt(),
 		},
@@ -528,7 +521,7 @@ func (suite *evmBankKeeperTestSuite) TestMintCoins() {
 		},
 		{
 			"mint an exact amount of a0gi",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 123_000_000_000_000_000)),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("123000000000000000000000")))),
 			sdkmath.NewInt(123_000),
 			sdk.ZeroInt(),
 			false,
@@ -571,7 +564,7 @@ func (suite *evmBankKeeperTestSuite) TestMintCoins() {
 		},
 		{
 			"adds to existing neuron balance",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 12_021_000_000_002)),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("12000000021000000002")))),
 			sdkmath.NewInt(12),
 			sdkmath.NewInt(21_000_000_102),
 			false,
@@ -579,11 +572,11 @@ func (suite *evmBankKeeperTestSuite) TestMintCoins() {
 		},
 		{
 			"convert neuron balance to a0gi if it exceeds 1 a0gi",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 10_999_000_000_000)),
-			sdkmath.NewInt(12),
-			sdkmath.NewInt(1_200_000_001),
+			sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("10000000999000000000")))),
+			sdkmath.NewInt(11),
+			sdkmath.NewInt(1_001_200_000_001),
 			false,
-			sdkmath.NewInt(1_002_200_000_001),
+			sdkmath.NewIntFromBigInt(makeBigIntByString("1000000002200000001")),
 		},
 	}
 
@@ -668,7 +661,7 @@ func (suite *evmBankKeeperTestSuite) TestConvertOneA0giToNeuronIfNeeded() {
 		{
 			"converts 1 a0gi to neuron",
 			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 10), sdk.NewInt64Coin(chaincfg.BaseDenom, 100)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 9), sdk.NewInt64Coin(chaincfg.BaseDenom, 1_000_000_000_100)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 9), sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("1000000000000000100")))),
 			true,
 		},
 		{
@@ -702,7 +695,6 @@ func (suite *evmBankKeeperTestSuite) TestConvertOneA0giToNeuronIfNeeded() {
 		})
 	}
 }
-
 func (suite *evmBankKeeperTestSuite) TestConvertNeuronToA0gi() {
 	tests := []struct {
 		name          string
@@ -716,13 +708,13 @@ func (suite *evmBankKeeperTestSuite) TestConvertNeuronToA0gi() {
 		},
 		{
 			"converts neuron for 1 a0gi",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 10), sdk.NewInt64Coin(chaincfg.BaseDenom, 1_000_000_000_003)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 11), sdk.NewInt64Coin(chaincfg.BaseDenom, 3)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 10), sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("1000000000003000000")))),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 11), sdk.NewInt64Coin(chaincfg.BaseDenom, 3_000_000)),
 		},
 		{
 			"converts more than 1 a0gi of neuron",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 10), sdk.NewInt64Coin(chaincfg.BaseDenom, 8_000_000_000_123)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 18), sdk.NewInt64Coin(chaincfg.BaseDenom, 123)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 10), sdk.NewCoin(chaincfg.BaseDenom, sdk.NewIntFromBigInt(makeBigIntByString("8000000000123000000")))),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 18), sdk.NewInt64Coin(chaincfg.BaseDenom, 123_000_000)),
 		},
 	}
 	for _, tt := range tests {
@@ -741,7 +733,6 @@ func (suite *evmBankKeeperTestSuite) TestConvertNeuronToA0gi() {
 		})
 	}
 }
-
 func (suite *evmBankKeeperTestSuite) TestSplitNeuronCoins() {
 	tests := []struct {
 		name          string
@@ -763,7 +754,7 @@ func (suite *evmBankKeeperTestSuite) TestSplitNeuronCoins() {
 		},
 		{
 			"a0gi & neuron coins",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 8_000_000_000_123)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 8_000_000_000_000_000_123)),
 			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 8), sdk.NewInt64Coin(chaincfg.BaseDenom, 123)),
 			false,
 		},
@@ -775,7 +766,7 @@ func (suite *evmBankKeeperTestSuite) TestSplitNeuronCoins() {
 		},
 		{
 			"only a0gi",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 5_000_000_000_000)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 5_000_000_000_000_000_000)),
 			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 5)),
 			false,
 		},
@@ -796,4 +787,9 @@ func (suite *evmBankKeeperTestSuite) TestSplitNeuronCoins() {
 
 func TestEvmBankKeeperTestSuite(t *testing.T) {
 	suite.Run(t, new(evmBankKeeperTestSuite))
+}
+
+func makeBigIntByString(s string) *big.Int {
+	i, _ := new(big.Int).SetString(s, 10)
+	return i
 }

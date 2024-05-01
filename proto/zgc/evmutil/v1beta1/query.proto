@@ -12,12 +12,12 @@ option go_package = "github.com/0glabs/0g-chain/x/evmutil/types";
 service Query {
   // Params queries all parameters of the evmutil module.
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/0g-chain/evmutil/v1beta1/params";
+    option (google.api.http).get = "/0g/evmutil/v1beta1/params";
   }
 
   // DeployedCosmosCoinContracts queries a list cosmos coin denom and their deployed erc20 address
   rpc DeployedCosmosCoinContracts(QueryDeployedCosmosCoinContractsRequest) returns (QueryDeployedCosmosCoinContractsResponse) {
-    option (google.api.http).get = "/0g-chain/evmutil/v1beta1/deployed_cosmos_coin_contracts";
+    option (google.api.http).get = "/0g/evmutil/v1beta1/deployed_cosmos_coin_contracts";
   }
 }
 

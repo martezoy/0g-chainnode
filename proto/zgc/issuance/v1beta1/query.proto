@@ -11,7 +11,7 @@ option go_package = "github.com/0glabs/0g-chain/x/issuance/types";
 service Query {
   // Params queries all parameters of the issuance module.
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/0g-chain/issuance/v1beta1/params";
+    option (google.api.http).get = "/0g/issuance/v1beta1/params";
   }
 }
 

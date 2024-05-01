@@ -26,15 +26,15 @@ var _ evmtypes.BankKeeper = EvmBankKeeper{}
 // extra percision needed by the evm.
 type EvmBankKeeper struct {
 	baseKeeper Keeper
-	bk          types.BankKeeper
-	ak          types.AccountKeeper
+	bk         types.BankKeeper
+	ak         types.AccountKeeper
 }
 
 func NewEvmBankKeeper(baseKeeper Keeper, bk types.BankKeeper, ak types.AccountKeeper) EvmBankKeeper {
 	return EvmBankKeeper{
 		baseKeeper: baseKeeper,
-		bk:          bk,
-		ak:          ak,
+		bk:         bk,
+		ak:         ak,
 	}
 }
 
