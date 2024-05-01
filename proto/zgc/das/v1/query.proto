@@ -1,0 +1,24 @@
+syntax = "proto3";
+package zgc.das.v1;
+
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/0glabs/0g-chain/x/das/v1/types";
+option (gogoproto.goproto_getters_all) = false;
+
+// Query defines the gRPC querier service for the das module
+service Query {
+  rpc NextRequestID(QueryNextRequestIDRequest) returns (QueryNextRequestIDResponse) {
+    option (google.api.http).get = "/0gchain/das/v1/next-request-id";
+  }
+}
+
+message QueryNextRequestIDRequest {}
+
+message QueryNextRequestIDResponse {
+  uint64 next_request_id = 1 [(gogoproto.customname) = "NextRequestID"];
+}

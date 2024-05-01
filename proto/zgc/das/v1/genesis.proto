@@ -1,0 +1,37 @@
+syntax = "proto3";
+package zgc.das.v1;
+
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/0glabs/0g-chain/x/das/v1/types";
+
+message Params {}
+
+// GenesisState defines the das module's genesis state.
+message GenesisState {
+  option (gogoproto.goproto_getters) = false;
+
+  Params params = 1 [(gogoproto.nullable) = false];
+  uint64 next_request_id = 2 [(gogoproto.customname) = "NextRequestID"];
+  repeated DASRequest requests = 3 [(gogoproto.nullable) = false];
+  repeated DASResponse responses = 4 [(gogoproto.nullable) = false];
+}
+
+message DASRequest {
+  uint64 id = 1 [(gogoproto.customname) = "ID"];
+  bytes stream_id = 2 [(gogoproto.customname) = "StreamID"];
+  bytes batch_header_hash = 3;
+  uint32 num_blobs = 4;
+}
+
+message DASResponse {
+  uint64 id = 1 [(gogoproto.customname) = "ID"];
+  bytes sampler = 2 [
+    (cosmos_proto.scalar) = "cosmos.AddressBytes",
+    (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"
+  ];
+  repeated bool results = 3;
+}
