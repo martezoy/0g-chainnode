@@ -7,14 +7,14 @@ package e2e_test
 // 	afterUpgradeCtx := util.CtxAtHeight(suite.UpgradeHeight)
 
 // 	// Before params
-// 	kavaDistParamsBefore, err := suite.Kava.Kavadist.Params(beforeUpgradeCtx, &kavadisttypes.QueryParamsRequest{})
+// 	kavaDistParamsBefore, err := suite.ZgChain.Kavadist.Params(beforeUpgradeCtx, &kavadisttypes.QueryParamsRequest{})
 // 	suite.NoError(err)
-// 	mintParamsBefore, err := suite.Kava.Mint.Params(beforeUpgradeCtx, &minttypes.QueryParamsRequest{})
+// 	mintParamsBefore, err := suite.ZgChain.Mint.Params(beforeUpgradeCtx, &minttypes.QueryParamsRequest{})
 // 	suite.NoError(err)
 
 // 	// Before parameters
 // 	suite.Run("x/community and x/kavadist parameters before upgrade", func() {
-// 		_, err = suite.Kava.Community.Params(beforeUpgradeCtx, &communitytypes.QueryParamsRequest{})
+// 		_, err = suite.ZgChain.Community.Params(beforeUpgradeCtx, &communitytypes.QueryParamsRequest{})
 // 		suite.Error(err, "x/community should not have params before upgrade")
 
 // 		suite.Require().True(
@@ -34,11 +34,11 @@ package e2e_test
 
 // 	// After upgrade, Before switchover - parameters
 // 	suite.Run("x/kavadist, x/mint, x/community parameters after upgrade, before switchover", func() {
-// 		kavaDistParamsAfter, err := suite.Kava.Kavadist.Params(afterUpgradeCtx, &kavadisttypes.QueryParamsRequest{})
+// 		kavaDistParamsAfter, err := suite.ZgChain.Kavadist.Params(afterUpgradeCtx, &kavadisttypes.QueryParamsRequest{})
 // 		suite.NoError(err)
-// 		mintParamsAfter, err := suite.Kava.Mint.Params(afterUpgradeCtx, &minttypes.QueryParamsRequest{})
+// 		mintParamsAfter, err := suite.ZgChain.Mint.Params(afterUpgradeCtx, &minttypes.QueryParamsRequest{})
 // 		suite.NoError(err)
-// 		communityParamsAfter, err := suite.Kava.Community.Params(afterUpgradeCtx, &communitytypes.QueryParamsRequest{})
+// 		communityParamsAfter, err := suite.ZgChain.Community.Params(afterUpgradeCtx, &communitytypes.QueryParamsRequest{})
 // 		suite.NoError(err)
 
 // 		suite.Equal(
@@ -74,7 +74,7 @@ package e2e_test
 // 	suite.Require().Eventually(
 // 		func() bool {
 // 			// Get x/community for switchover time
-// 			params, err := suite.Kava.Community.Params(
+// 			params, err := suite.ZgChain.Community.Params(
 // 				context.Background(),
 // 				&communitytypes.QueryParamsRequest{},
 // 			)
@@ -88,7 +88,7 @@ package e2e_test
 // 	)
 
 // 	// Fetch exact block when inflation stop event emitted
-// 	_, switchoverHeight, err := suite.Kava.GetBeginBlockEventsFromQuery(
+// 	_, switchoverHeight, err := suite.ZgChain.GetBeginBlockEventsFromQuery(
 // 		context.Background(),
 // 		fmt.Sprintf(
 // 			"%s.%s EXISTS",
@@ -103,17 +103,17 @@ package e2e_test
 // 	afterSwitchoverCtx := util.CtxAtHeight(switchoverHeight)
 
 // 	suite.Run("x/kavadist, x/mint, x/community parameters after upgrade, after switchover", func() {
-// 		kavaDistParamsAfter, err := suite.Kava.Kavadist.Params(
+// 		kavaDistParamsAfter, err := suite.ZgChain.Kavadist.Params(
 // 			afterSwitchoverCtx,
 // 			&kavadisttypes.QueryParamsRequest{},
 // 		)
 // 		suite.NoError(err)
-// 		mintParamsAfter, err := suite.Kava.Mint.Params(
+// 		mintParamsAfter, err := suite.ZgChain.Mint.Params(
 // 			afterSwitchoverCtx,
 // 			&minttypes.QueryParamsRequest{},
 // 		)
 // 		suite.NoError(err)
-// 		communityParamsAfter, err := suite.Kava.Community.Params(
+// 		communityParamsAfter, err := suite.ZgChain.Community.Params(
 // 			afterSwitchoverCtx,
 // 			&communitytypes.QueryParamsRequest{},
 // 		)
@@ -148,35 +148,35 @@ package e2e_test
 
 // 	suite.Run("x/kavadist, x/distribution, x/community balances after switchover", func() {
 // 		// Before balances - community pool fund consolidation
-// 		kavaDistBalBefore, err := suite.Kava.Kavadist.Balance(
+// 		kavaDistBalBefore, err := suite.ZgChain.Kavadist.Balance(
 // 			beforeSwitchoverCtx,
 // 			&kavadisttypes.QueryBalanceRequest{},
 // 		)
 // 		suite.NoError(err)
-// 		distrBalBefore, err := suite.Kava.Distribution.CommunityPool(
+// 		distrBalBefore, err := suite.ZgChain.Distribution.CommunityPool(
 // 			beforeSwitchoverCtx,
 // 			&distrtypes.QueryCommunityPoolRequest{},
 // 		)
 // 		suite.NoError(err)
 // 		distrBalCoinsBefore, distrDustBefore := distrBalBefore.Pool.TruncateDecimal()
-// 		beforeCommPoolBalance, err := suite.Kava.Community.Balance(
+// 		beforeCommPoolBalance, err := suite.ZgChain.Community.Balance(
 // 			beforeSwitchoverCtx,
 // 			&communitytypes.QueryBalanceRequest{},
 // 		)
 // 		suite.NoError(err)
 
 // 		// After balances
-// 		kavaDistBalAfter, err := suite.Kava.Kavadist.Balance(
+// 		kavaDistBalAfter, err := suite.ZgChain.Kavadist.Balance(
 // 			afterSwitchoverCtx,
 // 			&kavadisttypes.QueryBalanceRequest{},
 // 		)
 // 		suite.NoError(err)
-// 		distrBalAfter, err := suite.Kava.Distribution.CommunityPool(
+// 		distrBalAfter, err := suite.ZgChain.Distribution.CommunityPool(
 // 			afterSwitchoverCtx,
 // 			&distrtypes.QueryCommunityPoolRequest{},
 // 		)
 // 		suite.NoError(err)
-// 		afterCommPoolBalance, err := suite.Kava.Community.Balance(
+// 		afterCommPoolBalance, err := suite.ZgChain.Community.Balance(
 // 			afterSwitchoverCtx,
 // 			&communitytypes.QueryBalanceRequest{},
 // 		)
@@ -200,7 +200,7 @@ package e2e_test
 // 		suite.Empty(distrCoinsAfter, "expected no coins in x/distribution community pool")
 
 // 		// Fetch block results for paid staking rewards in the block
-// 		blockRes, err := suite.Kava.TmSignClient.BlockResults(
+// 		blockRes, err := suite.ZgChain.TmSignClient.BlockResults(
 // 			context.Background(),
 // 			&switchoverHeight,
 // 		)

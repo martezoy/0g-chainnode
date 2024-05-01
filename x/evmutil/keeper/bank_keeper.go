@@ -9,56 +9,49 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
 
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/evmutil/types"
 )
 
-const (
-	// EvmDenom is the gas denom used by the evm
-	EvmDenom = "akava"
-
-	// CosmosDenom is the gas denom used by the kava app
-	CosmosDenom = "ukava"
-)
-
-// ConversionMultiplier is the conversion multiplier between akava and ukava
-var ConversionMultiplier = sdkmath.NewInt(1_000_000_000_000)
+// ConversionMultiplier is the conversion multiplier between neuron and a0gi
+var ConversionMultiplier = sdkmath.NewInt(chaincfg.ConversionMultiplier)
 
 var _ evmtypes.BankKeeper = EvmBankKeeper{}
 
 // EvmBankKeeper is a BankKeeper wrapper for the x/evm module to allow the use
-// of the 18 decimal akava coin on the evm.
-// x/evm consumes gas and send coins by minting and burning akava coins in its module
+// of the 18 decimal neuron coin on the evm.
+// x/evm consumes gas and send coins by minting and burning neuron coins in its module
 // account and then sending the funds to the target account.
-// This keeper uses both the ukava coin and a separate akava balance to manage the
+// This keeper uses both the a0gi coin and a separate neuron balance to manage the
 // extra percision needed by the evm.
 type EvmBankKeeper struct {
-	akavaKeeper Keeper
+	baseKeeper Keeper
 	bk          types.BankKeeper
 	ak          types.AccountKeeper
 }
 
-func NewEvmBankKeeper(akavaKeeper Keeper, bk types.BankKeeper, ak types.AccountKeeper) EvmBankKeeper {
+func NewEvmBankKeeper(baseKeeper Keeper, bk types.BankKeeper, ak types.AccountKeeper) EvmBankKeeper {
 	return EvmBankKeeper{
-		akavaKeeper: akavaKeeper,
+		baseKeeper: baseKeeper,
 		bk:          bk,
 		ak:          ak,
 	}
 }
 
-// GetBalance returns the total **spendable** balance of akava for a given account by address.
+// GetBalance returns the total **spendable** balance of neuron for a given account by address.
 func (k EvmBankKeeper) GetBalance(ctx sdk.Context, addr sdk.AccAddress, denom string) sdk.Coin {
-	if denom != EvmDenom {
-		panic(fmt.Errorf("only evm denom %s is supported by EvmBankKeeper", EvmDenom))
+	if denom != chaincfg.BaseDenom {
+		panic(fmt.Errorf("only evm denom %s is supported by EvmBankKeeper", chaincfg.BaseDenom))
 	}
 
 	spendableCoins := k.bk.SpendableCoins(ctx, addr)
-	ukava := spendableCoins.AmountOf(CosmosDenom)
-	akava := k.akavaKeeper.GetBalance(ctx, addr)
-	total := ukava.Mul(ConversionMultiplier).Add(akava)
-	return sdk.NewCoin(EvmDenom, total)
+	a0gi := spendableCoins.AmountOf(chaincfg.DisplayDenom)
+	neuron := k.baseKeeper.GetBalance(ctx, addr)
+	total := a0gi.Mul(ConversionMultiplier).Add(neuron)
+	return sdk.NewCoin(chaincfg.BaseDenom, total)
 }
 
-// SendCoins transfers akava coins from a AccAddress to an AccAddress.
+// SendCoins transfers neuron coins from a AccAddress to an AccAddress.
 func (k EvmBankKeeper) SendCoins(ctx sdk.Context, senderAddr sdk.AccAddress, recipientAddr sdk.AccAddress, amt sdk.Coins) error {
 	// SendCoins method is not used by the evm module, but is required by the
 	// evmtypes.BankKeeper interface. This must be updated if the evm module
@@ -66,148 +59,148 @@ func (k EvmBankKeeper) SendCoins(ctx sdk.Context, senderAddr sdk.AccAddress, rec
 	panic("not implemented")
 }
 
-// SendCoinsFromModuleToAccount transfers akava coins from a ModuleAccount to an AccAddress.
+// SendCoinsFromModuleToAccount transfers neuron coins from a ModuleAccount to an AccAddress.
 // It will panic if the module account does not exist. An error is returned if the recipient
 // address is black-listed or if sending the tokens fails.
 func (k EvmBankKeeper) SendCoinsFromModuleToAccount(ctx sdk.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error {
-	ukava, akava, err := SplitAkavaCoins(amt)
+	a0gi, neuron, err := SplitNeuronCoins(amt)
 	if err != nil {
 		return err
 	}
 
-	if ukava.Amount.IsPositive() {
-		if err := k.bk.SendCoinsFromModuleToAccount(ctx, senderModule, recipientAddr, sdk.NewCoins(ukava)); err != nil {
+	if a0gi.Amount.IsPositive() {
+		if err := k.bk.SendCoinsFromModuleToAccount(ctx, senderModule, recipientAddr, sdk.NewCoins(a0gi)); err != nil {
 			return err
 		}
 	}
 
 	senderAddr := k.GetModuleAddress(senderModule)
-	if err := k.ConvertOneUkavaToAkavaIfNeeded(ctx, senderAddr, akava); err != nil {
+	if err := k.ConvertOneA0giToNeuronIfNeeded(ctx, senderAddr, neuron); err != nil {
 		return err
 	}
 
-	if err := k.akavaKeeper.SendBalance(ctx, senderAddr, recipientAddr, akava); err != nil {
+	if err := k.baseKeeper.SendBalance(ctx, senderAddr, recipientAddr, neuron); err != nil {
 		return err
 	}
 
-	return k.ConvertAkavaToUkava(ctx, recipientAddr)
+	return k.ConvertNeuronToA0gi(ctx, recipientAddr)
 }
 
-// SendCoinsFromAccountToModule transfers akava coins from an AccAddress to a ModuleAccount.
+// SendCoinsFromAccountToModule transfers neuron coins from an AccAddress to a ModuleAccount.
 // It will panic if the module account does not exist.
 func (k EvmBankKeeper) SendCoinsFromAccountToModule(ctx sdk.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error {
-	ukava, akavaNeeded, err := SplitAkavaCoins(amt)
+	a0gi, neuronNeeded, err := SplitNeuronCoins(amt)
 	if err != nil {
 		return err
 	}
 
-	if ukava.IsPositive() {
-		if err := k.bk.SendCoinsFromAccountToModule(ctx, senderAddr, recipientModule, sdk.NewCoins(ukava)); err != nil {
+	if a0gi.IsPositive() {
+		if err := k.bk.SendCoinsFromAccountToModule(ctx, senderAddr, recipientModule, sdk.NewCoins(a0gi)); err != nil {
 			return err
 		}
 	}
 
-	if err := k.ConvertOneUkavaToAkavaIfNeeded(ctx, senderAddr, akavaNeeded); err != nil {
+	if err := k.ConvertOneA0giToNeuronIfNeeded(ctx, senderAddr, neuronNeeded); err != nil {
 		return err
 	}
 
 	recipientAddr := k.GetModuleAddress(recipientModule)
-	if err := k.akavaKeeper.SendBalance(ctx, senderAddr, recipientAddr, akavaNeeded); err != nil {
+	if err := k.baseKeeper.SendBalance(ctx, senderAddr, recipientAddr, neuronNeeded); err != nil {
 		return err
 	}
 
-	return k.ConvertAkavaToUkava(ctx, recipientAddr)
+	return k.ConvertNeuronToA0gi(ctx, recipientAddr)
 }
 
-// MintCoins mints akava coins by minting the equivalent ukava coins and any remaining akava coins.
+// MintCoins mints neuron coins by minting the equivalent a0gi coins and any remaining neuron coins.
 // It will panic if the module account does not exist or is unauthorized.
 func (k EvmBankKeeper) MintCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error {
-	ukava, akava, err := SplitAkavaCoins(amt)
+	a0gi, neuron, err := SplitNeuronCoins(amt)
 	if err != nil {
 		return err
 	}
 
-	if ukava.IsPositive() {
-		if err := k.bk.MintCoins(ctx, moduleName, sdk.NewCoins(ukava)); err != nil {
+	if a0gi.IsPositive() {
+		if err := k.bk.MintCoins(ctx, moduleName, sdk.NewCoins(a0gi)); err != nil {
 			return err
 		}
 	}
 
 	recipientAddr := k.GetModuleAddress(moduleName)
-	if err := k.akavaKeeper.AddBalance(ctx, recipientAddr, akava); err != nil {
+	if err := k.baseKeeper.AddBalance(ctx, recipientAddr, neuron); err != nil {
 		return err
 	}
 
-	return k.ConvertAkavaToUkava(ctx, recipientAddr)
+	return k.ConvertNeuronToA0gi(ctx, recipientAddr)
 }
 
-// BurnCoins burns akava coins by burning the equivalent ukava coins and any remaining akava coins.
+// BurnCoins burns neuron coins by burning the equivalent a0gi coins and any remaining neuron coins.
 // It will panic if the module account does not exist or is unauthorized.
 func (k EvmBankKeeper) BurnCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error {
-	ukava, akava, err := SplitAkavaCoins(amt)
+	a0gi, neuron, err := SplitNeuronCoins(amt)
 	if err != nil {
 		return err
 	}
 
-	if ukava.IsPositive() {
-		if err := k.bk.BurnCoins(ctx, moduleName, sdk.NewCoins(ukava)); err != nil {
+	if a0gi.IsPositive() {
+		if err := k.bk.BurnCoins(ctx, moduleName, sdk.NewCoins(a0gi)); err != nil {
 			return err
 		}
 	}
 
 	moduleAddr := k.GetModuleAddress(moduleName)
-	if err := k.ConvertOneUkavaToAkavaIfNeeded(ctx, moduleAddr, akava); err != nil {
+	if err := k.ConvertOneA0giToNeuronIfNeeded(ctx, moduleAddr, neuron); err != nil {
 		return err
 	}
 
-	return k.akavaKeeper.RemoveBalance(ctx, moduleAddr, akava)
+	return k.baseKeeper.RemoveBalance(ctx, moduleAddr, neuron)
 }
 
-// ConvertOneUkavaToAkavaIfNeeded converts 1 ukava to akava for an address if
-// its akava balance is smaller than the akavaNeeded amount.
-func (k EvmBankKeeper) ConvertOneUkavaToAkavaIfNeeded(ctx sdk.Context, addr sdk.AccAddress, akavaNeeded sdkmath.Int) error {
-	akavaBal := k.akavaKeeper.GetBalance(ctx, addr)
-	if akavaBal.GTE(akavaNeeded) {
+// ConvertOneA0giToNeuronIfNeeded converts 1 a0gi to neuron for an address if
+// its neuron balance is smaller than the neuronNeeded amount.
+func (k EvmBankKeeper) ConvertOneA0giToNeuronIfNeeded(ctx sdk.Context, addr sdk.AccAddress, neuronNeeded sdkmath.Int) error {
+	neuronBal := k.baseKeeper.GetBalance(ctx, addr)
+	if neuronBal.GTE(neuronNeeded) {
 		return nil
 	}
 
-	ukavaToStore := sdk.NewCoins(sdk.NewCoin(CosmosDenom, sdk.OneInt()))
-	if err := k.bk.SendCoinsFromAccountToModule(ctx, addr, types.ModuleName, ukavaToStore); err != nil {
+	a0giToStore := sdk.NewCoins(sdk.NewCoin(chaincfg.DisplayDenom, sdk.OneInt()))
+	if err := k.bk.SendCoinsFromAccountToModule(ctx, addr, types.ModuleName, a0giToStore); err != nil {
 		return err
 	}
 
-	// add 1ukava equivalent of akava to addr
-	akavaToReceive := ConversionMultiplier
-	if err := k.akavaKeeper.AddBalance(ctx, addr, akavaToReceive); err != nil {
+	// add 1a0gi equivalent of neuron to addr
+	neuronToReceive := ConversionMultiplier
+	if err := k.baseKeeper.AddBalance(ctx, addr, neuronToReceive); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// ConvertAkavaToUkava converts all available akava to ukava for a given AccAddress.
-func (k EvmBankKeeper) ConvertAkavaToUkava(ctx sdk.Context, addr sdk.AccAddress) error {
-	totalAkava := k.akavaKeeper.GetBalance(ctx, addr)
-	ukava, _, err := SplitAkavaCoins(sdk.NewCoins(sdk.NewCoin(EvmDenom, totalAkava)))
+// ConvertNeuronToA0gi converts all available neuron to a0gi for a given AccAddress.
+func (k EvmBankKeeper) ConvertNeuronToA0gi(ctx sdk.Context, addr sdk.AccAddress) error {
+	totalNeuron := k.baseKeeper.GetBalance(ctx, addr)
+	a0gi, _, err := SplitNeuronCoins(sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, totalNeuron)))
 	if err != nil {
 		return err
 	}
 
-	// do nothing if account does not have enough akava for a single ukava
-	ukavaToReceive := ukava.Amount
-	if !ukavaToReceive.IsPositive() {
+	// do nothing if account does not have enough neuron for a single a0gi
+	a0giToReceive := a0gi.Amount
+	if !a0giToReceive.IsPositive() {
 		return nil
 	}
 
-	// remove akava used for converting to ukava
-	akavaToBurn := ukavaToReceive.Mul(ConversionMultiplier)
-	finalBal := totalAkava.Sub(akavaToBurn)
-	if err := k.akavaKeeper.SetBalance(ctx, addr, finalBal); err != nil {
+	// remove neuron used for converting to a0gi
+	neuronToBurn := a0giToReceive.Mul(ConversionMultiplier)
+	finalBal := totalNeuron.Sub(neuronToBurn)
+	if err := k.baseKeeper.SetBalance(ctx, addr, finalBal); err != nil {
 		return err
 	}
 
 	fromAddr := k.GetModuleAddress(types.ModuleName)
-	if err := k.bk.SendCoins(ctx, fromAddr, addr, sdk.NewCoins(ukava)); err != nil {
+	if err := k.bk.SendCoins(ctx, fromAddr, addr, sdk.NewCoins(a0gi)); err != nil {
 		return err
 	}
 
@@ -222,35 +215,35 @@ func (k EvmBankKeeper) GetModuleAddress(moduleName string) sdk.AccAddress {
 	return addr
 }
 
-// SplitAkavaCoins splits akava coins to the equivalent ukava coins and any remaining akava balance.
-// An error will be returned if the coins are not valid or if the coins are not the akava denom.
-func SplitAkavaCoins(coins sdk.Coins) (sdk.Coin, sdkmath.Int, error) {
-	akava := sdk.ZeroInt()
-	ukava := sdk.NewCoin(CosmosDenom, sdk.ZeroInt())
+// SplitNeuronCoins splits neuron coins to the equivalent a0gi coins and any remaining neuron balance.
+// An error will be returned if the coins are not valid or if the coins are not the neuron denom.
+func SplitNeuronCoins(coins sdk.Coins) (sdk.Coin, sdkmath.Int, error) {
+	neuron := sdk.ZeroInt()
+	a0gi := sdk.NewCoin(chaincfg.DisplayDenom, sdk.ZeroInt())
 
 	if len(coins) == 0 {
-		return ukava, akava, nil
+		return a0gi, neuron, nil
 	}
 
 	if err := ValidateEvmCoins(coins); err != nil {
-		return ukava, akava, err
+		return a0gi, neuron, err
 	}
 
 	// note: we should always have len(coins) == 1 here since coins cannot have dup denoms after we validate.
 	coin := coins[0]
 	remainingBalance := coin.Amount.Mod(ConversionMultiplier)
 	if remainingBalance.IsPositive() {
-		akava = remainingBalance
+		neuron = remainingBalance
 	}
-	ukavaAmount := coin.Amount.Quo(ConversionMultiplier)
-	if ukavaAmount.IsPositive() {
-		ukava = sdk.NewCoin(CosmosDenom, ukavaAmount)
+	a0giAmount := coin.Amount.Quo(ConversionMultiplier)
+	if a0giAmount.IsPositive() {
+		a0gi = sdk.NewCoin(chaincfg.DisplayDenom, a0giAmount)
 	}
 
-	return ukava, akava, nil
+	return a0gi, neuron, nil
 }
 
-// ValidateEvmCoins validates the coins from evm is valid and is the EvmDenom (akava).
+// ValidateEvmCoins validates the coins from evm is valid and is the chaincfg.BaseDenom (neuron).
 func ValidateEvmCoins(coins sdk.Coins) error {
 	if len(coins) == 0 {
 		return nil
@@ -261,9 +254,9 @@ func ValidateEvmCoins(coins sdk.Coins) error {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidCoins, coins.String())
 	}
 
-	// validate that coin denom is akava
-	if len(coins) != 1 || coins[0].Denom != EvmDenom {
-		errMsg := fmt.Sprintf("invalid evm coin denom, only %s is supported", EvmDenom)
+	// validate that coin denom is neuron
+	if len(coins) != 1 || coins[0].Denom != chaincfg.BaseDenom {
+		errMsg := fmt.Sprintf("invalid evm coin denom, only %s is supported", chaincfg.BaseDenom)
 		return errorsmod.Wrap(sdkerrors.ErrInvalidCoins, errMsg)
 	}
 

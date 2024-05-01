@@ -49,14 +49,14 @@ func (s *migrateTestSuite) TestMigrate_JSON() {
 					"active": true,
 					"base_asset": "bnb",
 					"market_id": "bnb:usd",
-					"oracles": ["kava1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"],
+					"oracles": ["0g1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"],
 					"quote_asset": "usd"
 				},
 				{
 					"active": true,
 					"base_asset": "bnb",
 					"market_id": "bnb:usd:30",
-					"oracles": ["kava1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"],
+					"oracles": ["0g1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"],
 					"quote_asset": "usd"
 				}
 			]
@@ -65,13 +65,13 @@ func (s *migrateTestSuite) TestMigrate_JSON() {
 			{
 				"expiry": "2022-07-20T00:00:00Z",
 				"market_id": "bnb:usd",
-				"oracle_address": "kava1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em",
+				"oracle_address": "0g1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em",
 				"price": "215.962650000000001782"
 			},
 			{
 				"expiry": "2022-07-20T00:00:00Z",
 				"market_id": "bnb:usd:30",
-				"oracle_address": "kava1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em",
+				"oracle_address": "0g1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em",
 				"price": "217.962650000000001782"
 			}
 		]
@@ -85,7 +85,7 @@ func (s *migrateTestSuite) TestMigrate_JSON() {
 					"base_asset": "bnb",
 					"quote_asset": "usd",
 					"oracles": [
-						"kava1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
+						"0g1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
 					],
 					"active": true
 				},
@@ -94,7 +94,7 @@ func (s *migrateTestSuite) TestMigrate_JSON() {
 					"base_asset": "bnb",
 					"quote_asset": "usd",
 					"oracles": [
-						"kava1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
+						"0g1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
 					],
 					"active": true
 				},
@@ -103,7 +103,7 @@ func (s *migrateTestSuite) TestMigrate_JSON() {
 					"base_asset": "atom",
 					"quote_asset": "usd",
 					"oracles": [
-						"kava1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
+						"0g1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
 					],
 					"active": true
 				},
@@ -112,7 +112,7 @@ func (s *migrateTestSuite) TestMigrate_JSON() {
 					"base_asset": "atom",
 					"quote_asset": "usd",
 					"oracles": [
-						"kava1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
+						"0g1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
 					],
 					"active": true
 				},
@@ -121,7 +121,7 @@ func (s *migrateTestSuite) TestMigrate_JSON() {
 					"base_asset": "akt",
 					"quote_asset": "usd",
 					"oracles": [
-						"kava1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
+						"0g1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
 					],
 					"active": true
 				},
@@ -130,7 +130,7 @@ func (s *migrateTestSuite) TestMigrate_JSON() {
 					"base_asset": "akt",
 					"quote_asset": "usd",
 					"oracles": [
-						"kava1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
+						"0g1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
 					],
 					"active": true
 				},
@@ -139,7 +139,7 @@ func (s *migrateTestSuite) TestMigrate_JSON() {
 					"base_asset": "luna",
 					"quote_asset": "usd",
 					"oracles": [
-						"kava1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
+						"0g1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
 					],
 					"active": true
 				},
@@ -148,7 +148,7 @@ func (s *migrateTestSuite) TestMigrate_JSON() {
 					"base_asset": "luna",
 					"quote_asset": "usd",
 					"oracles": [
-						"kava1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
+						"0g1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
 					],
 					"active": true
 				},
@@ -157,7 +157,7 @@ func (s *migrateTestSuite) TestMigrate_JSON() {
 					"base_asset": "osmo",
 					"quote_asset": "usd",
 					"oracles": [
-						"kava1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
+						"0g1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
 					],
 					"active": true
 				},
@@ -166,7 +166,7 @@ func (s *migrateTestSuite) TestMigrate_JSON() {
 					"base_asset": "osmo",
 					"quote_asset": "usd",
 					"oracles": [
-						"kava1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
+						"0g1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
 					],
 					"active": true
 				},
@@ -175,7 +175,7 @@ func (s *migrateTestSuite) TestMigrate_JSON() {
 					"base_asset": "ust",
 					"quote_asset": "usd",
 					"oracles": [
-						"kava1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
+						"0g1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
 					],
 					"active": true
 				},
@@ -184,7 +184,7 @@ func (s *migrateTestSuite) TestMigrate_JSON() {
 					"base_asset": "ust",
 					"quote_asset": "usd",
 					"oracles": [
-						"kava1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
+						"0g1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em"
 					],
 					"active": true
 				}
@@ -193,13 +193,13 @@ func (s *migrateTestSuite) TestMigrate_JSON() {
 		"posted_prices": [
 			{
 				"market_id": "bnb:usd",
-				"oracle_address": "kava1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em",
+				"oracle_address": "0g1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em",
 				"price": "215.962650000000001782",
 				"expiry": "2022-07-20T00:00:00Z"
 			},
 			{
 				"market_id": "bnb:usd:30",
-				"oracle_address": "kava1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em",
+				"oracle_address": "0g1acge4tcvhf3q6fh53fgwaa7vsq40wvx6wn50em",
 				"price": "217.962650000000001782",
 				"expiry": "2022-07-20T00:00:00Z"
 			}
@@ -222,7 +222,7 @@ func (s *migrateTestSuite) TestMigrate_Params() {
 		Markets: v015pricefeed.Markets{
 			{
 				MarketID:   "market-1",
-				BaseAsset:  "kava",
+				BaseAsset:  "a0gi",
 				QuoteAsset: "usd",
 				Oracles:    s.addresses,
 				Active:     true,
@@ -233,7 +233,7 @@ func (s *migrateTestSuite) TestMigrate_Params() {
 		Markets: v016pricefeed.Markets{
 			{
 				MarketID:   "market-1",
-				BaseAsset:  "kava",
+				BaseAsset:  "a0gi",
 				QuoteAsset: "usd",
 				Oracles:    s.addresses,
 				Active:     true,

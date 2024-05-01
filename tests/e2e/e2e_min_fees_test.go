@@ -13,6 +13,7 @@ import (
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 
 	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/tests/util"
 )
 
@@ -20,14 +21,14 @@ func (suite *IntegrationTestSuite) TestEthGasPriceReturnsMinFee() {
 	suite.SkipIfKvtoolDisabled()
 
 	// read expected min fee from app.toml
-	minGasPrices, err := getMinFeeFromAppToml(util.KavaHomePath())
+	minGasPrices, err := getMinFeeFromAppToml(util.ZgChainHomePath())
 	suite.NoError(err)
 
-	// evm uses akava, get akava min fee
-	evmMinGas := minGasPrices.AmountOf("akava").TruncateInt().BigInt()
+	// evm uses neuron, get neuron min fee
+	evmMinGas := minGasPrices.AmountOf(chaincfg.BaseDenom).TruncateInt().BigInt()
 
-	// returns eth_gasPrice, units in kava
-	gasPrice, err := suite.Kava.EvmClient.SuggestGasPrice(context.Background())
+	// returns eth_gasPrice, units in a0gi
+	gasPrice, err := suite.ZgChain.EvmClient.SuggestGasPrice(context.Background())
 	suite.NoError(err)
 
 	suite.Equal(evmMinGas, gasPrice)
@@ -37,13 +38,13 @@ func (suite *IntegrationTestSuite) TestEvmRespectsMinFee() {
 	suite.SkipIfKvtoolDisabled()
 
 	// setup sender & receiver
-	sender := suite.Kava.NewFundedAccount("evm-min-fee-test-sender", sdk.NewCoins(ukava(1e3)))
+	sender := suite.ZgChain.NewFundedAccount("evm-min-fee-test-sender", sdk.NewCoins(a0gi(big.NewInt(1e3))))
 	randoReceiver := util.SdkToEvmAddress(app.RandomAddress())
 
 	// get min gas price for evm (from app.toml)
-	minFees, err := getMinFeeFromAppToml(util.KavaHomePath())
+	minFees, err := getMinFeeFromAppToml(util.ZgChainHomePath())
 	suite.NoError(err)
-	minGasPrice := minFees.AmountOf("akava").TruncateInt()
+	minGasPrice := minFees.AmountOf(chaincfg.BaseDenom).TruncateInt()
 
 	// attempt tx with less than min gas price (min fee - 1)
 	tooLowGasPrice := minGasPrice.Sub(sdk.OneInt()).BigInt()
@@ -58,12 +59,12 @@ func (suite *IntegrationTestSuite) TestEvmRespectsMinFee() {
 	suite.ErrorContains(res.Err, "insufficient fee")
 }
 
-func getMinFeeFromAppToml(kavaHome string) (sdk.DecCoins, error) {
+func getMinFeeFromAppToml(zgChainHome string) (sdk.DecCoins, error) {
 	// read the expected min gas price from app.toml
 	parsed := struct {
 		MinGasPrices string `toml:"minimum-gas-prices"`
 	}{}
-	appToml, err := os.ReadFile(filepath.Join(kavaHome, "config", "app.toml"))
+	appToml, err := os.ReadFile(filepath.Join(zgChainHome, "config", "app.toml"))
 	if err != nil {
 		return nil, err
 	}

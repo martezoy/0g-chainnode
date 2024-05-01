@@ -22,7 +22,7 @@ func waitForChainStart(chainDetails ChainDetails) error {
 	b := backoff.NewExponentialBackOff()
 	b.MaxInterval = 5 * time.Second
 	b.MaxElapsedTime = 30 * time.Second
-	if err := backoff.Retry(func() error { return pingKava(chainDetails.RpcUrl) }, b); err != nil {
+	if err := backoff.Retry(func() error { return pingZgChain(chainDetails.RpcUrl) }, b); err != nil {
 		return fmt.Errorf("failed connect to chain: %s", err)
 	}
 
@@ -34,9 +34,9 @@ func waitForChainStart(chainDetails ChainDetails) error {
 	return nil
 }
 
-func pingKava(rpcUrl string) error {
+func pingZgChain(rpcUrl string) error {
 	statusUrl := fmt.Sprintf("%s/status", rpcUrl)
-	log.Printf("pinging kava chain: %s\n", statusUrl)
+	log.Printf("pinging 0g-chain: %s\n", statusUrl)
 	res, err := http.Get(statusUrl)
 	if err != nil {
 		return err
@@ -45,7 +45,7 @@ func pingKava(rpcUrl string) error {
 	if res.StatusCode >= 400 {
 		return fmt.Errorf("ping to status failed: %d", res.StatusCode)
 	}
-	log.Println("successfully started Kava!")
+	log.Println("successfully started ZgChain!")
 	return nil
 }
 

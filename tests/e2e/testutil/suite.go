@@ -10,14 +10,14 @@ import (
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/tests/e2e/runner"
 	"github.com/0glabs/0g-chain/tests/util"
 )
 
 const (
 	FundedAccountName = "whale"
-	// use coin type 60 so we are compatible with accounts from `kava add keys --eth <name>`
+	// use coin type 60 so we are compatible with accounts from `0gchaind add keys --eth <name>`
 	// these accounts use the ethsecp256k1 signing algorithm that allows the signing client
 	// to manage both sdk & evm txs.
 	Bip44CoinType = 60
@@ -33,7 +33,7 @@ const (
 // - the funded account has a nonzero balance of the erc20
 // - the erc20 is enabled for conversion to sdk.Coin
 // - the corresponding sdk.Coin is enabled as a cdp collateral type
-// These requirements are checked in InitKavaEvmData().
+// These requirements are checked in InitZgChainEvmData().
 type DeployedErc20 struct {
 	Address     common.Address
 	CosmosDenom string
@@ -41,15 +41,15 @@ type DeployedErc20 struct {
 	CdpCollateralType string
 }
 
-// E2eTestSuite is a testify test suite for running end-to-end integration tests on Kava.
+// E2eTestSuite is a testify test suite for running end-to-end integration tests on ZgChain.
 type E2eTestSuite struct {
 	suite.Suite
 
 	config SuiteConfig
 	runner runner.NodeRunner
 
-	Kava *Chain
-	Ibc  *Chain
+	ZgChain *Chain
+	Ibc     *Chain
 
 	UpgradeHeight int64
 	DeployedErc20 DeployedErc20
@@ -85,13 +85,13 @@ func (s costSummary) String() string {
 func (suite *E2eTestSuite) SetupSuite() {
 	var err error
 	fmt.Println("setting up test suite.")
-	app.SetSDKConfig()
+	chaincfg.SetSDKConfig()
 
 	suiteConfig := ParseSuiteConfig()
 	suite.config = suiteConfig
 	suite.DeployedErc20 = DeployedErc20{
 		Address: common.HexToAddress(suiteConfig.ZgChainErc20Address),
-		// Denom & CdpCollateralType are fetched in InitKavaEvmData()
+		// Denom & CdpCollateralType are fetched in InitZgChainEvmData()
 	}
 
 	// setup the correct NodeRunner for the given config
@@ -104,11 +104,11 @@ func (suite *E2eTestSuite) SetupSuite() {
 	}
 
 	chains := suite.runner.StartChains()
-	kavachain := chains.MustGetChain("kava")
-	suite.Kava, err = NewChain(suite.T(), kavachain, suiteConfig.FundedAccountMnemonic)
+	zgchain := chains.MustGetChain("0gchain")
+	suite.ZgChain, err = NewChain(suite.T(), zgchain, suiteConfig.FundedAccountMnemonic)
 	if err != nil {
 		suite.runner.Shutdown()
-		suite.T().Fatalf("failed to create kava chain querier: %s", err)
+		suite.T().Fatalf("failed to create 0g-chain querier: %s", err)
 	}
 
 	if suiteConfig.IncludeIbcTests {
@@ -120,14 +120,14 @@ func (suite *E2eTestSuite) SetupSuite() {
 		}
 	}
 
-	suite.InitKavaEvmData()
+	suite.InitZgChainEvmData()
 
-	whale := suite.Kava.GetAccount(FundedAccountName)
+	whale := suite.ZgChain.GetAccount(FundedAccountName)
 	suite.cost = costSummary{
 		sdkAddress:         whale.SdkAddress.String(),
 		evmAddress:         whale.EvmAddress.Hex(),
-		sdkBalanceBefore:   suite.Kava.QuerySdkForBalances(whale.SdkAddress),
-		erc20BalanceBefore: suite.Kava.GetErc20Balance(suite.DeployedErc20.Address, whale.EvmAddress),
+		sdkBalanceBefore:   suite.ZgChain.QuerySdkForBalances(whale.SdkAddress),
+		erc20BalanceBefore: suite.ZgChain.GetErc20Balance(suite.DeployedErc20.Address, whale.EvmAddress),
 	}
 }
 
@@ -136,27 +136,27 @@ func (suite *E2eTestSuite) SetupSuite() {
 func (suite *E2eTestSuite) TearDownSuite() {
 	fmt.Println("tearing down test suite.")
 
-	whale := suite.Kava.GetAccount(FundedAccountName)
+	whale := suite.ZgChain.GetAccount(FundedAccountName)
 
 	if suite.enableRefunds {
-		suite.cost.sdkBalanceAfter = suite.Kava.QuerySdkForBalances(whale.SdkAddress)
-		suite.cost.erc20BalanceAfter = suite.Kava.GetErc20Balance(suite.DeployedErc20.Address, whale.EvmAddress)
+		suite.cost.sdkBalanceAfter = suite.ZgChain.QuerySdkForBalances(whale.SdkAddress)
+		suite.cost.erc20BalanceAfter = suite.ZgChain.GetErc20Balance(suite.DeployedErc20.Address, whale.EvmAddress)
 		fmt.Println("==BEFORE REFUNDS==")
 		fmt.Println(suite.cost)
 
 		fmt.Println("attempting to return all unused funds")
-		suite.Kava.ReturnAllFunds()
+		suite.ZgChain.ReturnAllFunds()
 
 		fmt.Println("==AFTER REFUNDS==")
 	}
 
 	// calculate & output cost summary for funded account
-	suite.cost.sdkBalanceAfter = suite.Kava.QuerySdkForBalances(whale.SdkAddress)
-	suite.cost.erc20BalanceAfter = suite.Kava.GetErc20Balance(suite.DeployedErc20.Address, whale.EvmAddress)
+	suite.cost.sdkBalanceAfter = suite.ZgChain.QuerySdkForBalances(whale.SdkAddress)
+	suite.cost.erc20BalanceAfter = suite.ZgChain.GetErc20Balance(suite.DeployedErc20.Address, whale.EvmAddress)
 	fmt.Println(suite.cost)
 
 	// close all account request channels
-	suite.Kava.Shutdown()
+	suite.ZgChain.Shutdown()
 	if suite.Ibc != nil {
 		suite.Ibc.Shutdown()
 	}
@@ -167,19 +167,19 @@ func (suite *E2eTestSuite) TearDownSuite() {
 // SetupKvtoolNodeRunner is a helper method for building a KvtoolRunnerConfig from the suite config.
 func (suite *E2eTestSuite) SetupKvtoolNodeRunner() *runner.KvtoolRunner {
 	// upgrade tests are only supported on kvtool networks
-	suite.UpgradeHeight = suite.config.Kvtool.KavaUpgradeHeight
+	suite.UpgradeHeight = suite.config.Kvtool.ZgChainUpgradeHeight
 	suite.enableRefunds = false
 
 	runnerConfig := runner.KvtoolRunnerConfig{
-		KavaConfigTemplate: suite.config.Kvtool.KavaConfigTemplate,
+		ZgChainConfigTemplate: suite.config.Kvtool.ZgChainConfigTemplate,
 
 		IncludeIBC: suite.config.IncludeIbcTests,
 		ImageTag:   "local",
 
-		EnableAutomatedUpgrade:  suite.config.Kvtool.IncludeAutomatedUpgrade,
-		KavaUpgradeName:         suite.config.Kvtool.KavaUpgradeName,
-		KavaUpgradeHeight:       suite.config.Kvtool.KavaUpgradeHeight,
-		KavaUpgradeBaseImageTag: suite.config.Kvtool.KavaUpgradeBaseImageTag,
+		EnableAutomatedUpgrade:     suite.config.Kvtool.IncludeAutomatedUpgrade,
+		ZgChainUpgradeName:         suite.config.Kvtool.ZgChainUpgradeName,
+		ZgChainUpgradeHeight:       suite.config.Kvtool.ZgChainUpgradeHeight,
+		ZgChainUpgradeBaseImageTag: suite.config.Kvtool.ZgChainUpgradeBaseImageTag,
 
 		SkipShutdown: suite.config.SkipShutdown,
 	}
@@ -199,10 +199,10 @@ func (suite *E2eTestSuite) SetupLiveNetworkNodeRunner() *runner.LiveNodeRunner {
 	suite.enableRefunds = true
 
 	runnerConfig := runner.LiveNodeRunnerConfig{
-		KavaRpcUrl:    suite.config.LiveNetwork.KavaRpcUrl,
-		KavaGrpcUrl:   suite.config.LiveNetwork.KavaGrpcUrl,
-		KavaEvmRpcUrl: suite.config.LiveNetwork.KavaEvmRpcUrl,
-		UpgradeHeight: suite.config.LiveNetwork.UpgradeHeight,
+		ZgChainRpcUrl:    suite.config.LiveNetwork.ZgChainRpcUrl,
+		ZgChainGrpcUrl:   suite.config.LiveNetwork.ZgChainGrpcUrl,
+		ZgChainEvmRpcUrl: suite.config.LiveNetwork.ZgChainEvmRpcUrl,
+		UpgradeHeight:    suite.config.LiveNetwork.UpgradeHeight,
 	}
 
 	return runner.NewLiveNodeRunner(runnerConfig)

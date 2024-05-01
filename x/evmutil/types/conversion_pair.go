@@ -23,7 +23,7 @@ func NewConversionPair(address InternalEVMAddress, denom string) ConversionPair 
 	}
 }
 
-// GetAddress returns the InternalEVMAddress of the Kava ERC20 address.
+// GetAddress returns the InternalEVMAddress of the 0gChain ERC20 address.
 func (pair ConversionPair) GetAddress() InternalEVMAddress {
 	return NewInternalEVMAddress(common.BytesToAddress(pair.ZgChainERC20Address))
 }

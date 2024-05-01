@@ -19,16 +19,17 @@ import (
 	emtypes "github.com/evmos/ethermint/types"
 
 	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/tests/e2e/testutil"
 	"github.com/0glabs/0g-chain/tests/util"
 )
 
 var (
-	minEvmGasPrice = big.NewInt(1e10) // akava
+	minEvmGasPrice = big.NewInt(1e10) // neuron
 )
 
-func ukava(amt int64) sdk.Coin {
-	return sdk.NewCoin("ukava", sdkmath.NewInt(amt))
+func a0gi(amt *big.Int) sdk.Coin {
+	return sdk.NewCoin(chaincfg.DisplayDenom, sdkmath.NewIntFromBigInt(amt))
 }
 
 type IntegrationTestSuite struct {
@@ -39,63 +40,63 @@ func TestIntegrationTestSuite(t *testing.T) {
 	suite.Run(t, new(IntegrationTestSuite))
 }
 
-// example test that queries kava via SDK and EVM
+// example test that queries 0gchain via SDK and EVM
 func (suite *IntegrationTestSuite) TestChainID() {
-	expectedEvmNetworkId, err := emtypes.ParseChainID(suite.Kava.ChainID)
+	expectedEvmNetworkId, err := emtypes.ParseChainID(suite.ZgChain.ChainID)
 	suite.NoError(err)
 
 	// EVM query
-	evmNetworkId, err := suite.Kava.EvmClient.NetworkID(context.Background())
+	evmNetworkId, err := suite.ZgChain.EvmClient.NetworkID(context.Background())
 	suite.NoError(err)
 	suite.Equal(expectedEvmNetworkId, evmNetworkId)
 
 	// SDK query
-	nodeInfo, err := suite.Kava.Tm.GetNodeInfo(context.Background(), &tmservice.GetNodeInfoRequest{})
+	nodeInfo, err := suite.ZgChain.Tm.GetNodeInfo(context.Background(), &tmservice.GetNodeInfoRequest{})
 	suite.NoError(err)
-	suite.Equal(suite.Kava.ChainID, nodeInfo.DefaultNodeInfo.Network)
+	suite.Equal(suite.ZgChain.ChainID, nodeInfo.DefaultNodeInfo.Network)
 }
 
 // example test that funds a new account & queries its balance
 func (suite *IntegrationTestSuite) TestFundedAccount() {
-	funds := ukava(1e3)
-	acc := suite.Kava.NewFundedAccount("example-acc", sdk.NewCoins(funds))
+	funds := a0gi(big.NewInt(1e3))
+	acc := suite.ZgChain.NewFundedAccount("example-acc", sdk.NewCoins(funds))
 
 	// check that the sdk & evm signers are for the same account
 	suite.Equal(acc.SdkAddress.String(), util.EvmToSdkAddress(acc.EvmAddress).String())
 	suite.Equal(acc.EvmAddress.Hex(), util.SdkToEvmAddress(acc.SdkAddress).Hex())
 
 	// check balance via SDK query
-	res, err := suite.Kava.Bank.Balance(context.Background(), banktypes.NewQueryBalanceRequest(
-		acc.SdkAddress, "ukava",
+	res, err := suite.ZgChain.Bank.Balance(context.Background(), banktypes.NewQueryBalanceRequest(
+		acc.SdkAddress, chaincfg.DisplayDenom,
 	))
 	suite.NoError(err)
 	suite.Equal(funds, *res.Balance)
 
 	// check balance via EVM query
-	akavaBal, err := suite.Kava.EvmClient.BalanceAt(context.Background(), acc.EvmAddress, nil)
+	neuronBal, err := suite.ZgChain.EvmClient.BalanceAt(context.Background(), acc.EvmAddress, nil)
 	suite.NoError(err)
-	suite.Equal(funds.Amount.MulRaw(1e12).BigInt(), akavaBal)
+	suite.Equal(funds.Amount.MulRaw(1e12).BigInt(), neuronBal)
 }
 
 // example test that signs & broadcasts an EVM tx
 func (suite *IntegrationTestSuite) TestTransferOverEVM() {
 	// fund an account that can perform the transfer
-	initialFunds := ukava(1e6) // 1 KAVA
-	acc := suite.Kava.NewFundedAccount("evm-test-transfer", sdk.NewCoins(initialFunds))
+	initialFunds := a0gi(big.NewInt(1e6)) // 1 A0GI
+	acc := suite.ZgChain.NewFundedAccount("evm-test-transfer", sdk.NewCoins(initialFunds))
 
-	// get a rando account to send kava to
+	// get a rando account to send 0gchain to
 	randomAddr := app.RandomAddress()
 	to := util.SdkToEvmAddress(randomAddr)
 
 	// example fetching of nonce (account sequence)
-	nonce, err := suite.Kava.EvmClient.PendingNonceAt(context.Background(), acc.EvmAddress)
+	nonce, err := suite.ZgChain.EvmClient.PendingNonceAt(context.Background(), acc.EvmAddress)
 	suite.NoError(err)
 	suite.Equal(uint64(0), nonce) // sanity check. the account should have no prior txs
 
-	// transfer kava over EVM
-	kavaToTransfer := big.NewInt(1e17) // .1 KAVA; akava has 18 decimals.
+	// transfer a0gi over EVM
+	a0giToTransfer := big.NewInt(1e17) // .1 A0GI; neuron has 18 decimals.
 	req := util.EvmTxRequest{
-		Tx:   ethtypes.NewTransaction(nonce, to, kavaToTransfer, 1e5, minEvmGasPrice, nil),
+		Tx:   ethtypes.NewTransaction(nonce, to, a0giToTransfer, 1e5, minEvmGasPrice, nil),
 		Data: "any ol' data to track this through the system",
 	}
 	res := acc.SignAndBroadcastEvmTx(req)
@@ -103,36 +104,36 @@ func (suite *IntegrationTestSuite) TestTransferOverEVM() {
 	suite.Equal(ethtypes.ReceiptStatusSuccessful, res.Receipt.Status)
 
 	// evm txs refund unused gas. so to know the expected balance we need to know how much gas was used.
-	ukavaUsedForGas := sdkmath.NewIntFromBigInt(minEvmGasPrice).
+	a0giUsedForGas := sdkmath.NewIntFromBigInt(minEvmGasPrice).
 		Mul(sdkmath.NewIntFromUint64(res.Receipt.GasUsed)).
-		QuoRaw(1e12) // convert akava to ukava
+		QuoRaw(1e12) // convert neuron to a0gi
 
-	// expect (9 - gas used) KAVA remaining in account.
-	balance := suite.Kava.QuerySdkForBalances(acc.SdkAddress)
-	suite.Equal(sdkmath.NewInt(9e5).Sub(ukavaUsedForGas), balance.AmountOf("ukava"))
+	// expect (9 - gas used) A0GI remaining in account.
+	balance := suite.ZgChain.QuerySdkForBalances(acc.SdkAddress)
+	suite.Equal(sdkmath.NewInt(9e5).Sub(a0giUsedForGas), balance.AmountOf(chaincfg.DisplayDenom))
 }
 
-// TestIbcTransfer transfers KAVA from the primary kava chain (suite.Kava) to the ibc chain (suite.Ibc).
-// Note that because the IBC chain also runs kava's binary, this tests both the sending & receiving.
+// TestIbcTransfer transfers A0GI from the primary 0g-chain (suite.ZgChain) to the ibc chain (suite.Ibc).
+// Note that because the IBC chain also runs 0g-chain's binary, this tests both the sending & receiving.
 func (suite *IntegrationTestSuite) TestIbcTransfer() {
 	suite.SkipIfIbcDisabled()
 
 	// ARRANGE
-	// setup kava account
-	funds := ukava(1e5) // .1 KAVA
-	kavaAcc := suite.Kava.NewFundedAccount("ibc-transfer-kava-side", sdk.NewCoins(funds))
+	// setup 0g-chain account
+	funds := a0gi(big.NewInt(1e5)) // .1 A0GI
+	zgChainAcc := suite.ZgChain.NewFundedAccount("ibc-transfer-0g-side", sdk.NewCoins(funds))
 	// setup ibc account
 	ibcAcc := suite.Ibc.NewFundedAccount("ibc-transfer-ibc-side", sdk.NewCoins())
 
 	gasLimit := int64(2e5)
-	fee := ukava(200)
+	fee := a0gi(big.NewInt(200))
 
-	fundsToSend := ukava(5e4) // .005 KAVA
+	fundsToSend := a0gi(big.NewInt(5e4)) // .005 A0GI
 	transferMsg := ibctypes.NewMsgTransfer(
 		testutil.IbcPort,
 		testutil.IbcChannel,
 		fundsToSend,
-		kavaAcc.SdkAddress.String(),
+		zgChainAcc.SdkAddress.String(),
 		ibcAcc.SdkAddress.String(),
 		ibcclienttypes.NewHeight(0, 0), // timeout height disabled when 0
 		uint64(time.Now().Add(30*time.Second).UnixNano()),
@@ -142,22 +143,22 @@ func (suite *IntegrationTestSuite) TestIbcTransfer() {
 	expectedSrcBalance := funds.Sub(fundsToSend).Sub(fee)
 
 	// ACT
-	// IBC transfer from kava -> ibc
-	transferTo := util.KavaMsgRequest{
+	// IBC transfer from 0g-chain -> ibc
+	transferTo := util.ZgChainMsgRequest{
 		Msgs:      []sdk.Msg{transferMsg},
 		GasLimit:  uint64(gasLimit),
 		FeeAmount: sdk.NewCoins(fee),
-		Memo:      "sent from Kava!",
+		Memo:      "sent from ZgChain!",
 	}
-	res := kavaAcc.SignAndBroadcastKavaTx(transferTo)
+	res := zgChainAcc.SignAndBroadcastZgChainTx(transferTo)
 
 	// ASSERT
 	suite.NoError(res.Err)
 
-	// the balance should be deducted from kava account
+	// the balance should be deducted from 0g-chain account
 	suite.Eventually(func() bool {
-		balance := suite.Kava.QuerySdkForBalances(kavaAcc.SdkAddress)
-		return balance.AmountOf("ukava").Equal(expectedSrcBalance.Amount)
+		balance := suite.ZgChain.QuerySdkForBalances(zgChainAcc.SdkAddress)
+		return balance.AmountOf(chaincfg.DisplayDenom).Equal(expectedSrcBalance.Amount)
 	}, 10*time.Second, 1*time.Second)
 
 	// expect the balance to be transferred to the ibc chain!

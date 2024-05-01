@@ -10,7 +10,7 @@ import (
 // 	afterUpgradeCtx := util.CtxAtHeight(suite.UpgradeHeight)
 
 // 	// Get x/community for switchover time
-// 	params, err := suite.Kava.Community.Params(afterUpgradeCtx, &communitytypes.QueryParamsRequest{})
+// 	params, err := suite.ZgChain.Community.Params(afterUpgradeCtx, &communitytypes.QueryParamsRequest{})
 // 	suite.Require().NoError(err)
 
 // 	// Sleep until switchover time + 6 seconds for extra block
@@ -18,7 +18,7 @@ import (
 // 	time.Sleep(sleepDuration)
 
 // 	suite.Require().Eventually(func() bool {
-// 		communityParams, err := suite.Kava.Community.Params(afterUpgradeCtx, &communitytypes.QueryParamsRequest{})
+// 		communityParams, err := suite.ZgChain.Community.Params(afterUpgradeCtx, &communitytypes.QueryParamsRequest{})
 // 		suite.Require().NoError(err)
 
 // 		// After params are set in x/community -- non-zero switchover time
@@ -27,7 +27,7 @@ import (
 
 // 	// Fetch exact block when inflation stop event emitted
 // 	// This is run after the switchover, so we don't need to poll
-// 	_, switchoverHeight, err := suite.Kava.GetBeginBlockEventsFromQuery(
+// 	_, switchoverHeight, err := suite.ZgChain.GetBeginBlockEventsFromQuery(
 // 		context.Background(),
 // 		fmt.Sprintf(
 // 			"%s.%s EXISTS",
@@ -43,12 +43,12 @@ import (
 // 	afterSwitchoverCtx := util.CtxAtHeight(switchoverHeight)
 
 // 	suite.Run("x/mint, x/kavadist inflation before switchover", func() {
-// 		mintParams, err := suite.Kava.Mint.Params(
+// 		mintParams, err := suite.ZgChain.Mint.Params(
 // 			beforeSwitchoverCtx,
 // 			&minttypes.QueryParamsRequest{},
 // 		)
 // 		suite.NoError(err)
-// 		kavaDistParams, err := suite.Kava.Kavadist.Params(
+// 		kavaDistParams, err := suite.ZgChain.Kavadist.Params(
 // 			beforeSwitchoverCtx,
 // 			&kavadisttypes.QueryParamsRequest{},
 // 		)
@@ -74,7 +74,7 @@ import (
 // 	})
 
 // 	suite.Run("x/distribution community tax before switchover", func() {
-// 		distrParams, err := suite.Kava.Distribution.Params(
+// 		distrParams, err := suite.ZgChain.Distribution.Params(
 // 			beforeSwitchoverCtx,
 // 			&distributiontypes.QueryParamsRequest{},
 // 		)
@@ -88,12 +88,12 @@ import (
 // 	})
 
 // 	suite.Run("x/mint, x/kavadist inflation after switchover", func() {
-// 		mintParams, err := suite.Kava.Mint.Params(
+// 		mintParams, err := suite.ZgChain.Mint.Params(
 // 			afterSwitchoverCtx,
 // 			&minttypes.QueryParamsRequest{},
 // 		)
 // 		suite.NoError(err)
-// 		kavaDistParams, err := suite.Kava.Kavadist.Params(
+// 		kavaDistParams, err := suite.ZgChain.Kavadist.Params(
 // 			afterSwitchoverCtx,
 // 			&kavadisttypes.QueryParamsRequest{},
 // 		)
@@ -117,7 +117,7 @@ import (
 // 	})
 
 // 	suite.Run("x/distribution community tax after switchover", func() {
-// 		distrParams, err := suite.Kava.Distribution.Params(
+// 		distrParams, err := suite.ZgChain.Distribution.Params(
 // 			afterSwitchoverCtx,
 // 			&distributiontypes.QueryParamsRequest{},
 // 		)
@@ -135,7 +135,7 @@ import (
 // 		// 1 block before switchover
 // 		queryHeight := switchoverHeight - 1
 
-// 		block, err := suite.Kava.TmSignClient.BlockResults(
+// 		block, err := suite.ZgChain.TmSignClient.BlockResults(
 // 			context.Background(),
 // 			&queryHeight,
 // 		)
@@ -178,10 +178,10 @@ import (
 // 	suite.Run("staking denom supply increases before switchover", func() {
 // 		queryHeight := switchoverHeight - 2
 
-// 		supply1, err := suite.Kava.Bank.SupplyOf(
+// 		supply1, err := suite.ZgChain.Bank.SupplyOf(
 // 			util.CtxAtHeight(queryHeight),
 // 			&types.QuerySupplyOfRequest{
-// 				Denom: suite.Kava.StakingDenom,
+// 				Denom: suite.ZgChain.StakingDenom,
 // 			},
 // 		)
 // 		suite.Require().NoError(err)
@@ -190,10 +190,10 @@ import (
 
 // 		// Next block
 // 		queryHeight += 1
-// 		supply2, err := suite.Kava.Bank.SupplyOf(
+// 		supply2, err := suite.ZgChain.Bank.SupplyOf(
 // 			util.CtxAtHeight(queryHeight),
 // 			&types.QuerySupplyOfRequest{
-// 				Denom: suite.Kava.StakingDenom,
+// 				Denom: suite.ZgChain.StakingDenom,
 // 			},
 // 		)
 // 		suite.Require().NoError(err)
@@ -210,7 +210,7 @@ import (
 // 	// Check if inflation is ACTUALLY disabled... check if any coins are being
 // 	// minted in the blocks after switchover
 // 	suite.Run("no minting after switchover", func() {
-// 		kavaSupply := sdk.NewCoin(suite.Kava.StakingDenom, sdkmath.ZeroInt())
+// 		kavaSupply := sdk.NewCoin(suite.ZgChain.StakingDenom, sdkmath.ZeroInt())
 
 // 		// Next 5 blocks after switchover, ensure there's actually no more inflation
 // 		for i := 0; i < 5; i++ {
@@ -222,7 +222,7 @@ import (
 // 					var block *coretypes.ResultBlockResults
 // 					suite.Require().Eventually(func() bool {
 // 						// Check begin block events
-// 						block, err = suite.Kava.TmSignClient.BlockResults(
+// 						block, err = suite.ZgChain.TmSignClient.BlockResults(
 // 							context.Background(),
 // 							&queryHeight,
 // 						)
@@ -270,10 +270,10 @@ import (
 // 			suite.Run(
 // 				fmt.Sprintf("total staking denom supply should not change @ height=%d", queryHeight),
 // 				func() {
-// 					supplyRes, err := suite.Kava.Bank.SupplyOf(
+// 					supplyRes, err := suite.ZgChain.Bank.SupplyOf(
 // 						util.CtxAtHeight(queryHeight),
 // 						&types.QuerySupplyOfRequest{
-// 							Denom: suite.Kava.StakingDenom,
+// 							Denom: suite.ZgChain.StakingDenom,
 // 						},
 // 					)
 // 					suite.Require().NoError(err)
@@ -297,7 +297,7 @@ import (
 // 		// 1 block before switchover
 // 		queryHeight := switchoverHeight - 1
 
-// 		block, err := suite.Kava.TmSignClient.BlockResults(
+// 		block, err := suite.ZgChain.TmSignClient.BlockResults(
 // 			context.Background(),
 // 			&queryHeight,
 // 		)
@@ -313,7 +313,7 @@ import (
 // 			// after switchover
 // 			queryHeight := switchoverHeight + int64(i)
 
-// 			block, err := suite.Kava.TmSignClient.BlockResults(
+// 			block, err := suite.ZgChain.TmSignClient.BlockResults(
 // 				context.Background(),
 // 				&queryHeight,
 // 			)
@@ -358,7 +358,7 @@ import (
 // 		suite.SkipIfKvtoolDisabled()
 
 // 		// Get the delegator of the only validator
-// 		validators, err := suite.Kava.Staking.Validators(
+// 		validators, err := suite.ZgChain.Staking.Validators(
 // 			context.Background(),
 // 			&stakingtypes.QueryValidatorsRequest{},
 // 		)
@@ -370,17 +370,17 @@ import (
 
 // 		accAddr := sdk.AccAddress(valAddr.Bytes())
 
-// 		balBefore, err := suite.Kava.Bank.Balance(
+// 		balBefore, err := suite.ZgChain.Bank.Balance(
 // 			context.Background(),
 // 			&types.QueryBalanceRequest{
 // 				Address: accAddr.String(),
-// 				Denom:   suite.Kava.StakingDenom,
+// 				Denom:   suite.ZgChain.StakingDenom,
 // 			},
 // 		)
 // 		suite.Require().NoError(err)
 // 		suite.Require().False(balBefore.Balance.IsZero(), "val staking denom balance should be non-zero")
 
-// 		delegationRewards, err := suite.Kava.Distribution.DelegationRewards(
+// 		delegationRewards, err := suite.ZgChain.Distribution.DelegationRewards(
 // 			context.Background(),
 // 			&distributiontypes.QueryDelegationRewardsRequest{
 // 				ValidatorAddress: valAddr.String(),
@@ -398,16 +398,16 @@ import (
 // 		)
 
 // 		// Get the validator private key from kava keyring
-// 		key, err := suite.Kava.Keyring.(unsafeExporter).ExportPrivateKeyObject(
+// 		key, err := suite.ZgChain.Keyring.(unsafeExporter).ExportPrivateKeyObject(
 // 			"validator",
 // 		)
 // 		suite.Require().NoError(err)
 
-// 		acc := suite.Kava.AddNewSigningAccountFromPrivKey(
+// 		acc := suite.ZgChain.AddNewSigningAccountFromPrivKey(
 // 			"validator",
 // 			key,
 // 			"",
-// 			suite.Kava.ChainID,
+// 			suite.ZgChain.ChainID,
 // 		)
 
 // 		gasLimit := int64(2e5)
@@ -420,14 +420,14 @@ import (
 // 		}
 // 		res := acc.SignAndBroadcastKavaTx(req)
 
-// 		_, err = util.WaitForSdkTxCommit(suite.Kava.Tx, res.Result.TxHash, 6*time.Second)
+// 		_, err = util.WaitForSdkTxCommit(suite.ZgChain.Tx, res.Result.TxHash, 6*time.Second)
 // 		suite.Require().NoError(err)
 
-// 		balAfter, err := suite.Kava.Bank.Balance(
+// 		balAfter, err := suite.ZgChain.Bank.Balance(
 // 			context.Background(),
 // 			&types.QueryBalanceRequest{
 // 				Address: accAddr.String(),
-// 				Denom:   suite.Kava.StakingDenom,
+// 				Denom:   suite.ZgChain.StakingDenom,
 // 			},
 // 		)
 // 		suite.Require().NoError(err)
@@ -440,11 +440,11 @@ import (
 // 		queriedRewardsCoins, _ := delegationRewards.Rewards.TruncateDecimal()
 
 // 		suite.Require().Truef(
-// 			queriedRewardsCoins.AmountOf(suite.Kava.StakingDenom).
+// 			queriedRewardsCoins.AmountOf(suite.ZgChain.StakingDenom).
 // 				LTE(balIncrease.Amount),
 // 			"claimed rewards should be >= queried delegation rewards, got claimed %s vs queried %s",
 // 			balIncrease.Amount.String(),
-// 			queriedRewardsCoins.AmountOf(suite.Kava.StakingDenom).String(),
+// 			queriedRewardsCoins.AmountOf(suite.ZgChain.StakingDenom).String(),
 // 		)
 // 	})
 // }

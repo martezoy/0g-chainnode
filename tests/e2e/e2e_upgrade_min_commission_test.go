@@ -19,7 +19,7 @@ func (suite *IntegrationTestSuite) TestValMinCommission() {
 
 	suite.Run("before upgrade", func() {
 		// Before params
-		beforeParams, err := suite.Kava.Staking.Params(beforeUpgradeCtx, &types.QueryParamsRequest{})
+		beforeParams, err := suite.ZgChain.Staking.Params(beforeUpgradeCtx, &types.QueryParamsRequest{})
 		suite.Require().NoError(err)
 
 		suite.Require().Equal(
@@ -29,7 +29,7 @@ func (suite *IntegrationTestSuite) TestValMinCommission() {
 		)
 
 		// Before validators
-		beforeValidators, err := suite.Kava.Staking.Validators(beforeUpgradeCtx, &types.QueryValidatorsRequest{})
+		beforeValidators, err := suite.ZgChain.Staking.Validators(beforeUpgradeCtx, &types.QueryValidatorsRequest{})
 		suite.Require().NoError(err)
 
 		for _, val := range beforeValidators.Validators {
@@ -56,13 +56,13 @@ func (suite *IntegrationTestSuite) TestValMinCommission() {
 	})
 
 	suite.Run("after upgrade", func() {
-		block, err := suite.Kava.Tm.GetBlockByHeight(context.Background(), &tmservice.GetBlockByHeightRequest{
+		block, err := suite.ZgChain.Tm.GetBlockByHeight(context.Background(), &tmservice.GetBlockByHeightRequest{
 			Height: suite.UpgradeHeight,
 		})
 		suite.Require().NoError(err)
 
 		// After params
-		afterParams, err := suite.Kava.Staking.Params(afterUpgradeCtx, &types.QueryParamsRequest{})
+		afterParams, err := suite.ZgChain.Staking.Params(afterUpgradeCtx, &types.QueryParamsRequest{})
 		suite.Require().NoError(err)
 
 		expectedMinRate := sdk.MustNewDecFromStr("0.05")
@@ -74,7 +74,7 @@ func (suite *IntegrationTestSuite) TestValMinCommission() {
 		)
 
 		// After validators
-		afterValidators, err := suite.Kava.Staking.Validators(afterUpgradeCtx, &types.QueryValidatorsRequest{})
+		afterValidators, err := suite.ZgChain.Staking.Validators(afterUpgradeCtx, &types.QueryValidatorsRequest{})
 		suite.Require().NoError(err)
 
 		for _, val := range afterValidators.Validators {

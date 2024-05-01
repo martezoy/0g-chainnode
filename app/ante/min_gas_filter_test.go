@@ -13,6 +13,7 @@ import (
 
 	"github.com/0glabs/0g-chain/app"
 	"github.com/0glabs/0g-chain/app/ante"
+	"github.com/0glabs/0g-chain/chaincfg"
 )
 
 func mustParseDecCoins(value string) sdk.DecCoins {
@@ -30,7 +31,7 @@ func TestEvmMinGasFilter(t *testing.T) {
 
 	ctx := tApp.NewContext(true, tmproto.Header{Height: 1, Time: tmtime.Now()})
 	tApp.GetEvmKeeper().SetParams(ctx, evmtypes.Params{
-		EvmDenom: "akava",
+		EvmDenom: chaincfg.BaseDenom,
 	})
 
 	testCases := []struct {
@@ -44,29 +45,29 @@ func TestEvmMinGasFilter(t *testing.T) {
 			mustParseDecCoins(""),
 		},
 		{
-			"zero ukava gas price",
-			mustParseDecCoins("0ukava"),
-			mustParseDecCoins("0ukava"),
+			"zero a0gi gas price",
+			mustParseDecCoins("0a0gi"),
+			mustParseDecCoins("0a0gi"),
 		},
 		{
-			"non-zero ukava gas price",
-			mustParseDecCoins("0.001ukava"),
-			mustParseDecCoins("0.001ukava"),
+			"non-zero a0gi gas price",
+			mustParseDecCoins("0.001a0gi"),
+			mustParseDecCoins("0.001a0gi"),
 		},
 		{
-			"zero ukava gas price, min akava price",
-			mustParseDecCoins("0ukava;100000akava"),
-			mustParseDecCoins("0ukava"), // akava is removed
+			"zero a0gi gas price, min neuron price",
+			mustParseDecCoins("0a0gi;100000neuron"),
+			mustParseDecCoins("0a0gi"), // neuron is removed
 		},
 		{
-			"zero ukava gas price, min akava price, other token",
-			mustParseDecCoins("0ukava;100000akava;0.001other"),
-			mustParseDecCoins("0ukava;0.001other"), // akava is removed
+			"zero a0gi gas price, min neuron price, other token",
+			mustParseDecCoins("0a0gi;100000neuron;0.001other"),
+			mustParseDecCoins("0a0gi;0.001other"), // neuron is removed
 		},
 		{
-			"non-zero ukava gas price, min akava price",
-			mustParseDecCoins("0.25ukava;100000akava;0.001other"),
-			mustParseDecCoins("0.25ukava;0.001other"), // akava is removed
+			"non-zero a0gi gas price, min neuron price",
+			mustParseDecCoins("0.25a0gi;100000neuron;0.001other"),
+			mustParseDecCoins("0.25a0gi;0.001other"), // neuron is removed
 		},
 	}
 

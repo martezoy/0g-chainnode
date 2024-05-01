@@ -16,8 +16,8 @@ import (
 const (
 	TestSenderOtherChain    = "bnb1uky3me9ggqypmrsvxk7ur6hqkzq7zmv4ed4ng7"
 	TestRecipientOtherChain = "bnb1urfermcg92dwq36572cx4xg84wpk3lfpksr5g7"
-	TestDeputy              = "kava1xy7hrjy9r0algz9w3gzm8u6mrpq97kwta747gj"
-	TestUser                = "kava1vry5lhegzlulehuutcr7nmdlmktw88awp0a39p"
+	TestDeputy              = "0g1xy7hrjy9r0algz9w3gzm8u6mrpq97kwta747gj"
+	TestUser                = "0g1vry5lhegzlulehuutcr7nmdlmktw88awp0a39p"
 )
 
 var (

@@ -36,26 +36,26 @@ type SuiteConfig struct {
 // KvtoolConfig wraps configuration options for running the end-to-end test suite against
 // a locally running chain. This config must be defined if E2E_RUN_KVTOOL_NETWORKS is true.
 type KvtoolConfig struct {
-	// The kava.configTemplate flag to be passed to kvtool, usually "master".
+	// The 0gchain.configTemplate flag to be passed to kvtool, usually "master".
 	// This allows one to change the base genesis used to start the chain.
-	KavaConfigTemplate string
+	ZgChainConfigTemplate string
 
 	// Whether or not to run a chain upgrade & run post-upgrade tests. Use `suite.SkipIfUpgradeDisabled()` in post-upgrade tests.
 	IncludeAutomatedUpgrade bool
 	// Name of the upgrade, if upgrade is enabled.
-	KavaUpgradeName string
+	ZgChainUpgradeName string
 	// Height upgrade will be applied to the test chain, if upgrade is enabled.
-	KavaUpgradeHeight int64
-	// Tag of kava docker image that will be upgraded to the current image before tests are run, if upgrade is enabled.
-	KavaUpgradeBaseImageTag string
+	ZgChainUpgradeHeight int64
+	// Tag of 0gchain docker image that will be upgraded to the current image before tests are run, if upgrade is enabled.
+	ZgChainUpgradeBaseImageTag string
 }
 
 // LiveNetworkConfig wraps configuration options for running the end-to-end test suite
 // against a live network. It must be defined if E2E_RUN_KVTOOL_NETWORKS is false.
 type LiveNetworkConfig struct {
-	KavaRpcUrl    string
-	KavaGrpcUrl   string
-	KavaEvmRpcUrl string
+	ZgChainRpcUrl    string
+	ZgChainGrpcUrl   string
+	ZgChainEvmRpcUrl string
 
 	UpgradeHeight int64
 }
@@ -65,8 +65,8 @@ func ParseSuiteConfig() SuiteConfig {
 	config := SuiteConfig{
 		// this mnemonic is expected to be a funded account that can seed the funds for all
 		// new accounts created during tests. it will be available under Accounts["whale"]
-		FundedAccountMnemonic: nonemptyStringEnv("E2E_KAVA_FUNDED_ACCOUNT_MNEMONIC"),
-		ZgChainErc20Address:   nonemptyStringEnv("E2E_KAVA_ERC20_ADDRESS"),
+		FundedAccountMnemonic: nonemptyStringEnv("E2E_0GCHAIN_FUNDED_ACCOUNT_MNEMONIC"),
+		ZgChainErc20Address:   nonemptyStringEnv("E2E_0GCHAIN_ERC20_ADDRESS"),
 		IncludeIbcTests:       mustParseBool("E2E_INCLUDE_IBC_TESTS"),
 	}
 
@@ -90,18 +90,18 @@ func ParseSuiteConfig() SuiteConfig {
 // ParseKvtoolConfig builds a KvtoolConfig from environment variables.
 func ParseKvtoolConfig() KvtoolConfig {
 	config := KvtoolConfig{
-		KavaConfigTemplate:      nonemptyStringEnv("E2E_KVTOOL_KAVA_CONFIG_TEMPLATE"),
+		ZgChainConfigTemplate:   nonemptyStringEnv("E2E_KVTOOL_0GCHAIN_CONFIG_TEMPLATE"),
 		IncludeAutomatedUpgrade: mustParseBool("E2E_INCLUDE_AUTOMATED_UPGRADE"),
 	}
 
 	if config.IncludeAutomatedUpgrade {
-		config.KavaUpgradeName = nonemptyStringEnv("E2E_KAVA_UPGRADE_NAME")
-		config.KavaUpgradeBaseImageTag = nonemptyStringEnv("E2E_KAVA_UPGRADE_BASE_IMAGE_TAG")
-		upgradeHeight, err := strconv.ParseInt(nonemptyStringEnv("E2E_KAVA_UPGRADE_HEIGHT"), 10, 64)
+		config.ZgChainUpgradeName = nonemptyStringEnv("E2E_0GCHAIN_UPGRADE_NAME")
+		config.ZgChainUpgradeBaseImageTag = nonemptyStringEnv("E2E_0GCHAIN_UPGRADE_BASE_IMAGE_TAG")
+		upgradeHeight, err := strconv.ParseInt(nonemptyStringEnv("E2E_0GCHAIN_UPGRADE_HEIGHT"), 10, 64)
 		if err != nil {
-			panic(fmt.Sprintf("E2E_KAVA_UPGRADE_HEIGHT must be a number: %s", err))
+			panic(fmt.Sprintf("E2E_0GCHAIN_UPGRADE_HEIGHT must be a number: %s", err))
 		}
-		config.KavaUpgradeHeight = upgradeHeight
+		config.ZgChainUpgradeHeight = upgradeHeight
 	}
 
 	return config
@@ -110,16 +110,16 @@ func ParseKvtoolConfig() KvtoolConfig {
 // ParseLiveNetworkConfig builds a LiveNetworkConfig from environment variables.
 func ParseLiveNetworkConfig() LiveNetworkConfig {
 	config := LiveNetworkConfig{
-		KavaRpcUrl:    nonemptyStringEnv("E2E_KAVA_RPC_URL"),
-		KavaGrpcUrl:   nonemptyStringEnv("E2E_KAVA_GRPC_URL"),
-		KavaEvmRpcUrl: nonemptyStringEnv("E2E_KAVA_EVM_RPC_URL"),
+		ZgChainRpcUrl:    nonemptyStringEnv("E2E_0GCHAIN_RPC_URL"),
+		ZgChainGrpcUrl:   nonemptyStringEnv("E2E_0GCHAIN_GRPC_URL"),
+		ZgChainEvmRpcUrl: nonemptyStringEnv("E2E_0GCHAIN_EVM_RPC_URL"),
 	}
 
-	upgradeHeight := os.Getenv("E2E_KAVA_UPGRADE_HEIGHT")
+	upgradeHeight := os.Getenv("E2E_0GCHAIN_UPGRADE_HEIGHT")
 	if upgradeHeight != "" {
 		parsedHeight, err := strconv.ParseInt(upgradeHeight, 10, 64)
 		if err != nil {
-			panic(fmt.Sprintf("E2E_KAVA_UPGRADE_HEIGHT must be a number: %s", err))
+			panic(fmt.Sprintf("E2E_0GCHAIN_UPGRADE_HEIGHT must be a number: %s", err))
 		}
 
 		config.UpgradeHeight = parsedHeight

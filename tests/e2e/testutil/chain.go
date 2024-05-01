@@ -32,7 +32,7 @@ import (
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
 
 	"github.com/0glabs/0g-chain/app"
-	kavaparams "github.com/0glabs/0g-chain/app/params"
+	chainparams "github.com/0glabs/0g-chain/app/params"
 	"github.com/0glabs/0g-chain/tests/e2e/runner"
 	"github.com/0glabs/0g-chain/tests/util"
 	committeetypes "github.com/0glabs/0g-chain/x/committee/types"
@@ -52,7 +52,7 @@ type Chain struct {
 	ContractAddrs map[string]common.Address
 	erc20s        map[common.Address]struct{}
 
-	EncodingConfig kavaparams.EncodingConfig
+	EncodingConfig chainparams.EncodingConfig
 
 	Auth         authtypes.QueryClient
 	Authz        authz.QueryClient
@@ -88,7 +88,7 @@ func NewChain(t *testing.T, details *runner.ChainDetails, fundedAccountMnemonic 
 	kr, err := keyring.New(
 		sdk.KeyringServiceName(),
 		keyring.BackendTest,
-		util.KavaHomePath(),
+		util.ZgChainHomePath(),
 		nil,
 		chain.EncodingConfig.Marshaler,
 		evmhd.EthSecp256k1Option(),

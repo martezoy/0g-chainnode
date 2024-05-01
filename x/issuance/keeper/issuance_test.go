@@ -47,7 +47,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	}
 
 	keeper := tApp.GetIssuanceKeeper()
-	modAccount, err := sdk.AccAddressFromBech32("kava1cj7njkw2g9fqx4e768zc75dp9sks8u9znxrf0w")
+	modAccount, err := sdk.AccAddressFromBech32("0g1cj7njkw2g9fqx4e768zc75dp9sks8u9znxrf0w")
 	suite.Require().NoError(err)
 
 	suite.tApp = tApp
