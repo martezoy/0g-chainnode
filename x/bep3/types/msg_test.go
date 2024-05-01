@@ -8,7 +8,7 @@ import (
 	"github.com/tendermint/tendermint/crypto"
 	tmbytes "github.com/tendermint/tendermint/libs/bytes"
 
-	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/bep3/types"
 )
 
@@ -22,7 +22,7 @@ var (
 )
 
 func init() {
-	app.SetSDKConfig()
+	chaincfg.SetSDKConfig()
 
 	// Must be set after SetSDKConfig to use 0g Bech32 prefix instead of cosmos
 	binanceAddrs = []sdk.AccAddress{
@@ -40,8 +40,7 @@ type MsgTestSuite struct {
 }
 
 func (suite *MsgTestSuite) SetupTest() {
-	config := sdk.GetConfig()
-	app.SetBech32AddressPrefixes(config)
+	chaincfg.SetSDKConfig()
 }
 
 func (suite *MsgTestSuite) TestMsgCreateAtomicSwap() {

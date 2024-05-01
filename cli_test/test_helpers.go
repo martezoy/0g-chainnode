@@ -65,8 +65,7 @@ var (
 
 func init() {
 	// set the address prefixes
-	config := sdk.GetConfig()
-	app.SetBech32AddressPrefixes(config)
+	chaincfg.SetSDKConfig()
 	// config.Seal()
 }
 

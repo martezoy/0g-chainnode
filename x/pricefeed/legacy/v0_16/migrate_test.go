@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	app "github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
 	v015pricefeed "github.com/0glabs/0g-chain/x/pricefeed/legacy/v0_15"
 	v016pricefeed "github.com/0glabs/0g-chain/x/pricefeed/types"
 )
@@ -23,7 +24,7 @@ type migrateTestSuite struct {
 }
 
 func (s *migrateTestSuite) SetupTest() {
-	app.SetSDKConfig()
+	chaincfg.SetSDKConfig()
 
 	s.v15genstate = v015pricefeed.GenesisState{
 		Params:       v015pricefeed.Params{},

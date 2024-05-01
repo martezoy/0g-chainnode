@@ -10,6 +10,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/bep3/types"
 )
 
@@ -20,8 +21,7 @@ type ParamsTestSuite struct {
 }
 
 func (suite *ParamsTestSuite) SetupTest() {
-	config := sdk.GetConfig()
-	app.SetBech32AddressPrefixes(config)
+	chaincfg.SetSDKConfig()
 	_, addrs := app.GeneratePrivKeyAddressPairs(1)
 	suite.addr = addrs[0]
 	supply1 := types.SupplyLimit{

@@ -13,6 +13,7 @@ import (
 	"github.com/tendermint/tendermint/libs/bytes"
 
 	app "github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/bep3/types"
 )
 
@@ -25,7 +26,7 @@ type migrateTestSuite struct {
 }
 
 func (s *migrateTestSuite) SetupTest() {
-	app.SetSDKConfig()
+	chaincfg.SetSDKConfig()
 
 	s.v16genstate = types.GenesisState{
 		PreviousBlockTime: time.Date(2021, 4, 8, 15, 0, 0, 0, time.UTC),

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/evmutil/testutil"
 	"github.com/0glabs/0g-chain/x/evmutil/types"
 	"github.com/stretchr/testify/require"
@@ -13,7 +14,7 @@ import (
 )
 
 func TestMsgConvertCoinToERC20(t *testing.T) {
-	app.SetSDKConfig()
+	chaincfg.SetSDKConfig()
 
 	type errArgs struct {
 		expectPass bool
@@ -109,7 +110,7 @@ func TestMsgConvertCoinToERC20(t *testing.T) {
 }
 
 func TestMsgConvertERC20ToCoin(t *testing.T) {
-	app.SetSDKConfig()
+	chaincfg.SetSDKConfig()
 
 	type errArgs struct {
 		expectPass bool
