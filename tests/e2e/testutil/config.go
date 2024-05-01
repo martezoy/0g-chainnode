@@ -27,7 +27,7 @@ type SuiteConfig struct {
 	IncludeIbcTests bool
 
 	// The contract address of a deployed ERC-20 token
-	KavaErc20Address string
+	ZgChainErc20Address string
 
 	// When true, the chains will remain running after tests complete (pass or fail)
 	SkipShutdown bool
@@ -66,7 +66,7 @@ func ParseSuiteConfig() SuiteConfig {
 		// this mnemonic is expected to be a funded account that can seed the funds for all
 		// new accounts created during tests. it will be available under Accounts["whale"]
 		FundedAccountMnemonic: nonemptyStringEnv("E2E_KAVA_FUNDED_ACCOUNT_MNEMONIC"),
-		KavaErc20Address:      nonemptyStringEnv("E2E_KAVA_ERC20_ADDRESS"),
+		ZgChainErc20Address:   nonemptyStringEnv("E2E_KAVA_ERC20_ADDRESS"),
 		IncludeIbcTests:       mustParseBool("E2E_INCLUDE_IBC_TESTS"),
 	}
 

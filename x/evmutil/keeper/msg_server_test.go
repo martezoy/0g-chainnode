@@ -185,10 +185,10 @@ func (suite *MsgServerSuite) TestConvertERC20ToCoin() {
 		{
 			"invalid - invalid hex address",
 			types.MsgConvertERC20ToCoin{
-				Initiator:        "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc",
-				Receiver:         invokerCosmosAddr.String(),
-				KavaERC20Address: contractAddr.String(),
-				Amount:           sdkmath.NewInt(10_000),
+				Initiator:           "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc",
+				Receiver:            invokerCosmosAddr.String(),
+				ZgChainERC20Address: contractAddr.String(),
+				Amount:              sdkmath.NewInt(10_000),
 			},
 			math.MaxBig256,
 			errArgs{
