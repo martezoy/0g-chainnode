@@ -11,9 +11,9 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	earntypes "github.com/kava-labs/kava/x/earn/types"
-	"github.com/kava-labs/kava/x/incentive/types"
-	liquidtypes "github.com/kava-labs/kava/x/liquid/types"
+	earntypes "github.com/0glabs/0g-chain/x/earn/types"
+	"github.com/0glabs/0g-chain/x/incentive/types"
+	liquidtypes "github.com/0glabs/0g-chain/x/liquid/types"
 )
 
 const (

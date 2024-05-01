@@ -7,7 +7,7 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-	"github.com/kava-labs/kava/x/kavadist/types"
+	"github.com/0glabs/0g-chain/x/kavadist/types"
 )
 
 // ParamChanges defines the parameters that can be modified by param change proposals

@@ -7,7 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/types/kv"
 
-	"github.com/kava-labs/kava/x/kavadist/types"
+	"github.com/0glabs/0g-chain/x/kavadist/types"
 )
 
 // DecodeStore unmarshals the KVPair's Value to the corresponding cdp type

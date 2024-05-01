@@ -16,9 +16,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
-	"github.com/kava-labs/kava/x/committee/client/cli"
-	"github.com/kava-labs/kava/x/committee/keeper"
-	"github.com/kava-labs/kava/x/committee/types"
+	"github.com/0glabs/0g-chain/x/committee/client/cli"
+	"github.com/0glabs/0g-chain/x/committee/keeper"
+	"github.com/0glabs/0g-chain/x/committee/types"
 )
 
 // ConsensusVersion defines the current module consensus version.

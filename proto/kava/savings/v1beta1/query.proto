@@ -8,7 +8,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "kava/savings/v1beta1/store.proto";
 
-option go_package = "github.com/kava-labs/kava/x/savings/types";
+option go_package = "github.com/0glabs/0g-chain/x/savings/types";
 
 // Query defines the gRPC querier service for savings module
 service Query {

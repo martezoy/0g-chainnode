@@ -6,7 +6,7 @@ import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 import "kava/community/v1beta1/params.proto";
 
-option go_package = "github.com/kava-labs/kava/x/community/types";
+option go_package = "github.com/0glabs/0g-chain/x/community/types";
 option (gogoproto.equal_all) = true;
 
 // Msg defines the community Msg service.

@@ -13,7 +13,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
-	"github.com/kava-labs/kava/x/earn/types"
+	"github.com/0glabs/0g-chain/x/earn/types"
 )
 
 // GetTxCmd returns the transaction commands for this module

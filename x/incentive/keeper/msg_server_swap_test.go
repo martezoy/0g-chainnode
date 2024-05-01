@@ -9,10 +9,10 @@ import (
 	"github.com/stretchr/testify/suite"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/incentive/testutil"
-	"github.com/kava-labs/kava/x/incentive/types"
-	kavadisttypes "github.com/kava-labs/kava/x/kavadist/types"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/x/incentive/testutil"
+	"github.com/0glabs/0g-chain/x/incentive/types"
+	kavadisttypes "github.com/0glabs/0g-chain/x/kavadist/types"
 )
 
 const secondsPerDay = 24 * 60 * 60

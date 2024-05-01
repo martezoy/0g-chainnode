@@ -8,8 +8,8 @@ import (
 	"github.com/tendermint/tendermint/crypto"
 	tmbytes "github.com/tendermint/tendermint/libs/bytes"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/bep3/types"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/x/bep3/types"
 )
 
 var (

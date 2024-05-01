@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kava-labs/kava/x/swap/keeper"
-	"github.com/kava-labs/kava/x/swap/testutil"
-	"github.com/kava-labs/kava/x/swap/types"
+	"github.com/0glabs/0g-chain/x/swap/keeper"
+	"github.com/0glabs/0g-chain/x/swap/testutil"
+	"github.com/0glabs/0g-chain/x/swap/types"
 	"github.com/stretchr/testify/suite"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmtime "github.com/tendermint/tendermint/types/time"

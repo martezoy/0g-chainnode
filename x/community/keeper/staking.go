@@ -4,9 +4,9 @@ import (
 	"time"
 
 	sdkmath "cosmossdk.io/math"
+	"github.com/0glabs/0g-chain/x/community/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/kava-labs/kava/x/community/types"
 )
 
 const nanosecondsInOneSecond = int64(1000000000)

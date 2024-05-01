@@ -7,8 +7,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/kava-labs/kava/x/auction/keeper"
-	"github.com/kava-labs/kava/x/auction/types"
+	"github.com/0glabs/0g-chain/x/auction/keeper"
+	"github.com/0glabs/0g-chain/x/auction/types"
 )
 
 // BeginBlocker closes all expired auctions at the end of each block. It panics if

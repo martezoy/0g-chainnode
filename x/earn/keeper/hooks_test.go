@@ -3,9 +3,9 @@ package keeper_test
 import (
 	"testing"
 
-	"github.com/kava-labs/kava/x/earn/testutil"
-	"github.com/kava-labs/kava/x/earn/types"
-	"github.com/kava-labs/kava/x/earn/types/mocks"
+	"github.com/0glabs/0g-chain/x/earn/testutil"
+	"github.com/0glabs/0g-chain/x/earn/types"
+	"github.com/0glabs/0g-chain/x/earn/types/mocks"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/mock"

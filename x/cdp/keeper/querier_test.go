@@ -18,11 +18,11 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmtime "github.com/tendermint/tendermint/types/time"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/cdp/keeper"
-	"github.com/kava-labs/kava/x/cdp/types"
-	pfkeeper "github.com/kava-labs/kava/x/pricefeed/keeper"
-	pftypes "github.com/kava-labs/kava/x/pricefeed/types"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/x/cdp/keeper"
+	"github.com/0glabs/0g-chain/x/cdp/types"
+	pfkeeper "github.com/0glabs/0g-chain/x/pricefeed/keeper"
+	pftypes "github.com/0glabs/0g-chain/x/pricefeed/types"
 )
 
 const (

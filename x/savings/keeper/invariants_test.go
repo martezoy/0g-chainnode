@@ -11,9 +11,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/savings/keeper"
-	"github.com/kava-labs/kava/x/savings/types"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/x/savings/keeper"
+	"github.com/0glabs/0g-chain/x/savings/types"
 )
 
 type invariantTestSuite struct {

@@ -1,8 +1,8 @@
 package v0_16
 
 import (
-	v015cdp "github.com/kava-labs/kava/x/cdp/legacy/v0_15"
-	v016cdp "github.com/kava-labs/kava/x/cdp/types"
+	v015cdp "github.com/0glabs/0g-chain/x/cdp/legacy/v0_15"
+	v016cdp "github.com/0glabs/0g-chain/x/cdp/types"
 )
 
 func migrateParams(params v015cdp.Params) v016cdp.Params {

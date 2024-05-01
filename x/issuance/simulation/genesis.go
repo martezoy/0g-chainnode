@@ -11,7 +11,7 @@ package simulation
 // 	"github.com/cosmos/cosmos-sdk/types/module"
 // 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-// 	"github.com/kava-labs/kava/x/issuance/types"
+// 	"github.com/0glabs/0g-chain/x/issuance/types"
 // )
 
 // var (

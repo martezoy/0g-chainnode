@@ -9,8 +9,8 @@ package simulation
 // 	"github.com/cosmos/cosmos-sdk/types/module"
 // 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-// 	"github.com/kava-labs/kava/x/pricefeed/types"
-// 	pricefeed "github.com/kava-labs/kava/x/pricefeed/types"
+// 	"github.com/0glabs/0g-chain/x/pricefeed/types"
+// 	pricefeed "github.com/0glabs/0g-chain/x/pricefeed/types"
 // )
 
 // var (

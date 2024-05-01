@@ -10,7 +10,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 
-	"github.com/kava-labs/kava/x/committee/types"
+	"github.com/0glabs/0g-chain/x/committee/types"
 )
 
 type queryServer struct {

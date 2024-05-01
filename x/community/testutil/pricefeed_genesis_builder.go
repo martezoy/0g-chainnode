@@ -4,9 +4,9 @@ import (
 	"time"
 
 	sdkmath "cosmossdk.io/math"
+	hardtypes "github.com/0glabs/0g-chain/x/hard/types"
+	pricefeedtypes "github.com/0glabs/0g-chain/x/pricefeed/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	hardtypes "github.com/kava-labs/kava/x/hard/types"
-	pricefeedtypes "github.com/kava-labs/kava/x/pricefeed/types"
 )
 
 // lendGenesisBuilder builds the Hard and Pricefeed genesis states for setting up Kava Lend

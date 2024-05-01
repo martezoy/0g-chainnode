@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 import "kava/bep3/v1beta1/bep3.proto";
 
-option go_package = "github.com/kava-labs/kava/x/bep3/types";
+option go_package = "github.com/0glabs/0g-chain/x/bep3/types";
 
 // GenesisState defines the pricefeed module's genesis state.
 message GenesisState {

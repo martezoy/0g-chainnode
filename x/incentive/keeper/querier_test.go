@@ -5,13 +5,13 @@ import (
 	"time"
 
 	sdkmath "cosmossdk.io/math"
+	pricefeedtypes "github.com/0glabs/0g-chain/x/pricefeed/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	pricefeedtypes "github.com/kava-labs/kava/x/pricefeed/types"
 
-	earntypes "github.com/kava-labs/kava/x/earn/types"
-	"github.com/kava-labs/kava/x/incentive/keeper"
-	"github.com/kava-labs/kava/x/incentive/types"
+	earntypes "github.com/0glabs/0g-chain/x/earn/types"
+	"github.com/0glabs/0g-chain/x/incentive/keeper"
+	"github.com/0glabs/0g-chain/x/incentive/types"
 	"github.com/stretchr/testify/suite"
 )
 

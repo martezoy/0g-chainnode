@@ -2,16 +2,16 @@ package types
 
 import (
 	sdkmath "cosmossdk.io/math"
+	cdptypes "github.com/0glabs/0g-chain/x/cdp/types"
+	earntypes "github.com/0glabs/0g-chain/x/earn/types"
+	hardtypes "github.com/0glabs/0g-chain/x/hard/types"
+	pricefeedtypes "github.com/0glabs/0g-chain/x/pricefeed/types"
+	savingstypes "github.com/0glabs/0g-chain/x/savings/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	cdptypes "github.com/kava-labs/kava/x/cdp/types"
-	earntypes "github.com/kava-labs/kava/x/earn/types"
-	hardtypes "github.com/kava-labs/kava/x/hard/types"
-	pricefeedtypes "github.com/kava-labs/kava/x/pricefeed/types"
-	savingstypes "github.com/kava-labs/kava/x/savings/types"
 )
 
 // ParamSubspace defines the expected Subspace interfacace

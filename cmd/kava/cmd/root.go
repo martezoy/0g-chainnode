@@ -20,10 +20,10 @@ import (
 	tmcfg "github.com/tendermint/tendermint/config"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/app/params"
-	kavaclient "github.com/kava-labs/kava/client"
-	"github.com/kava-labs/kava/cmd/kava/opendb"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/app/params"
+	kavaclient "github.com/0glabs/0g-chain/client"
+	"github.com/0glabs/0g-chain/cmd/kava/opendb"
 )
 
 // EnvPrefix is the prefix environment variables must have to configure the app.

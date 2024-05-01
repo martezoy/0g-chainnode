@@ -1,9 +1,9 @@
 package testutil
 
 import (
+	"github.com/0glabs/0g-chain/app"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/kava-labs/kava/app"
 
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 )

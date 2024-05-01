@@ -5,7 +5,7 @@ import "cosmos/base/v1beta1/coin.proto";
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/kava-labs/kava/x/swap/types";
+option go_package = "github.com/0glabs/0g-chain/x/swap/types";
 
 // Params defines the parameters for the swap module.
 message Params {

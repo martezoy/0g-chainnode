@@ -12,8 +12,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/tests/util"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/tests/util"
 )
 
 func (suite *IntegrationTestSuite) TestEthGasPriceReturnsMinFee() {

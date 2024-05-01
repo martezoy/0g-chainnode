@@ -7,10 +7,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/kava-labs/kava/app"
-	hardtypes "github.com/kava-labs/kava/x/hard/types"
-	"github.com/kava-labs/kava/x/incentive/types"
-	savingstypes "github.com/kava-labs/kava/x/savings/types"
+	"github.com/0glabs/0g-chain/app"
+	hardtypes "github.com/0glabs/0g-chain/x/hard/types"
+	"github.com/0glabs/0g-chain/x/incentive/types"
+	savingstypes "github.com/0glabs/0g-chain/x/savings/types"
 )
 
 const (

@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/kava-labs/kava/x/kavadist/types"
+	"github.com/0glabs/0g-chain/x/kavadist/types"
 
 	"github.com/cosmos/cosmos-sdk/types/kv"
 )

@@ -4,11 +4,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/0glabs/0g-chain/app"
+	earntypes "github.com/0glabs/0g-chain/x/earn/types"
+	"github.com/0glabs/0g-chain/x/incentive/testutil"
+	"github.com/0glabs/0g-chain/x/incentive/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/kava-labs/kava/app"
-	earntypes "github.com/kava-labs/kava/x/earn/types"
-	"github.com/kava-labs/kava/x/incentive/testutil"
-	"github.com/kava-labs/kava/x/incentive/types"
 	"github.com/stretchr/testify/suite"
 	abci "github.com/tendermint/tendermint/abci/types"
 )

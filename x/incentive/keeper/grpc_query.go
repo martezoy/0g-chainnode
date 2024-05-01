@@ -8,8 +8,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/kava-labs/kava/x/incentive/types"
-	liquidtypes "github.com/kava-labs/kava/x/liquid/types"
+	"github.com/0glabs/0g-chain/x/incentive/types"
+	liquidtypes "github.com/0glabs/0g-chain/x/liquid/types"
 )
 
 const (

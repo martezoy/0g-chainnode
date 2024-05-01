@@ -10,9 +10,9 @@ import (
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/tests/e2e/runner"
-	"github.com/kava-labs/kava/tests/util"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/tests/e2e/runner"
+	"github.com/0glabs/0g-chain/tests/util"
 )
 
 const (

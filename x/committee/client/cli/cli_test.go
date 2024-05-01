@@ -7,8 +7,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/committee/client/cli"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/x/committee/client/cli"
 )
 
 type CLITestSuite struct {

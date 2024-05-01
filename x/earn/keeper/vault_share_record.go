@@ -1,9 +1,9 @@
 package keeper
 
 import (
+	"github.com/0glabs/0g-chain/x/earn/types"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/kava-labs/kava/x/earn/types"
 )
 
 // ----------------------------------------------------------------------------

@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"github.com/kava-labs/kava/x/earn/types"
+	"github.com/0glabs/0g-chain/x/earn/types"
 	"github.com/stretchr/testify/require"
 )
 

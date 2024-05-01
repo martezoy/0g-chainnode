@@ -7,7 +7,7 @@ import (
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/kava-labs/kava/x/hard/types"
+	"github.com/0glabs/0g-chain/x/hard/types"
 )
 
 // LiqData holds liquidation-related data

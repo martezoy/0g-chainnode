@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"github.com/kava-labs/kava/x/swap/types"
+	"github.com/0glabs/0g-chain/x/swap/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"

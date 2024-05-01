@@ -9,7 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 
-	"github.com/kava-labs/kava/x/kavadist/types"
+	"github.com/0glabs/0g-chain/x/kavadist/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module

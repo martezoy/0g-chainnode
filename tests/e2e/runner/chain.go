@@ -8,7 +8,7 @@ import (
 	rpchttpclient "github.com/tendermint/tendermint/rpc/client/http"
 	"google.golang.org/grpc"
 
-	"github.com/kava-labs/kava/tests/util"
+	"github.com/0glabs/0g-chain/tests/util"
 )
 
 var (

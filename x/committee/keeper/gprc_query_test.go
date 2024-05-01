@@ -6,8 +6,8 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	"github.com/kava-labs/kava/x/committee/testutil"
-	"github.com/kava-labs/kava/x/committee/types"
+	"github.com/0glabs/0g-chain/x/committee/testutil"
+	"github.com/0glabs/0g-chain/x/committee/types"
 )
 
 type grpcQueryTestSuite struct {

@@ -12,7 +12,7 @@ package simulation
 // 	"github.com/cosmos/cosmos-sdk/codec"
 // 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-// 	"github.com/kava-labs/kava/x/issuance/types"
+// 	"github.com/0glabs/0g-chain/x/issuance/types"
 // )
 
 // func makeTestCodec() (cdc *codec.Codec) {

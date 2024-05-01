@@ -7,7 +7,7 @@ package simulation
 // 	"github.com/cosmos/cosmos-sdk/codec"
 // 	"github.com/tendermint/tendermint/libs/kv"
 
-// 	"github.com/kava-labs/kava/x/swap/types"
+// 	"github.com/0glabs/0g-chain/x/swap/types"
 // )
 
 // // DecodeStore unmarshals the KVPair's Value to the module's corresponding type

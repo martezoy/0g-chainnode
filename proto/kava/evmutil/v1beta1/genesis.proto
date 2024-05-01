@@ -5,7 +5,7 @@ import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 import "kava/evmutil/v1beta1/conversion_pair.proto";
 
-option go_package = "github.com/kava-labs/kava/x/evmutil/types";
+option go_package = "github.com/0glabs/0g-chain/x/evmutil/types";
 option (gogoproto.equal_all) = true;
 option (gogoproto.verbose_equal_all) = true;
 

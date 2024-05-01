@@ -28,7 +28,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 
-	"github.com/kava-labs/kava/app"
+	"github.com/0glabs/0g-chain/app"
 )
 
 const (

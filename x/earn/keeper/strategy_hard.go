@@ -1,8 +1,8 @@
 package keeper
 
 import (
+	"github.com/0glabs/0g-chain/x/earn/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/kava-labs/kava/x/earn/types"
 )
 
 // HardStrategy defines the strategy that deposits assets to Hard

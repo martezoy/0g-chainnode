@@ -12,7 +12,7 @@ import (
 
 	"github.com/tendermint/tendermint/libs/kv"
 
-	"github.com/kava-labs/kava/x/incentive/types"
+	"github.com/0glabs/0g-chain/x/incentive/types"
 )
 
 func makeTestCodec() (cdc *codec.Codec) {

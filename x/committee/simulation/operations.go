@@ -12,8 +12,8 @@ import (
 	distsim "github.com/cosmos/cosmos-sdk/x/distribution/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-	"github.com/kava-labs/kava/x/committee/keeper"
-	"github.com/kava-labs/kava/x/committee/types"
+	"github.com/0glabs/0g-chain/x/committee/keeper"
+	"github.com/0glabs/0g-chain/x/committee/types"
 )
 
 var proposalPassPercentage = 0.9

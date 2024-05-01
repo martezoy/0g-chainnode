@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"github.com/kava-labs/kava/x/router/types"
+	"github.com/0glabs/0g-chain/x/router/types"
 )
 
 // Keeper is the keeper for the module

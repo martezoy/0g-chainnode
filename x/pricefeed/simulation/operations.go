@@ -12,9 +12,9 @@ package simulation
 // 	"github.com/cosmos/cosmos-sdk/x/auth"
 // 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-// 	appparams "github.com/kava-labs/kava/app/params"
-// 	"github.com/kava-labs/kava/x/pricefeed/keeper"
-// 	"github.com/kava-labs/kava/x/pricefeed/types"
+// 	appparams "github.com/0glabs/0g-chain/app/params"
+// 	"github.com/0glabs/0g-chain/x/pricefeed/keeper"
+// 	"github.com/0glabs/0g-chain/x/pricefeed/types"
 // )
 
 // // Simulation operation weights constants

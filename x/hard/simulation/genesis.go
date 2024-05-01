@@ -6,7 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
-	"github.com/kava-labs/kava/x/hard/types"
+	"github.com/0glabs/0g-chain/x/hard/types"
 )
 
 // SecondsPerYear is the number of seconds in a year

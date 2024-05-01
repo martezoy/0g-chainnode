@@ -7,7 +7,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/kava-labs/kava/x/committee/types"
+	"github.com/0glabs/0g-chain/x/committee/types"
 )
 
 // NewQuerier creates a new gov Querier instance

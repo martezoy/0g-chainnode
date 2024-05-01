@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/tendermint/tendermint/libs/log"
 
-	"github.com/kava-labs/kava/x/liquid/types"
+	"github.com/0glabs/0g-chain/x/liquid/types"
 )
 
 // Keeper struct for the liquid module.

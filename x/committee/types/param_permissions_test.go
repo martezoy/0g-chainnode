@@ -12,10 +12,10 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmtime "github.com/tendermint/tendermint/types/time"
 
-	"github.com/kava-labs/kava/app"
-	cdptypes "github.com/kava-labs/kava/x/cdp/types"
-	types "github.com/kava-labs/kava/x/committee/types"
-	pricefeedtypes "github.com/kava-labs/kava/x/pricefeed/types"
+	"github.com/0glabs/0g-chain/app"
+	cdptypes "github.com/0glabs/0g-chain/x/cdp/types"
+	types "github.com/0glabs/0g-chain/x/committee/types"
+	pricefeedtypes "github.com/0glabs/0g-chain/x/pricefeed/types"
 )
 
 type ParamsChangeTestSuite struct {

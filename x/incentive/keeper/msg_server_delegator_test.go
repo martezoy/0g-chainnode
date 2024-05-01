@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 
-	"github.com/kava-labs/kava/x/incentive/types"
+	"github.com/0glabs/0g-chain/x/incentive/types"
 )
 
 func (suite *HandlerTestSuite) TestPayoutDelegatorClaimMultiDenom() {

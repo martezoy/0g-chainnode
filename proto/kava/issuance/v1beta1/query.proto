@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "kava/issuance/v1beta1/genesis.proto";
 
-option go_package = "github.com/kava-labs/kava/x/issuance/types";
+option go_package = "github.com/0glabs/0g-chain/x/issuance/types";
 
 // Query defines the gRPC querier service for issuance module
 service Query {

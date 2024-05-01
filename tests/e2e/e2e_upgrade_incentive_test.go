@@ -4,8 +4,8 @@ import (
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/kava-labs/kava/tests/util"
-	incentivetypes "github.com/kava-labs/kava/x/incentive/types"
+	"github.com/0glabs/0g-chain/tests/util"
+	incentivetypes "github.com/0glabs/0g-chain/x/incentive/types"
 )
 
 func (suite *IntegrationTestSuite) TestUpgradeIncentiveParams() {

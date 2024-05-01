@@ -2,10 +2,10 @@ package keeper_test
 
 import (
 	sdkmath "cosmossdk.io/math"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/x/liquid/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/liquid/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 )

@@ -10,7 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/simulation"
 
-	"github.com/kava-labs/kava/x/kavadist/types"
+	"github.com/0glabs/0g-chain/x/kavadist/types"
 )
 
 // SecondsPerYear is the number of seconds in a year

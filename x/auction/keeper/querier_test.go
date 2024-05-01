@@ -13,9 +13,9 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/kava-labs/kava/x/auction/keeper"
-	"github.com/kava-labs/kava/x/auction/testutil"
-	"github.com/kava-labs/kava/x/auction/types"
+	"github.com/0glabs/0g-chain/x/auction/keeper"
+	"github.com/0glabs/0g-chain/x/auction/testutil"
+	"github.com/0glabs/0g-chain/x/auction/types"
 )
 
 const (

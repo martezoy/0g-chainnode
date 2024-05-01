@@ -10,9 +10,9 @@ package simulation
 // 	sdk "github.com/cosmos/cosmos-sdk/types"
 // 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-// 	appparams "github.com/kava-labs/kava/app/params"
-// 	"github.com/kava-labs/kava/x/cdp/keeper"
-// 	"github.com/kava-labs/kava/x/cdp/types"
+// 	appparams "github.com/0glabs/0g-chain/app/params"
+// 	"github.com/0glabs/0g-chain/x/cdp/keeper"
+// 	"github.com/0glabs/0g-chain/x/cdp/types"
 // )
 
 // // Simulation operation weights constants

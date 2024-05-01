@@ -8,7 +8,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "kava/swap/v1beta1/swap.proto";
 
-option go_package = "github.com/kava-labs/kava/x/swap/types";
+option go_package = "github.com/0glabs/0g-chain/x/swap/types";
 
 // Query defines the gRPC querier service for swap module
 service Query {

@@ -4,10 +4,10 @@ import (
 	"errors"
 	"time"
 
+	"github.com/0glabs/0g-chain/x/pricefeed/keeper"
+	"github.com/0glabs/0g-chain/x/pricefeed/types"
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/kava-labs/kava/x/pricefeed/keeper"
-	"github.com/kava-labs/kava/x/pricefeed/types"
 )
 
 // EndBlocker updates the current pricefeed

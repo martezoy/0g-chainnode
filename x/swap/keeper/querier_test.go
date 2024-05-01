@@ -8,10 +8,10 @@ package keeper_test
 // 	"github.com/stretchr/testify/suite"
 // 	abci "github.com/tendermint/tendermint/abci/types"
 
-// 	"github.com/kava-labs/kava/app"
-// 	"github.com/kava-labs/kava/x/swap/keeper"
-// 	"github.com/kava-labs/kava/x/swap/testutil"
-// 	"github.com/kava-labs/kava/x/swap/types"
+// 	"github.com/0glabs/0g-chain/app"
+// 	"github.com/0glabs/0g-chain/x/swap/keeper"
+// 	"github.com/0glabs/0g-chain/x/swap/testutil"
+// 	"github.com/0glabs/0g-chain/x/swap/types"
 // )
 
 // type querierTestSuite struct {

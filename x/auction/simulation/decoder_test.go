@@ -12,7 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/kava-labs/kava/x/auction/types"
+	"github.com/0glabs/0g-chain/x/auction/types"
 )
 
 func makeTestCodec() (cdc *codec.Codec) {

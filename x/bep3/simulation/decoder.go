@@ -10,7 +10,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/kava-labs/kava/x/bep3/types"
+	"github.com/0glabs/0g-chain/x/bep3/types"
 )
 
 // DecodeStore unmarshals the KVPair's Value to the module's corresponding type

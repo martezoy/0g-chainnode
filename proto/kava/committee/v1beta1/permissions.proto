@@ -4,7 +4,7 @@ package kava.committee.v1beta1;
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/kava-labs/kava/x/committee/types";
+option go_package = "github.com/0glabs/0g-chain/x/committee/types";
 
 // GodPermission allows any governance proposal. It is used mainly for testing.
 message GodPermission {

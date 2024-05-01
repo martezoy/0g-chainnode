@@ -6,8 +6,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
-	"github.com/kava-labs/kava/x/community/keeper"
-	"github.com/kava-labs/kava/x/community/types"
+	"github.com/0glabs/0g-chain/x/community/keeper"
+	"github.com/0glabs/0g-chain/x/community/types"
 )
 
 // NewCommunityPoolProposalHandler handles x/community proposals.

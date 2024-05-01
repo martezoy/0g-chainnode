@@ -6,10 +6,10 @@ import (
 	"github.com/stretchr/testify/require"
 
 	sdkmath "cosmossdk.io/math"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/x/community/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/community/types"
 )
 
 func TestFundCommunityPool_ValidateBasic(t *testing.T) {
