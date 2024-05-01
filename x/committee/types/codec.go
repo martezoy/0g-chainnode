@@ -52,28 +52,28 @@ func init() {
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	// Proposals
 	cdc.RegisterInterface((*PubProposal)(nil), nil)
-	cdc.RegisterConcrete(CommitteeChangeProposal{}, "0gchain/CommitteeChangeProposal", nil)
-	cdc.RegisterConcrete(CommitteeDeleteProposal{}, "0gchain/CommitteeDeleteProposal", nil)
+	cdc.RegisterConcrete(CommitteeChangeProposal{}, "0g-chain/CommitteeChangeProposal", nil)
+	cdc.RegisterConcrete(CommitteeDeleteProposal{}, "0g-chain/CommitteeDeleteProposal", nil)
 
 	// Committees
 	cdc.RegisterInterface((*Committee)(nil), nil)
-	cdc.RegisterConcrete(BaseCommittee{}, "0gchain/BaseCommittee", nil)
-	cdc.RegisterConcrete(MemberCommittee{}, "0gchain/MemberCommittee", nil)
-	cdc.RegisterConcrete(TokenCommittee{}, "0gchain/TokenCommittee", nil)
+	cdc.RegisterConcrete(BaseCommittee{}, "0g-chain/BaseCommittee", nil)
+	cdc.RegisterConcrete(MemberCommittee{}, "0g-chain/MemberCommittee", nil)
+	cdc.RegisterConcrete(TokenCommittee{}, "0g-chain/TokenCommittee", nil)
 
 	// Permissions
 	cdc.RegisterInterface((*Permission)(nil), nil)
-	cdc.RegisterConcrete(GodPermission{}, "0gchain/GodPermission", nil)
-	cdc.RegisterConcrete(TextPermission{}, "0gchain/TextPermission", nil)
-	cdc.RegisterConcrete(SoftwareUpgradePermission{}, "0gchain/SoftwareUpgradePermission", nil)
-	cdc.RegisterConcrete(ParamsChangePermission{}, "0gchain/ParamsChangePermission", nil)
-	cdc.RegisterConcrete(CommunityCDPRepayDebtPermission{}, "0gchain/CommunityCDPRepayDebtPermission", nil)
-	cdc.RegisterConcrete(CommunityCDPWithdrawCollateralPermission{}, "0gchain/CommunityCDPWithdrawCollateralPermission", nil)
-	cdc.RegisterConcrete(CommunityPoolLendWithdrawPermission{}, "0gchain/CommunityPoolLendWithdrawPermission", nil)
+	cdc.RegisterConcrete(GodPermission{}, "0g-chain/GodPermission", nil)
+	cdc.RegisterConcrete(TextPermission{}, "0g-chain/TextPermission", nil)
+	cdc.RegisterConcrete(SoftwareUpgradePermission{}, "0g-chain/SoftwareUpgradePermission", nil)
+	cdc.RegisterConcrete(ParamsChangePermission{}, "0g-chain/ParamsChangePermission", nil)
+	cdc.RegisterConcrete(CommunityCDPRepayDebtPermission{}, "0g-chain/CommunityCDPRepayDebtPermission", nil)
+	cdc.RegisterConcrete(CommunityCDPWithdrawCollateralPermission{}, "0g-chain/CommunityCDPWithdrawCollateralPermission", nil)
+	cdc.RegisterConcrete(CommunityPoolLendWithdrawPermission{}, "0g-chain/CommunityPoolLendWithdrawPermission", nil)
 
 	// Msgs
-	legacy.RegisterAminoMsg(cdc, &MsgSubmitProposal{}, "0gchain/MsgSubmitProposal")
-	legacy.RegisterAminoMsg(cdc, &MsgVote{}, "0gchain/MsgVote")
+	legacy.RegisterAminoMsg(cdc, &MsgSubmitProposal{}, "0g-chain/MsgSubmitProposal")
+	legacy.RegisterAminoMsg(cdc, &MsgVote{}, "0g-chain/MsgVote")
 }
 
 // RegisterProposalTypeCodec allows external modules to register their own pubproposal types on the
@@ -91,7 +91,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 
 	registry.RegisterInterface(
-		"0gchain.committee.v1beta1.Committee",
+		"0g-chain.committee.v1beta1.Committee",
 		(*Committee)(nil),
 		&BaseCommittee{},
 		&TokenCommittee{},
@@ -99,21 +99,21 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 	)
 
 	registry.RegisterInterface(
-		"0gchain.committee.v1beta1.Permission",
+		"0g-chain.committee.v1beta1.Permission",
 		(*Permission)(nil),
 		&GodPermission{},
 		&TextPermission{},
 		&SoftwareUpgradePermission{},
 		&ParamsChangePermission{},
-		&CommunityCDPRepayDebtPermission{},
-		&CommunityCDPWithdrawCollateralPermission{},
-		&CommunityPoolLendWithdrawPermission{},
+		// &CommunityCDPRepayDebtPermission{},
+		// &CommunityCDPWithdrawCollateralPermission{},
+		// &CommunityPoolLendWithdrawPermission{},
 	)
 
 	// Need to register PubProposal here since we use this as alias for the x/gov Content interface for all the proposal implementations used in this module.
 	// Note that all proposals supported by x/committee needed to be registered here, including the proposals from x/gov.
 	registry.RegisterInterface(
-		"0gchain.committee.v1beta1.PubProposal",
+		"0g-chain.committee.v1beta1.PubProposal",
 		(*PubProposal)(nil),
 		&Proposal{},
 		&distrtypes.CommunityPoolSpendProposal{},
