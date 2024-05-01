@@ -106,6 +106,12 @@ import (
 	committeeclient "github.com/0glabs/0g-chain/x/committee/client"
 	committeekeeper "github.com/0glabs/0g-chain/x/committee/keeper"
 	committeetypes "github.com/0glabs/0g-chain/x/committee/types"
+	council "github.com/0glabs/0g-chain/x/council/v1"
+	councilkeeper "github.com/0glabs/0g-chain/x/council/v1/keeper"
+	counciltypes "github.com/0glabs/0g-chain/x/council/v1/types"
+	das "github.com/0glabs/0g-chain/x/das/v1"
+	daskeeper "github.com/0glabs/0g-chain/x/das/v1/keeper"
+	dastypes "github.com/0glabs/0g-chain/x/das/v1/types"
 	evmutil "github.com/0glabs/0g-chain/x/evmutil"
 	evmutilkeeper "github.com/0glabs/0g-chain/x/evmutil/keeper"
 	evmutiltypes "github.com/0glabs/0g-chain/x/evmutil/types"
@@ -157,6 +163,8 @@ var (
 		validatorvesting.AppModuleBasic{},
 		evmutil.AppModuleBasic{},
 		mint.AppModuleBasic{},
+		council.AppModuleBasic{},
+		das.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -233,6 +241,8 @@ type App struct {
 	upgradeKeeper    upgradekeeper.Keeper
 	evidenceKeeper   evidencekeeper.Keeper
 	transferKeeper   ibctransferkeeper.Keeper
+	CouncilKeeper    councilkeeper.Keeper
+	DasKeeper        daskeeper.Keeper
 	issuanceKeeper   issuancekeeper.Keeper
 	bep3Keeper       bep3keeper.Keeper
 	pricefeedKeeper  pricefeedkeeper.Keeper
@@ -288,6 +298,8 @@ func NewApp(
 		issuancetypes.StoreKey, bep3types.StoreKey, pricefeedtypes.StoreKey,
 		committeetypes.StoreKey, evmutiltypes.StoreKey,
 		minttypes.StoreKey,
+		counciltypes.StoreKey,
+		dastypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey, feemarkettypes.TransientKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -547,6 +559,11 @@ func NewApp(
 	)
 	app.govKeeper.SetTallyHandler(tallyHandler)
 
+	app.CouncilKeeper = councilkeeper.NewKeeper(
+		keys[counciltypes.StoreKey], appCodec, app.stakingKeeper,
+	)
+	app.DasKeeper = daskeeper.NewKeeper(keys[dastypes.StoreKey], appCodec, app.stakingKeeper)
+
 	// create the module manager (Note: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.)
 	app.mm = module.NewManager(
@@ -576,6 +593,8 @@ func NewApp(
 		evmutil.NewAppModule(app.evmutilKeeper, app.bankKeeper, app.accountKeeper),
 		// nil InflationCalculationFn, use SDK's default inflation function
 		mint.NewAppModule(appCodec, app.mintKeeper, app.accountKeeper, nil),
+		council.NewAppModule(app.CouncilKeeper, app.stakingKeeper),
+		das.NewAppModule(app.DasKeeper),
 	)
 
 	// Warning: Some begin blockers must run before others. Ensure the dependencies are understood before modifying this list.
@@ -617,6 +636,9 @@ func NewApp(
 		paramstypes.ModuleName,
 		authz.ModuleName,
 		evmutiltypes.ModuleName,
+
+		counciltypes.ModuleName,
+		dastypes.ModuleName,
 	)
 
 	// Warning: Some end blockers must run before others. Ensure the dependencies are understood before modifying this list.
@@ -648,6 +670,8 @@ func NewApp(
 		authz.ModuleName,
 		evmutiltypes.ModuleName,
 		minttypes.ModuleName,
+		counciltypes.ModuleName,
+		dastypes.ModuleName,
 	)
 
 	// Warning: Some init genesis methods must run before others. Ensure the dependencies are understood before modifying this list
@@ -678,6 +702,8 @@ func NewApp(
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
 		validatorvestingtypes.ModuleName,
+		counciltypes.ModuleName,
+		dastypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.crisisKeeper)
@@ -842,7 +868,7 @@ func RegisterAPIRouteRewrites(router *mux.Router) {
 	// Eg: querying /cosmos/distribution/v1beta1/community_pool will return
 	// the same response as querying /kava/community/v1beta1/total_balance
 	routeMap := map[string]string{
-		"/cosmos/distribution/v1beta1/community_pool": "/kava/community/v1beta1/total_balance",
+		"/cosmos/distribution/v1beta1/community_pool": "/0g-chain/community/v1beta1/total_balance",
 	}
 
 	for clientPath, backendPath := range routeMap {
