@@ -183,10 +183,10 @@ func TestMsgConvertERC20ToCoin(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			msg := types.MsgConvertERC20ToCoin{
-				Initiator:        tc.initiator,
-				Receiver:         tc.receiver,
-				KavaERC20Address: tc.contractAddr,
-				Amount:           tc.amount,
+				Initiator:           tc.initiator,
+				Receiver:            tc.receiver,
+				ZgChainERC20Address: tc.contractAddr,
+				Amount:              tc.amount,
 			}
 			err := msg.ValidateBasic()
 

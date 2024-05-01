@@ -27,7 +27,7 @@ const (
 )
 
 // DeployedErc20 is a type that wraps the details of the pre-deployed erc20 used by the e2e test suite.
-// The Address comes from SuiteConfig.KavaErc20Address
+// The Address comes from SuiteConfig.ZgChainErc20Address
 // The CosmosDenom is fetched from the EnabledConversionPairs param of x/evmutil.
 // The tests expect the following:
 // - the funded account has a nonzero balance of the erc20
@@ -90,7 +90,7 @@ func (suite *E2eTestSuite) SetupSuite() {
 	suiteConfig := ParseSuiteConfig()
 	suite.config = suiteConfig
 	suite.DeployedErc20 = DeployedErc20{
-		Address: common.HexToAddress(suiteConfig.KavaErc20Address),
+		Address: common.HexToAddress(suiteConfig.ZgChainErc20Address),
 		// Denom & CdpCollateralType are fetched in InitKavaEvmData()
 	}
 

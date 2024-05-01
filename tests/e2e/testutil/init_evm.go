@@ -34,7 +34,7 @@ func (suite *E2eTestSuite) InitKavaEvmData() {
 	found := false
 	erc20Addr := suite.DeployedErc20.Address.Hex()
 	for _, p := range params.Params.EnabledConversionPairs {
-		if common.BytesToAddress(p.KavaERC20Address).Hex() == erc20Addr {
+		if common.BytesToAddress(p.ZgChainERC20Address).Hex() == erc20Addr {
 			found = true
 			suite.DeployedErc20.CosmosDenom = p.Denom
 		}
