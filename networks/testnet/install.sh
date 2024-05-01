@@ -8,7 +8,7 @@ gcc --version 2>/dev/null || (sudo apt-get update; sudo apt install gcc -y)
 
 # Build binary
 export PATH=$PATH:$(go env GOPATH)/bin
-kava version 2>/dev/null
+0gchaind version 2>/dev/null
 if [[ $? -ne 0 ]]; then
     # Make under root dir
     SCRIPT_DIR=`dirname "${BASH_SOURCE[0]}"`

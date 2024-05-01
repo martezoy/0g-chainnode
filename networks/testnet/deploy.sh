@@ -56,7 +56,7 @@ NUM_NODES=${#IPS[@]}
 
 # Install dependent libraries and binary
 for ((i=0; i<$NUM_NODES; i++)) do
-    ssh $PEM_FLAG ubuntu@${IPS[$i]} "rm -rf 0g-chain; git clone https://github.com/0glabs/0g-chain.git; cd 0g-chain; git checkout testnet; ./networks/testnet/install.sh"
+    ssh $PEM_FLAG ubuntu@${IPS[$i]} "rm -rf 0g-chain; git clone https://github.com/0glabs/0g-chain.git; cd 0g-chain; git checkout patch_testnet_1; ./networks/testnet/install.sh"
 done
 
 # Create genesis config on node0
@@ -71,7 +71,7 @@ cd $NETWORK
 for ((i=0; i<$NUM_NODES; i++)) do
     tar czf node$i.tar.gz node$i
     scp $PEM_FLAG node$i.tar.gz ubuntu@${IPS[$i]}:~
-    ssh $PEM_FLAG ubuntu@${IPS[$i]} "rm -rf kava-prod; tar xzf node$i.tar.gz; rm node$i.tar.gz; mv node$i kava-prod"
+    ssh $PEM_FLAG ubuntu@${IPS[$i]} "rm -rf 0gchaind-prod; tar xzf node$i.tar.gz; rm node$i.tar.gz; mv node$i 0gchaind-prod"
     rm node$i.tar.gz
 done
 
