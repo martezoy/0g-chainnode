@@ -3,7 +3,7 @@ package kava.evmutil.v1beta1;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/kava-labs/kava/x/evmutil/types";
+option go_package = "github.com/0glabs/0g-chain/x/evmutil/types";
 option (gogoproto.equal_all) = true;
 option (gogoproto.verbose_equal_all) = true;
 

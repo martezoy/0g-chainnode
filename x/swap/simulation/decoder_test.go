@@ -11,7 +11,7 @@ package simulation
 // 	"github.com/tendermint/tendermint/crypto"
 // 	"github.com/tendermint/tendermint/libs/kv"
 
-// 	"github.com/kava-labs/kava/x/swap/types"
+// 	"github.com/0glabs/0g-chain/x/swap/types"
 // )
 
 // func makeTestCodec() (cdc *codec.Codec) {

@@ -9,8 +9,8 @@ import (
 	"github.com/spf13/cobra"
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/app/params"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/app/params"
 )
 
 func AssertInvariantsCmd(config params.EncodingConfig) *cobra.Command {

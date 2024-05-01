@@ -4,8 +4,8 @@ package keeper_test
 // 	sdk "github.com/cosmos/cosmos-sdk/types"
 // 	abci "github.com/tendermint/tendermint/abci/types"
 
-// 	"github.com/kava-labs/kava/x/kavadist/keeper"
-// 	"github.com/kava-labs/kava/x/kavadist/types"
+// 	"github.com/0glabs/0g-chain/x/kavadist/keeper"
+// 	"github.com/0glabs/0g-chain/x/kavadist/types"
 // )
 
 // func (suite *KeeperTestSuite) TestQuerierGetParams() {

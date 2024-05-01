@@ -6,7 +6,7 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/kava-labs/kava/x/incentive/types"
+	"github.com/0glabs/0g-chain/x/incentive/types"
 )
 
 // InitializeDelegatorRewardTests runs unit tests for the keeper.InitializeDelegatorReward method

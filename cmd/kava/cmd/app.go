@@ -22,9 +22,9 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	db "github.com/tendermint/tm-db"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/app/params"
-	metricstypes "github.com/kava-labs/kava/x/metrics/types"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/app/params"
+	metricstypes "github.com/0glabs/0g-chain/x/metrics/types"
 )
 
 const (

@@ -8,7 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	"github.com/kava-labs/kava/tests/util"
+	"github.com/0glabs/0g-chain/tests/util"
 )
 
 func (suite *IntegrationTestSuite) TestValMinCommission() {

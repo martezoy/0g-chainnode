@@ -12,10 +12,10 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmtime "github.com/tendermint/tendermint/types/time"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/issuance"
-	"github.com/kava-labs/kava/x/issuance/keeper"
-	"github.com/kava-labs/kava/x/issuance/types"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/x/issuance"
+	"github.com/0glabs/0g-chain/x/issuance/keeper"
+	"github.com/0glabs/0g-chain/x/issuance/types"
 )
 
 // Test suite used for all keeper tests

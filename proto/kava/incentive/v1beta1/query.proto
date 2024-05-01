@@ -7,7 +7,7 @@ import "kava/incentive/v1beta1/apy.proto";
 import "kava/incentive/v1beta1/claims.proto";
 import "kava/incentive/v1beta1/params.proto";
 
-option go_package = "github.com/kava-labs/kava/x/incentive/types";
+option go_package = "github.com/0glabs/0g-chain/x/incentive/types";
 
 // Query defines the gRPC querier service for incentive module.
 service Query {

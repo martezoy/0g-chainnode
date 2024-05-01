@@ -6,9 +6,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/kava-labs/kava/x/community"
-	"github.com/kava-labs/kava/x/community/keeper"
-	"github.com/kava-labs/kava/x/community/testutil"
+	"github.com/0glabs/0g-chain/x/community"
+	"github.com/0glabs/0g-chain/x/community/keeper"
+	"github.com/0glabs/0g-chain/x/community/testutil"
 )
 
 func TestABCIDisableInflation(t *testing.T) {

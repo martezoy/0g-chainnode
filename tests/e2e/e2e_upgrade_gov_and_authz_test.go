@@ -11,8 +11,8 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	govv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 
-	"github.com/kava-labs/kava/tests/e2e/testutil"
-	"github.com/kava-labs/kava/tests/util"
+	"github.com/0glabs/0g-chain/tests/e2e/testutil"
+	"github.com/0glabs/0g-chain/tests/util"
 )
 
 const (

@@ -6,10 +6,10 @@ import (
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/kava-labs/kava/app"
-	auctiontypes "github.com/kava-labs/kava/x/auction/types"
-	"github.com/kava-labs/kava/x/cdp/keeper"
-	"github.com/kava-labs/kava/x/cdp/types"
+	"github.com/0glabs/0g-chain/app"
+	auctiontypes "github.com/0glabs/0g-chain/x/auction/types"
+	"github.com/0glabs/0g-chain/x/cdp/keeper"
+	"github.com/0glabs/0g-chain/x/cdp/types"
 
 	"github.com/stretchr/testify/suite"
 

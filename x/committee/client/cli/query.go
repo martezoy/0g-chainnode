@@ -7,11 +7,11 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/0glabs/0g-chain/x/committee/client/common"
+	"github.com/0glabs/0g-chain/x/committee/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/version"
-	"github.com/kava-labs/kava/x/committee/client/common"
-	"github.com/kava-labs/kava/x/committee/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module

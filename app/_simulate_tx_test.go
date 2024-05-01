@@ -8,7 +8,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/kava-labs/kava/app"
+	sdkmath "cosmossdk.io/math"
+	"github.com/0glabs/0g-chain/app"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdk "github.com/cosmos/cosmos-sdk/types"

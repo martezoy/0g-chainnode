@@ -3,8 +3,8 @@ package pricefeed
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/kava-labs/kava/x/pricefeed/keeper"
-	"github.com/kava-labs/kava/x/pricefeed/types"
+	"github.com/0glabs/0g-chain/x/pricefeed/keeper"
+	"github.com/0glabs/0g-chain/x/pricefeed/types"
 )
 
 // InitGenesis sets distribution information for genesis.

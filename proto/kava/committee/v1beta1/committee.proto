@@ -6,7 +6,7 @@ import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/duration.proto";
 
-option go_package = "github.com/kava-labs/kava/x/committee/types";
+option go_package = "github.com/0glabs/0g-chain/x/committee/types";
 option (gogoproto.goproto_getters_all) = false;
 
 // BaseCommittee is a common type shared by all Committees

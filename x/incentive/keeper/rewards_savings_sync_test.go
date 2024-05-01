@@ -6,8 +6,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/kava-labs/kava/x/incentive/types"
-	savingstypes "github.com/kava-labs/kava/x/savings/types"
+	"github.com/0glabs/0g-chain/x/incentive/types"
+	savingstypes "github.com/0glabs/0g-chain/x/savings/types"
 )
 
 // SynchronizeSavingsRewardTests runs unit tests for the keeper.SynchronizeSavingsReward method

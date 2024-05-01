@@ -16,11 +16,11 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/earn/keeper"
-	"github.com/kava-labs/kava/x/earn/testutil"
-	"github.com/kava-labs/kava/x/earn/types"
-	liquidtypes "github.com/kava-labs/kava/x/liquid/types"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/x/earn/keeper"
+	"github.com/0glabs/0g-chain/x/earn/testutil"
+	"github.com/0glabs/0g-chain/x/earn/types"
+	liquidtypes "github.com/0glabs/0g-chain/x/liquid/types"
 )
 
 type grpcQueryTestSuite struct {

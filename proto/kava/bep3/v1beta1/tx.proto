@@ -5,7 +5,7 @@ import "cosmos/base/v1beta1/coin.proto";
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/kava-labs/kava/x/bep3/types";
+option go_package = "github.com/0glabs/0g-chain/x/bep3/types";
 
 // Msg defines the bep3 Msg service.
 service Msg {

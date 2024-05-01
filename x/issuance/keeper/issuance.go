@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	errorsmod "cosmossdk.io/errors"
+	"github.com/0glabs/0g-chain/x/issuance/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/kava-labs/kava/x/issuance/types"
 )
 
 // IssueTokens mints new tokens and sends them to the receiver address

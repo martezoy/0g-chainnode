@@ -13,7 +13,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/version"
 
-	"github.com/kava-labs/kava/x/liquid/types"
+	"github.com/0glabs/0g-chain/x/liquid/types"
 )
 
 // GetTxCmd returns the transaction commands for this module

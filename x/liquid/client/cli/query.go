@@ -6,7 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 
-	"github.com/kava-labs/kava/x/liquid/types"
+	"github.com/0glabs/0g-chain/x/liquid/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module

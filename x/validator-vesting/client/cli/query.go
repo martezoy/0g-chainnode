@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 
-	"github.com/kava-labs/kava/x/validator-vesting/types"
+	"github.com/0glabs/0g-chain/x/validator-vesting/types"
 )
 
 // GetQueryCmd returns the cli query commands for the kavadist module

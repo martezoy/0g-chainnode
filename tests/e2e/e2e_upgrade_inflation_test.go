@@ -16,9 +16,9 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	coretypes "github.com/tendermint/tendermint/rpc/core/types"
 
-	"github.com/kava-labs/kava/tests/util"
-	communitytypes "github.com/kava-labs/kava/x/community/types"
-	kavadisttypes "github.com/kava-labs/kava/x/kavadist/types"
+	"github.com/0glabs/0g-chain/tests/util"
+	communitytypes "github.com/0glabs/0g-chain/x/community/types"
+	kavadisttypes "github.com/0glabs/0g-chain/x/kavadist/types"
 )
 
 func (suite *IntegrationTestSuite) TestUpgradeInflation_Disable() {

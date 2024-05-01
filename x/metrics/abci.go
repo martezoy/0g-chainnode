@@ -1,7 +1,7 @@
 package metrics
 
 import (
-	"github.com/kava-labs/kava/x/metrics/types"
+	"github.com/0glabs/0g-chain/x/metrics/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

@@ -9,9 +9,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
 
-	app "github.com/kava-labs/kava/app"
-	v015issuance "github.com/kava-labs/kava/x/issuance/legacy/v0_15"
-	v016issuance "github.com/kava-labs/kava/x/issuance/types"
+	app "github.com/0glabs/0g-chain/app"
+	v015issuance "github.com/0glabs/0g-chain/x/issuance/legacy/v0_15"
+	v016issuance "github.com/0glabs/0g-chain/x/issuance/types"
 )
 
 type migrateTestSuite struct {

@@ -11,7 +11,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
-	"github.com/kava-labs/kava/x/swap/types"
+	"github.com/0glabs/0g-chain/x/swap/types"
 )
 
 // Keeper keeper for the swap module

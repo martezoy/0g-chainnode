@@ -1,10 +1,10 @@
 package testutil
 
 import (
+	"github.com/0glabs/0g-chain/app"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/kava-labs/kava/app"
 
-	earntypes "github.com/kava-labs/kava/x/earn/types"
+	earntypes "github.com/0glabs/0g-chain/x/earn/types"
 )
 
 // EarnGenesisBuilder is a tool for creating a earn genesis state.

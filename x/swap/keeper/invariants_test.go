@@ -3,9 +3,9 @@ package keeper_test
 import (
 	"testing"
 
-	"github.com/kava-labs/kava/x/swap/keeper"
-	"github.com/kava-labs/kava/x/swap/testutil"
-	"github.com/kava-labs/kava/x/swap/types"
+	"github.com/0glabs/0g-chain/x/swap/keeper"
+	"github.com/0glabs/0g-chain/x/swap/testutil"
+	"github.com/0glabs/0g-chain/x/swap/types"
 
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"

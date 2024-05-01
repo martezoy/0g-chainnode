@@ -3,8 +3,8 @@ package keeper
 import (
 	"fmt"
 
+	"github.com/0glabs/0g-chain/x/earn/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/kava-labs/kava/x/earn/types"
 )
 
 // GetVaultTotalShares returns the total shares of a vault.

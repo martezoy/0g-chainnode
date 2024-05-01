@@ -9,10 +9,10 @@ package simulation
 // 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 // 	sdk "github.com/cosmos/cosmos-sdk/types"
 // 	"github.com/cosmos/cosmos-sdk/x/simulation"
-// 	simappparams "github.com/kava-labs/kava/app/params"
+// 	simappparams "github.com/0glabs/0g-chain/app/params"
 
-// 	"github.com/kava-labs/kava/x/issuance/keeper"
-// 	"github.com/kava-labs/kava/x/issuance/types"
+// 	"github.com/0glabs/0g-chain/x/issuance/keeper"
+// 	"github.com/0glabs/0g-chain/x/issuance/types"
 // )
 
 // // Simulation operation weights constants

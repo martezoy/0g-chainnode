@@ -6,10 +6,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
+	"github.com/0glabs/0g-chain/app"
+	types "github.com/0glabs/0g-chain/x/community/types"
+	kavadisttypes "github.com/0glabs/0g-chain/x/kavadist/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	"github.com/kava-labs/kava/app"
-	types "github.com/kava-labs/kava/x/community/types"
-	kavadisttypes "github.com/kava-labs/kava/x/kavadist/types"
 )
 
 func (suite *disableInflationTestSuite) TestStartCommunityFundConsolidation() {

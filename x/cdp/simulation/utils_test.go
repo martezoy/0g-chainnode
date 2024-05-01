@@ -7,7 +7,7 @@ package simulation_test
 
 // 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-// 	"github.com/kava-labs/kava/x/cdp/simulation"
+// 	"github.com/0glabs/0g-chain/x/cdp/simulation"
 // )
 
 // func TestShiftDec(t *testing.T) {

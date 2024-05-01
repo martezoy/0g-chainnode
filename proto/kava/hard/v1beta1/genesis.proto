@@ -7,7 +7,7 @@ import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 import "kava/hard/v1beta1/hard.proto";
 
-option go_package = "github.com/kava-labs/kava/x/hard/types";
+option go_package = "github.com/0glabs/0g-chain/x/hard/types";
 
 // GenesisState defines the hard module's genesis state.
 message GenesisState {

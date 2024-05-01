@@ -3,9 +3,9 @@ package types_test
 import (
 	"testing"
 
+	"github.com/0glabs/0g-chain/x/metrics/types"
 	"github.com/go-kit/kit/metrics"
 	"github.com/go-kit/kit/metrics/prometheus"
-	"github.com/kava-labs/kava/x/metrics/types"
 	"github.com/stretchr/testify/require"
 )
 

@@ -3,10 +3,10 @@ package swap_test
 import (
 	"testing"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/swap"
-	"github.com/kava-labs/kava/x/swap/testutil"
-	"github.com/kava-labs/kava/x/swap/types"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/x/swap"
+	"github.com/0glabs/0g-chain/x/swap/testutil"
+	"github.com/0glabs/0g-chain/x/swap/types"
 	"github.com/stretchr/testify/suite"
 
 	sdkmath "cosmossdk.io/math"

@@ -8,7 +8,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/kava-labs/kava/x/pricefeed/types"
+	"github.com/0glabs/0g-chain/x/pricefeed/types"
 )
 
 type queryServer struct {

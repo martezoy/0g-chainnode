@@ -9,7 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/kava-labs/kava/x/bep3/types"
+	"github.com/0glabs/0g-chain/x/bep3/types"
 )
 
 // NewQuerier is the module level router for state queries

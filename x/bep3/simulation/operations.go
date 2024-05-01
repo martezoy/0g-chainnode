@@ -10,9 +10,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-	appparams "github.com/kava-labs/kava/app/params"
-	"github.com/kava-labs/kava/x/bep3/keeper"
-	"github.com/kava-labs/kava/x/bep3/types"
+	appparams "github.com/0glabs/0g-chain/app/params"
+	"github.com/0glabs/0g-chain/x/bep3/keeper"
+	"github.com/0glabs/0g-chain/x/bep3/types"
 )
 
 var (

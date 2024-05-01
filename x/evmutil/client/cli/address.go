@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/0glabs/0g-chain/x/evmutil/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/kava-labs/kava/x/evmutil/types"
 )
 
 // ParseAddrFromHexOrBech32 parses a string address that can be either a hex or

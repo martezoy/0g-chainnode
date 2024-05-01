@@ -4,7 +4,7 @@ package kava.issuance.v1beta1;
 import "cosmos/base/v1beta1/coin.proto";
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/kava-labs/kava/x/issuance/types";
+option go_package = "github.com/0glabs/0g-chain/x/issuance/types";
 
 // Msg defines the issuance Msg service.
 service Msg {

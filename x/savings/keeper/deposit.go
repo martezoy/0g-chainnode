@@ -5,7 +5,7 @@ import (
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/kava-labs/kava/x/savings/types"
+	"github.com/0glabs/0g-chain/x/savings/types"
 )
 
 // Deposit deposit

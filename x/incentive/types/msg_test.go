@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto"
 
-	"github.com/kava-labs/kava/x/incentive/types"
+	"github.com/0glabs/0g-chain/x/incentive/types"
 )
 
 func TestMsgClaim_Validate(t *testing.T) {

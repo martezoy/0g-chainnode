@@ -13,8 +13,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
-	"github.com/kava-labs/kava/x/community/client/utils"
-	"github.com/kava-labs/kava/x/community/types"
+	"github.com/0glabs/0g-chain/x/community/client/utils"
+	"github.com/0glabs/0g-chain/x/community/types"
 )
 
 const (

@@ -6,7 +6,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "kava/kavadist/v1beta1/params.proto";
 
-option go_package = "github.com/kava-labs/kava/x/kavadist/types";
+option go_package = "github.com/0glabs/0g-chain/x/kavadist/types";
 
 // Query defines the gRPC querier service.
 service Query {

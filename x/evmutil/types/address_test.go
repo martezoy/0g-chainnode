@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/kava-labs/kava/x/evmutil/testutil"
-	"github.com/kava-labs/kava/x/evmutil/types"
+	"github.com/0glabs/0g-chain/x/evmutil/testutil"
+	"github.com/0glabs/0g-chain/x/evmutil/types"
 	"github.com/stretchr/testify/require"
 )
 

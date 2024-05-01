@@ -21,9 +21,9 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tmdb "github.com/tendermint/tm-db"
 
-	"github.com/kava-labs/kava/app"
-	bep3types "github.com/kava-labs/kava/x/bep3/types"
-	pricefeedtypes "github.com/kava-labs/kava/x/pricefeed/types"
+	"github.com/0glabs/0g-chain/app"
+	bep3types "github.com/0glabs/0g-chain/x/bep3/types"
+	pricefeedtypes "github.com/0glabs/0g-chain/x/pricefeed/types"
 )
 
 func TestMain(m *testing.M) {

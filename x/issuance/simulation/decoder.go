@@ -7,7 +7,7 @@ package simulation
 
 // 	"github.com/cosmos/cosmos-sdk/codec"
 
-// 	"github.com/kava-labs/kava/x/issuance/types"
+// 	"github.com/0glabs/0g-chain/x/issuance/types"
 
 // 	"github.com/tendermint/tendermint/libs/kv"
 // )

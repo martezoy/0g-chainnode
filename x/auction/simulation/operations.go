@@ -15,9 +15,9 @@ import (
 	authexported "github.com/cosmos/cosmos-sdk/x/auth/exported"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-	appparams "github.com/kava-labs/kava/app/params"
-	"github.com/kava-labs/kava/x/auction/keeper"
-	"github.com/kava-labs/kava/x/auction/types"
+	appparams "github.com/0glabs/0g-chain/app/params"
+	"github.com/0glabs/0g-chain/x/auction/keeper"
+	"github.com/0glabs/0g-chain/x/auction/types"
 )
 
 var (

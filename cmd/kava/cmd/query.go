@@ -7,7 +7,7 @@ import (
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	"github.com/spf13/cobra"
 
-	"github.com/kava-labs/kava/app"
+	"github.com/0glabs/0g-chain/app"
 )
 
 // newQueryCmd creates all the commands for querying blockchain state.

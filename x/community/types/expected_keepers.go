@@ -2,11 +2,11 @@ package types
 
 import (
 	sdkmath "cosmossdk.io/math"
+	kavadisttypes "github.com/0glabs/0g-chain/x/kavadist/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	kavadisttypes "github.com/kava-labs/kava/x/kavadist/types"
 )
 
 // AccountKeeper defines the contract required for account APIs.

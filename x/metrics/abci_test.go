@@ -9,9 +9,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"github.com/kava-labs/kava/app"
-	"github.com/kava-labs/kava/x/metrics"
-	"github.com/kava-labs/kava/x/metrics/types"
+	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/x/metrics"
+	"github.com/0glabs/0g-chain/x/metrics/types"
 )
 
 type MockGauge struct {

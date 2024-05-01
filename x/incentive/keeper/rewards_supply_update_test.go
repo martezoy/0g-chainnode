@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	"github.com/kava-labs/kava/x/incentive/types"
+	"github.com/0glabs/0g-chain/x/incentive/types"
 )
 
 // UpdateHardSupplyIndexDenomsTests runs unit tests for the keeper.UpdateHardSupplyIndexDenoms method

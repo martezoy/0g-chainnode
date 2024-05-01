@@ -15,9 +15,9 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/kava-labs/kava/x/cdp/client/cli"
-	"github.com/kava-labs/kava/x/cdp/keeper"
-	"github.com/kava-labs/kava/x/cdp/types"
+	"github.com/0glabs/0g-chain/x/cdp/client/cli"
+	"github.com/0glabs/0g-chain/x/cdp/keeper"
+	"github.com/0glabs/0g-chain/x/cdp/types"
 )
 
 var (

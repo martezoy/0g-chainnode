@@ -6,7 +6,7 @@ import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/kava-labs/kava/x/cdp/types";
+option go_package = "github.com/0glabs/0g-chain/x/cdp/types";
 option (gogoproto.goproto_getters_all) = false;
 
 // CDP defines the state of a single collateralized debt position.

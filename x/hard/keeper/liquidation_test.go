@@ -9,11 +9,11 @@ import (
 	"github.com/tendermint/tendermint/crypto"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"github.com/kava-labs/kava/app"
-	auctiontypes "github.com/kava-labs/kava/x/auction/types"
-	"github.com/kava-labs/kava/x/hard"
-	"github.com/kava-labs/kava/x/hard/types"
-	pricefeedtypes "github.com/kava-labs/kava/x/pricefeed/types"
+	"github.com/0glabs/0g-chain/app"
+	auctiontypes "github.com/0glabs/0g-chain/x/auction/types"
+	"github.com/0glabs/0g-chain/x/hard"
+	"github.com/0glabs/0g-chain/x/hard/types"
+	pricefeedtypes "github.com/0glabs/0g-chain/x/pricefeed/types"
 )
 
 func (suite *KeeperTestSuite) TestKeeperLiquidation() {

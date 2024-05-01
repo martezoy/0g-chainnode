@@ -7,8 +7,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
+	pftypes "github.com/0glabs/0g-chain/x/pricefeed/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	pftypes "github.com/kava-labs/kava/x/pricefeed/types"
 )
 
 // BankKeeper defines the expected bank keeper for module accounts

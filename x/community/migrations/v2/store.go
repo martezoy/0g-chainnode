@@ -6,9 +6,9 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 
 	sdkmath "cosmossdk.io/math"
+	"github.com/0glabs/0g-chain/x/community/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/kava-labs/kava/x/community/types"
 )
 
 // Migrate migrates the x/community module state from the consensus version 1 to

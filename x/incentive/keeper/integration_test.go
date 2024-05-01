@@ -4,15 +4,15 @@ import (
 	"time"
 
 	sdkmath "cosmossdk.io/math"
+	"github.com/0glabs/0g-chain/app"
+	cdptypes "github.com/0glabs/0g-chain/x/cdp/types"
+	committeetypes "github.com/0glabs/0g-chain/x/committee/types"
+	"github.com/0glabs/0g-chain/x/incentive/testutil"
+	pricefeedtypes "github.com/0glabs/0g-chain/x/pricefeed/types"
+	swaptypes "github.com/0glabs/0g-chain/x/swap/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/kava-labs/kava/app"
-	cdptypes "github.com/kava-labs/kava/x/cdp/types"
-	committeetypes "github.com/kava-labs/kava/x/committee/types"
-	"github.com/kava-labs/kava/x/incentive/testutil"
-	pricefeedtypes "github.com/kava-labs/kava/x/pricefeed/types"
-	swaptypes "github.com/kava-labs/kava/x/swap/types"
 )
 
 // Avoid cluttering test cases with long function names

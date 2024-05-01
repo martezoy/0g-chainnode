@@ -9,8 +9,8 @@ import (
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	earntypes "github.com/kava-labs/kava/x/earn/types"
-	"github.com/kava-labs/kava/x/incentive/types"
+	earntypes "github.com/0glabs/0g-chain/x/earn/types"
+	"github.com/0glabs/0g-chain/x/incentive/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 )

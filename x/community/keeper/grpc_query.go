@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/kava-labs/kava/x/community/types"
+	"github.com/0glabs/0g-chain/x/community/types"
 )
 
 type queryServer struct {
