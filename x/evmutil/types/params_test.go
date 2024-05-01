@@ -9,7 +9,7 @@ import (
 
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
-	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/evmutil/testutil"
 	"github.com/0glabs/0g-chain/x/evmutil/types"
 )
@@ -19,7 +19,7 @@ type ParamsTestSuite struct {
 }
 
 func (suite *ParamsTestSuite) SetupTest() {
-	app.SetSDKConfig()
+	chaincfg.SetSDKConfig()
 }
 
 func (suite *ParamsTestSuite) TestDefault() {

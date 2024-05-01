@@ -7,6 +7,7 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/committee/keeper"
 	"github.com/0glabs/0g-chain/x/committee/types"
 )
@@ -25,8 +26,7 @@ type Suite struct {
 
 // SetupTest instantiates a new app, keepers, and sets suite state
 func (suite *Suite) SetupTest() {
-	config := sdk.GetConfig()
-	app.SetBech32AddressPrefixes(config)
+	chaincfg.SetSDKConfig()
 	suite.App = app.NewTestApp()
 	suite.Keeper = suite.App.GetCommitteeKeeper()
 	suite.BankKeeper = suite.App.GetBankKeeper()

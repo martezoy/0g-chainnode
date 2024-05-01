@@ -9,7 +9,7 @@ import (
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/bep3/types"
 )
 
@@ -99,8 +99,7 @@ func (suite *GenesisTestSuite) TestValidate() {
 
 	for _, tc := range testCases {
 		suite.Run(tc.name, func() {
-			config := sdk.GetConfig()
-			app.SetBech32AddressPrefixes(config)
+			chaincfg.SetSDKConfig()
 			var gs types.GenesisState
 			if tc.name == "default" {
 				gs = types.DefaultGenesisState()

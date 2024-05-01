@@ -14,6 +14,7 @@ import (
 	tmtime "github.com/tendermint/tendermint/types/time"
 
 	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/bep3/keeper"
 	"github.com/0glabs/0g-chain/x/bep3/types"
 )
@@ -27,8 +28,7 @@ type AssetTestSuite struct {
 }
 
 func (suite *AssetTestSuite) SetupTest() {
-	config := sdk.GetConfig()
-	app.SetBech32AddressPrefixes(config)
+	chaincfg.SetSDKConfig()
 
 	// Initialize test app and set context
 	tApp := app.NewTestApp()

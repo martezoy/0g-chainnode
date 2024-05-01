@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	app "github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
 	v015issuance "github.com/0glabs/0g-chain/x/issuance/legacy/v0_15"
 	v016issuance "github.com/0glabs/0g-chain/x/issuance/types"
 )
@@ -24,7 +25,7 @@ type migrateTestSuite struct {
 }
 
 func (s *migrateTestSuite) SetupTest() {
-	app.SetSDKConfig()
+	chaincfg.SetSDKConfig()
 
 	s.v15genstate = v015issuance.GenesisState{
 		Params:   v015issuance.Params{},
