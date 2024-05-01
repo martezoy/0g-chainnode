@@ -8,14 +8,12 @@ import (
 
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	proposal "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/0glabs/0g-chain/app"
 	"github.com/0glabs/0g-chain/x/committee/keeper"
 	"github.com/0glabs/0g-chain/x/committee/types"
-	swaptypes "github.com/0glabs/0g-chain/x/swap/types"
 )
 
 //NewDistributionGenesisWithPool creates a default distribution genesis state with some coins in the community pool.
@@ -72,55 +70,6 @@ func (suite *MsgServerTestSuite) SetupTest() {
 	suite.ctx = suite.app.NewContext(true, tmproto.Header{Height: 1, Time: firstBlockTime})
 }
 
-func (suite *MsgServerTestSuite) TestSubmitProposalMsg_Valid() {
-	msg, err := types.NewMsgSubmitProposal(
-		proposal.NewParameterChangeProposal(
-			"A Title",
-			"A description of this proposal.",
-			[]proposal.ParamChange{{
-				Subspace: swaptypes.ModuleName,
-				Key:      string(swaptypes.KeySwapFee),
-				Value:    "\"0.001500000000000000\"",
-			}},
-		),
-		suite.addresses[0],
-		1,
-	)
-	suite.Require().NoError(err)
-
-	res, err := suite.msgServer.SubmitProposal(sdk.WrapSDKContext(suite.ctx), msg)
-
-	suite.NoError(err)
-	_, found := suite.keeper.GetProposal(suite.ctx, res.ProposalID)
-	suite.True(found)
-}
-
-func (suite *MsgServerTestSuite) TestSubmitProposalMsg_Invalid() {
-	var committeeID uint64 = 1
-	msg, err := types.NewMsgSubmitProposal(
-		proposal.NewParameterChangeProposal(
-			"A Title",
-			"A description of this proposal.",
-			[]proposal.ParamChange{{
-				Subspace: swaptypes.ModuleName,
-				Key:      "nonsense-key",
-				Value:    "nonsense-value",
-			}},
-		),
-		suite.addresses[0],
-		committeeID,
-	)
-	suite.Require().NoError(err)
-
-	_, err = suite.msgServer.SubmitProposal(sdk.WrapSDKContext(suite.ctx), msg)
-
-	suite.Error(err)
-	suite.Empty(
-		suite.keeper.GetProposalsByCommittee(suite.ctx, committeeID),
-		"proposal found when none should exist",
-	)
-}
-
 func (suite *MsgServerTestSuite) TestSubmitProposalMsg_ValidUpgrade() {
 	msg, err := types.NewMsgSubmitProposal(
 		upgradetypes.NewSoftwareUpgradeProposal(
@@ -161,33 +110,6 @@ func (suite *MsgServerTestSuite) TestSubmitProposalMsg_Unregistered() {
 		suite.keeper.GetProposalsByCommittee(suite.ctx, committeeID),
 		"proposal found when none should exist",
 	)
-}
-
-func (suite *MsgServerTestSuite) TestSubmitProposalMsgAndVote() {
-	msg, err := types.NewMsgSubmitProposal(
-		proposal.NewParameterChangeProposal(
-			"A Title",
-			"A description of this proposal.",
-			[]proposal.ParamChange{{
-				Subspace: swaptypes.ModuleName,
-				Key:      string(swaptypes.KeySwapFee),
-				Value:    "\"0.001500000000000000\"",
-			}},
-		),
-		suite.addresses[0],
-		1,
-	)
-	suite.Require().NoError(err)
-
-	res, err := suite.msgServer.SubmitProposal(sdk.WrapSDKContext(suite.ctx), msg)
-	suite.Require().NoError(err)
-
-	proposal, found := suite.keeper.GetProposal(suite.ctx, res.ProposalID)
-	suite.Require().True(found)
-
-	msgVote := types.NewMsgVote(suite.addresses[0], proposal.ID, types.VOTE_TYPE_YES)
-	_, err = suite.msgServer.Vote(sdk.WrapSDKContext(suite.ctx), msgVote)
-	suite.Require().NoError(err)
 }
 
 func TestMsgServerTestSuite(t *testing.T) {

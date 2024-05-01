@@ -41,22 +41,11 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 	tmdb "github.com/tendermint/tm-db"
 
-	auctionkeeper "github.com/0glabs/0g-chain/x/auction/keeper"
 	bep3keeper "github.com/0glabs/0g-chain/x/bep3/keeper"
-	cdpkeeper "github.com/0glabs/0g-chain/x/cdp/keeper"
 	committeekeeper "github.com/0glabs/0g-chain/x/committee/keeper"
-	communitykeeper "github.com/0glabs/0g-chain/x/community/keeper"
-	earnkeeper "github.com/0glabs/0g-chain/x/earn/keeper"
 	evmutilkeeper "github.com/0glabs/0g-chain/x/evmutil/keeper"
-	hardkeeper "github.com/0glabs/0g-chain/x/hard/keeper"
-	incentivekeeper "github.com/0glabs/0g-chain/x/incentive/keeper"
 	issuancekeeper "github.com/0glabs/0g-chain/x/issuance/keeper"
-	kavadistkeeper "github.com/0glabs/0g-chain/x/kavadist/keeper"
-	liquidkeeper "github.com/0glabs/0g-chain/x/liquid/keeper"
 	pricefeedkeeper "github.com/0glabs/0g-chain/x/pricefeed/keeper"
-	routerkeeper "github.com/0glabs/0g-chain/x/router/keeper"
-	savingskeeper "github.com/0glabs/0g-chain/x/savings/keeper"
-	swapkeeper "github.com/0glabs/0g-chain/x/swap/keeper"
 )
 
 var (
@@ -113,24 +102,13 @@ func (tApp TestApp) GetDistrKeeper() distkeeper.Keeper          { return tApp.di
 func (tApp TestApp) GetGovKeeper() govkeeper.Keeper             { return tApp.govKeeper }
 func (tApp TestApp) GetCrisisKeeper() crisiskeeper.Keeper       { return tApp.crisisKeeper }
 func (tApp TestApp) GetParamsKeeper() paramskeeper.Keeper       { return tApp.paramsKeeper }
-func (tApp TestApp) GetKavadistKeeper() kavadistkeeper.Keeper   { return tApp.kavadistKeeper }
-func (tApp TestApp) GetAuctionKeeper() auctionkeeper.Keeper     { return tApp.auctionKeeper }
 func (tApp TestApp) GetIssuanceKeeper() issuancekeeper.Keeper   { return tApp.issuanceKeeper }
 func (tApp TestApp) GetBep3Keeper() bep3keeper.Keeper           { return tApp.bep3Keeper }
 func (tApp TestApp) GetPriceFeedKeeper() pricefeedkeeper.Keeper { return tApp.pricefeedKeeper }
-func (tApp TestApp) GetSwapKeeper() swapkeeper.Keeper           { return tApp.swapKeeper }
-func (tApp TestApp) GetCDPKeeper() cdpkeeper.Keeper             { return tApp.cdpKeeper }
-func (tApp TestApp) GetHardKeeper() hardkeeper.Keeper           { return tApp.hardKeeper }
 func (tApp TestApp) GetCommitteeKeeper() committeekeeper.Keeper { return tApp.committeeKeeper }
-func (tApp TestApp) GetIncentiveKeeper() incentivekeeper.Keeper { return tApp.incentiveKeeper }
 func (tApp TestApp) GetEvmutilKeeper() evmutilkeeper.Keeper     { return tApp.evmutilKeeper }
 func (tApp TestApp) GetEvmKeeper() *evmkeeper.Keeper            { return tApp.evmKeeper }
-func (tApp TestApp) GetSavingsKeeper() savingskeeper.Keeper     { return tApp.savingsKeeper }
 func (tApp TestApp) GetFeeMarketKeeper() feemarketkeeper.Keeper { return tApp.feeMarketKeeper }
-func (tApp TestApp) GetLiquidKeeper() liquidkeeper.Keeper       { return tApp.liquidKeeper }
-func (tApp TestApp) GetEarnKeeper() earnkeeper.Keeper           { return tApp.earnKeeper }
-func (tApp TestApp) GetRouterKeeper() routerkeeper.Keeper       { return tApp.routerKeeper }
-func (tApp TestApp) GetCommunityKeeper() communitykeeper.Keeper { return tApp.communityKeeper }
 
 func (tApp TestApp) GetKVStoreKey(key string) *storetypes.KVStoreKey {
 	return tApp.keys[key]

@@ -34,11 +34,9 @@ import (
 	"github.com/tendermint/tendermint/version"
 
 	"github.com/0glabs/0g-chain/app"
-	cdptypes "github.com/0glabs/0g-chain/x/cdp/types"
 	evmutilkeeper "github.com/0glabs/0g-chain/x/evmutil/keeper"
 	evmutiltestutil "github.com/0glabs/0g-chain/x/evmutil/testutil"
 	evmutiltypes "github.com/0glabs/0g-chain/x/evmutil/types"
-	hardtypes "github.com/0glabs/0g-chain/x/hard/types"
 	pricefeedtypes "github.com/0glabs/0g-chain/x/pricefeed/types"
 )
 
@@ -172,47 +170,6 @@ func (suite *EIP712TestSuite) SetupTest() {
 	feemarketGenesis.Params.EnableHeight = 1
 	feemarketGenesis.Params.NoBaseFee = false
 
-	cdpGenState := cdptypes.DefaultGenesisState()
-	cdpGenState.Params.GlobalDebtLimit = sdk.NewInt64Coin("usdx", 53000000000000)
-	cdpGenState.Params.CollateralParams = cdptypes.CollateralParams{
-		{
-			Denom:                            USDCCoinDenom,
-			Type:                             USDCCDPType,
-			LiquidationRatio:                 sdk.MustNewDecFromStr("1.01"),
-			DebtLimit:                        sdk.NewInt64Coin("usdx", 500000000000),
-			StabilityFee:                     sdk.OneDec(),
-			AuctionSize:                      sdkmath.NewIntFromUint64(10000000000),
-			LiquidationPenalty:               sdk.MustNewDecFromStr("0.05"),
-			CheckCollateralizationIndexCount: sdkmath.NewInt(10),
-			KeeperRewardPercentage:           sdk.MustNewDecFromStr("0.01"),
-			SpotMarketID:                     "usdc:usd",
-			LiquidationMarketID:              "usdc:usd:30",
-			ConversionFactor:                 sdkmath.NewInt(18),
-		},
-	}
-
-	hardGenState := hardtypes.DefaultGenesisState()
-	hardGenState.Params.MoneyMarkets = []hardtypes.MoneyMarket{
-		{
-			Denom: "usdx",
-			BorrowLimit: hardtypes.BorrowLimit{
-				HasMaxLimit:  true,
-				MaximumLimit: sdk.MustNewDecFromStr("100000000000"),
-				LoanToValue:  sdk.MustNewDecFromStr("1"),
-			},
-			SpotMarketID:     "usdx:usd",
-			ConversionFactor: sdkmath.NewInt(1_000_000),
-			InterestRateModel: hardtypes.InterestRateModel{
-				BaseRateAPY:    sdk.MustNewDecFromStr("0.05"),
-				BaseMultiplier: sdk.MustNewDecFromStr("2"),
-				Kink:           sdk.MustNewDecFromStr("0.8"),
-				JumpMultiplier: sdk.MustNewDecFromStr("10"),
-			},
-			ReserveFactor:          sdk.MustNewDecFromStr("0.05"),
-			KeeperRewardPercentage: sdk.ZeroDec(),
-		},
-	}
-
 	pricefeedGenState := pricefeedtypes.DefaultGenesisState()
 	pricefeedGenState.Params.Markets = []pricefeedtypes.Market{
 		{
@@ -261,8 +218,6 @@ func (suite *EIP712TestSuite) SetupTest() {
 	genState := app.GenesisState{
 		evmtypes.ModuleName:       cdc.MustMarshalJSON(evmGs),
 		feemarkettypes.ModuleName: cdc.MustMarshalJSON(feemarketGenesis),
-		cdptypes.ModuleName:       cdc.MustMarshalJSON(&cdpGenState),
-		hardtypes.ModuleName:      cdc.MustMarshalJSON(&hardGenState),
 		pricefeedtypes.ModuleName: cdc.MustMarshalJSON(&pricefeedGenState),
 	}
 
@@ -601,21 +556,9 @@ func (suite *EIP712TestSuite) TestEIP712Tx() {
 				suite.usdcEVMAddr,
 				usdcAmt,
 			)
-			usdxAmt := sdkmath.NewInt(1_000_000).Mul(sdkmath.NewInt(tc.usdxToMintAmt))
-			mintMsg := cdptypes.NewMsgCreateCDP(
-				suite.testAddr,
-				sdk.NewCoin(USDCCoinDenom, usdcAmt),
-				sdk.NewCoin(cdptypes.DefaultStableDenom, usdxAmt),
-				USDCCDPType,
-			)
-			lendMsg := hardtypes.NewMsgDeposit(
-				suite.testAddr,
-				sdk.NewCoins(sdk.NewCoin(cdptypes.DefaultStableDenom, usdxAmt)),
-			)
+
 			msgs := []sdk.Msg{
 				&convertMsg,
-				&mintMsg,
-				&lendMsg,
 			}
 			if tc.updateMsgs != nil {
 				msgs = tc.updateMsgs(msgs)
@@ -659,17 +602,17 @@ func (suite *EIP712TestSuite) TestEIP712Tx() {
 				suite.Require().Equal(sdk.ZeroInt(), amt.Amount)
 
 				// validate cdp
-				cdp, found := suite.tApp.GetCDPKeeper().GetCdpByOwnerAndCollateralType(suite.ctx, suite.testAddr, USDCCDPType)
-				suite.Require().True(found)
-				suite.Require().Equal(suite.testAddr, cdp.Owner)
-				suite.Require().Equal(sdk.NewCoin(USDCCoinDenom, suite.getEVMAmount(100)), cdp.Collateral)
-				suite.Require().Equal(sdk.NewCoin("usdx", sdkmath.NewInt(99_000_000)), cdp.Principal)
+				// cdp, found := suite.tApp.GetCDPKeeper().GetCdpByOwnerAndCollateralType(suite.ctx, suite.testAddr, USDCCDPType)
+				// suite.Require().True(found)
+				// suite.Require().Equal(suite.testAddr, cdp.Owner)
+				// suite.Require().Equal(sdk.NewCoin(USDCCoinDenom, suite.getEVMAmount(100)), cdp.Collateral)
+				// suite.Require().Equal(sdk.NewCoin("usdx", sdkmath.NewInt(99_000_000)), cdp.Principal)
 
 				// validate hard
-				hardDeposit, found := suite.tApp.GetHardKeeper().GetDeposit(suite.ctx, suite.testAddr)
-				suite.Require().True(found)
-				suite.Require().Equal(suite.testAddr, hardDeposit.Depositor)
-				suite.Require().Equal(sdk.NewCoins(sdk.NewCoin("usdx", sdkmath.NewInt(99_000_000))), hardDeposit.Amount)
+				// hardDeposit, found := suite.tApp.GetHardKeeper().GetDeposit(suite.ctx, suite.testAddr)
+				// suite.Require().True(found)
+				// suite.Require().Equal(suite.testAddr, hardDeposit.Depositor)
+				// suite.Require().Equal(sdk.NewCoins(sdk.NewCoin("usdx", sdkmath.NewInt(99_000_000))), hardDeposit.Amount)
 			} else {
 				suite.Require().NotEqual(resDeliverTx.Code, uint32(0), resCheckTx.Log)
 				suite.Require().Contains(resDeliverTx.Log, tc.errMsg)
@@ -689,21 +632,9 @@ func (suite *EIP712TestSuite) TestEIP712Tx_DepositAndWithdraw() {
 		suite.usdcEVMAddr,
 		usdcAmt,
 	)
-	usdxAmt := sdkmath.NewInt(1_000_000).Mul(sdkmath.NewInt(99))
-	mintMsg := cdptypes.NewMsgCreateCDP(
-		suite.testAddr,
-		sdk.NewCoin(USDCCoinDenom, usdcAmt),
-		sdk.NewCoin(cdptypes.DefaultStableDenom, usdxAmt),
-		USDCCDPType,
-	)
-	lendMsg := hardtypes.NewMsgDeposit(
-		suite.testAddr,
-		sdk.NewCoins(sdk.NewCoin(cdptypes.DefaultStableDenom, usdxAmt)),
-	)
+
 	depositMsgs := []sdk.Msg{
 		&convertMsg,
-		&mintMsg,
-		&lendMsg,
 	}
 
 	// deliver deposit msg
@@ -721,10 +652,10 @@ func (suite *EIP712TestSuite) TestEIP712Tx_DepositAndWithdraw() {
 	suite.Require().Equal(resDeliverTx.Code, uint32(0), resDeliverTx.Log)
 
 	// validate hard
-	hardDeposit, found := suite.tApp.GetHardKeeper().GetDeposit(suite.ctx, suite.testAddr)
-	suite.Require().True(found)
-	suite.Require().Equal(suite.testAddr, hardDeposit.Depositor)
-	suite.Require().Equal(sdk.NewCoins(sdk.NewCoin("usdx", sdkmath.NewInt(99_000_000))), hardDeposit.Amount)
+	// hardDeposit, found := suite.tApp.GetHardKeeper().GetDeposit(suite.ctx, suite.testAddr)
+	// suite.Require().True(found)
+	// suite.Require().Equal(suite.testAddr, hardDeposit.Depositor)
+	// suite.Require().Equal(sdk.NewCoins(sdk.NewCoin("usdx", sdkmath.NewInt(99_000_000))), hardDeposit.Amount)
 
 	// validate erc20 balance
 	coinBal, err := suite.evmutilKeeper.QueryERC20BalanceOf(suite.ctx, suite.usdcEVMAddr, suite.testEVMAddr)
@@ -737,18 +668,7 @@ func (suite *EIP712TestSuite) TestEIP712Tx_DepositAndWithdraw() {
 		suite.testEVMAddr.String(),
 		sdk.NewCoin(USDCCoinDenom, usdcAmt),
 	)
-	cdpWithdrawMsg := cdptypes.NewMsgRepayDebt(
-		suite.testAddr,
-		USDCCDPType,
-		sdk.NewCoin(cdptypes.DefaultStableDenom, usdxAmt),
-	)
-	hardWithdrawMsg := hardtypes.NewMsgWithdraw(
-		suite.testAddr,
-		sdk.NewCoins(sdk.NewCoin(cdptypes.DefaultStableDenom, usdxAmt)),
-	)
 	withdrawMsgs := []sdk.Msg{
-		&hardWithdrawMsg,
-		&cdpWithdrawMsg,
 		&withdrawConvertMsg,
 	}
 
@@ -766,10 +686,10 @@ func (suite *EIP712TestSuite) TestEIP712Tx_DepositAndWithdraw() {
 	suite.Require().Equal(resDeliverTx.Code, uint32(0), resDeliverTx.Log)
 
 	// validate hard & cdp should be repayed
-	_, found = suite.tApp.GetHardKeeper().GetDeposit(suite.ctx, suite.testAddr)
-	suite.Require().False(found)
-	_, found = suite.tApp.GetCDPKeeper().GetCdpByOwnerAndCollateralType(suite.ctx, suite.testAddr, USDCCDPType)
-	suite.Require().False(found)
+	// _, found = suite.tApp.GetHardKeeper().GetDeposit(suite.ctx, suite.testAddr)
+	// suite.Require().False(found)
+	// _, found = suite.tApp.GetCDPKeeper().GetCdpByOwnerAndCollateralType(suite.ctx, suite.testAddr, USDCCDPType)
+	// suite.Require().False(found)
 
 	// validate user cosmos erc20/usd balance
 	bk := suite.tApp.GetBankKeeper()
