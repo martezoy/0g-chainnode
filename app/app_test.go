@@ -7,7 +7,7 @@ import (
 	"sort"
 	"testing"
 	"time"
-
+        "github.com/0glabs/0g-chain/chaincfg"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
@@ -22,11 +22,11 @@ import (
 )
 
 func TestNewApp(t *testing.T) {
-	SetSDKConfig()
+	chaincfg.SetSDKConfig()
 	NewApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)),
 		db.NewMemDB(),
-		DefaultNodeHome,
+		chaincfg.DefaultNodeHome,
 		nil,
 		MakeEncodingConfig(),
 		DefaultOptions,
@@ -34,9 +34,9 @@ func TestNewApp(t *testing.T) {
 }
 
 func TestExport(t *testing.T) {
-	SetSDKConfig()
+	chaincfg.SetSDKConfig()
 	db := db.NewMemDB()
-	app := NewApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, DefaultNodeHome, nil, MakeEncodingConfig(), DefaultOptions)
+	app := NewApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, chaincfg.DefaultNodeHome, nil, MakeEncodingConfig(), DefaultOptions)
 
 	genesisState := GenesisStateWithSingleValidator(&TestApp{App: *app}, NewDefaultGenesisState())
 

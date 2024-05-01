@@ -49,7 +49,7 @@ func GetCmdCreateAtomicSwap() *cobra.Command {
 	return &cobra.Command{
 		Use:   "create [to] [recipient-other-chain] [sender-other-chain] [timestamp] [coins] [height-span]",
 		Short: "create a new atomic swap",
-		Example: fmt.Sprintf("%s tx %s create kava1xy7hrjy9r0algz9w3gzm8u6mrpq97kwta747gj bnb1urfermcg92dwq36572cx4xg84wpk3lfpksr5g7 bnb1uky3me9ggqypmrsvxk7ur6hqkzq7zmv4ed4ng7 now 100bnb 270 --from validator",
+		Example: fmt.Sprintf("%s tx %s create 0g1xy7hrjy9r0algz9w3gzm8u6mrpq97kwta747gj bnb1urfermcg92dwq36572cx4xg84wpk3lfpksr5g7 bnb1uky3me9ggqypmrsvxk7ur6hqkzq7zmv4ed4ng7 now 100bnb 270 --from validator",
 			version.AppName, types.ModuleName),
 		Args: cobra.ExactArgs(6),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -58,7 +58,7 @@ func GetCmdCreateAtomicSwap() *cobra.Command {
 				return err
 			}
 
-			from := clientCtx.GetFromAddress() // same as Kava executor's deputy address
+			from := clientCtx.GetFromAddress() // same as 0g-chain executor's deputy address
 			to, err := sdk.AccAddressFromBech32(args[0])
 			if err != nil {
 				return err

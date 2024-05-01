@@ -3,11 +3,9 @@ package app
 import (
 	"fmt"
 	"io"
-	stdlog "log"
 	"net/http"
-	"os"
-	"path/filepath"
 
+	sdkmath "cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	nodeservice "github.com/cosmos/cosmos-sdk/client/grpc/node"
@@ -99,7 +97,8 @@ import (
 	dbm "github.com/tendermint/tm-db"
 
 	"github.com/0glabs/0g-chain/app/ante"
-	kavaparams "github.com/0glabs/0g-chain/app/params"
+	chainparams "github.com/0glabs/0g-chain/app/params"
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/bep3"
 	bep3keeper "github.com/0glabs/0g-chain/x/bep3/keeper"
 	bep3types "github.com/0glabs/0g-chain/x/bep3/types"
@@ -121,14 +120,7 @@ import (
 	validatorvestingtypes "github.com/0glabs/0g-chain/x/validator-vesting/types"
 )
 
-const (
-	appName = "kava"
-)
-
 var (
-	// DefaultNodeHome default home directories for the application daemon
-	DefaultNodeHome string
-
 	// ModuleBasics manages simple versions of full app modules.
 	// It's used for things such as codec registration and genesis file verification.
 	ModuleBasics = module.NewBasicManager(
@@ -209,7 +201,7 @@ var DefaultOptions = Options{
 	EVMMaxGasWanted: ethermintconfig.DefaultMaxTxGasWanted,
 }
 
-// App is the Kava ABCI application.
+// App is the 0gChain ABCI application.
 type App struct {
 	*baseapp.BaseApp
 
@@ -262,12 +254,9 @@ type App struct {
 }
 
 func init() {
-	userHomeDir, err := os.UserHomeDir()
-	if err != nil {
-		stdlog.Printf("Failed to get home dir %v", err)
-	}
-
-	DefaultNodeHome = filepath.Join(userHomeDir, ".kava")
+	// 1stake = 1 ukava = 1_000_000_000_000 akava = 1_000_000_000_000 neuron
+	conversionMultiplier := sdkmath.NewIntFromUint64(1_000_000_000_000)
+	sdk.DefaultPowerReduction = sdk.DefaultPowerReduction.Mul(conversionMultiplier)
 }
 
 // NewApp returns a reference to an initialized App.
@@ -276,7 +265,7 @@ func NewApp(
 	db dbm.DB,
 	homePath string,
 	traceStore io.Writer,
-	encodingConfig kavaparams.EncodingConfig,
+	encodingConfig chainparams.EncodingConfig,
 	options Options,
 	baseAppOptions ...func(*baseapp.BaseApp),
 ) *App {
@@ -284,7 +273,7 @@ func NewApp(
 	legacyAmino := encodingConfig.Amino
 	interfaceRegistry := encodingConfig.InterfaceRegistry
 
-	bApp := baseapp.NewBaseApp(appName, logger, db, encodingConfig.TxConfig.TxDecoder(), baseAppOptions...)
+	bApp := baseapp.NewBaseApp(chaincfg.AppName, logger, db, encodingConfig.TxConfig.TxDecoder(), baseAppOptions...)
 	bApp.SetCommitMultiStoreTracer(traceStore)
 	bApp.SetVersion(version.Version)
 	bApp.SetInterfaceRegistry(interfaceRegistry)
@@ -791,7 +780,7 @@ func (app *App) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.Res
 		panic(err)
 	}
 
-	// Store current module versions in kava-10 to setup future in-place upgrades.
+	// Store current module versions in 0gChain-10 to setup future in-place upgrades.
 	// During in-place migrations, the old module versions in the store will be referenced to determine which migrations to run.
 	app.upgradeKeeper.SetModuleVersionMap(ctx, app.mm.GetVersionMap())
 

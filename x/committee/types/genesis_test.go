@@ -17,11 +17,11 @@ import (
 func TestGenesisState_Validate(t *testing.T) {
 	testTime := time.Date(1998, time.January, 1, 0, 0, 0, 0, time.UTC)
 	addresses := []sdk.AccAddress{
-		sdk.AccAddress(crypto.AddressHash([]byte("KavaTest1"))),
-		sdk.AccAddress(crypto.AddressHash([]byte("KavaTest2"))),
-		sdk.AccAddress(crypto.AddressHash([]byte("KavaTest3"))),
-		sdk.AccAddress(crypto.AddressHash([]byte("KavaTest4"))),
-		sdk.AccAddress(crypto.AddressHash([]byte("KavaTest5"))),
+		sdk.AccAddress(crypto.AddressHash([]byte("0gChainTest1"))),
+		sdk.AccAddress(crypto.AddressHash([]byte("0gChainTest2"))),
+		sdk.AccAddress(crypto.AddressHash([]byte("0gChainTest3"))),
+		sdk.AccAddress(crypto.AddressHash([]byte("0gChainTest4"))),
+		sdk.AccAddress(crypto.AddressHash([]byte("0gChainTest5"))),
 	}
 
 	testGenesis := types.NewGenesisState(

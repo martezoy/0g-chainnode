@@ -98,7 +98,7 @@ func (s *genesisTestSuite) TestExportGenesis() {
 	params.AllowedCosmosDenoms = []types.AllowedCosmosCoinERC20Token{
 		{
 			CosmosDenom: "hard",
-			Name:        "Kava EVM HARD",
+			Name:        "0G EVM HARD",
 			Symbol:      "HARD",
 			Decimals:    6,
 		},

@@ -3,6 +3,7 @@ package e2e_test
 import (
 	"context"
 	"fmt"
+	"math/big"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -11,14 +12,15 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	govv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/tests/e2e/testutil"
 	"github.com/0glabs/0g-chain/tests/util"
 )
 
 const (
-	govModuleAcc       = "kava10d07y265gmmuvt4z0w9aw880jnsr700jxh8cq5"
-	communityModuleAcc = "kava17d2wax0zhjrrecvaszuyxdf5wcu5a0p4qlx3t5"
-	kavadistModuleAcc  = "kava1cj7njkw2g9fqx4e768zc75dp9sks8u9znxrf0w"
+	govModuleAcc         = "0g10d07y265gmmuvt4z0w9aw880jnsr700jxh8cq5"
+	communityModuleAcc   = "0g17d2wax0zhjrrecvaszuyxdf5wcu5a0p4qlx3t5"
+	zgChainDistModuleAcc = "0g1cj7njkw2g9fqx4e768zc75dp9sks8u9znxrf0w"
 )
 
 func (suite *IntegrationTestSuite) TestGovParamChanges() {
@@ -28,13 +30,13 @@ func (suite *IntegrationTestSuite) TestGovParamChanges() {
 	afterUpgradeCtx := util.CtxAtHeight(suite.UpgradeHeight)
 
 	// fetch gov parameters before upgrade
-	govBeforeParams, err := suite.Kava.Gov.Params(beforeUpgradeCtx, &govv1.QueryParamsRequest{ParamsType: "tallying"})
+	govBeforeParams, err := suite.ZgChain.Gov.Params(beforeUpgradeCtx, &govv1.QueryParamsRequest{ParamsType: "tallying"})
 	suite.Require().NoError(err)
 
 	// assert expected gov quorum before upgrade
 	suite.NotEqual(govBeforeParams.TallyParams.Quorum, "0.200000000000000000")
 
-	govAfterParams, err := suite.Kava.Gov.Params(afterUpgradeCtx, &govv1.QueryParamsRequest{ParamsType: "tallying"})
+	govAfterParams, err := suite.ZgChain.Gov.Params(afterUpgradeCtx, &govv1.QueryParamsRequest{ParamsType: "tallying"})
 	suite.Require().NoError(err)
 
 	// assert expected gov quorum after upgrade
@@ -49,7 +51,7 @@ func (suite *IntegrationTestSuite) TestAuthzParamChanges() {
 	afterUpgradeCtx := util.CtxAtHeight(suite.UpgradeHeight)
 
 	// fetch authz grants before upgrade
-	authzBeforeGrants, err := suite.Kava.Authz.Grants(beforeUpgradeCtx, &authz.QueryGrantsRequest{Granter: kavadistModuleAcc, Grantee: govModuleAcc, Pagination: &query.PageRequest{Limit: 1000, CountTotal: true}})
+	authzBeforeGrants, err := suite.ZgChain.Authz.Grants(beforeUpgradeCtx, &authz.QueryGrantsRequest{Granter: zgChainDistModuleAcc, Grantee: govModuleAcc, Pagination: &query.PageRequest{Limit: 1000, CountTotal: true}})
 	suite.Require().NoError(err)
 	suite.Require().Equal(authzBeforeGrants.Pagination.Total, uint64(len(authzBeforeGrants.Grants)), "expected all grants to have been requested")
 
@@ -57,7 +59,7 @@ func (suite *IntegrationTestSuite) TestAuthzParamChanges() {
 	suite.Equal(0, len(authzBeforeGrants.Grants))
 
 	// fetch authz grants after upgrade
-	authzAfterGrants, err := suite.Kava.Authz.Grants(afterUpgradeCtx, &authz.QueryGrantsRequest{Granter: kavadistModuleAcc, Grantee: govModuleAcc, Pagination: &query.PageRequest{Limit: 1000, CountTotal: true}})
+	authzAfterGrants, err := suite.ZgChain.Authz.Grants(afterUpgradeCtx, &authz.QueryGrantsRequest{Granter: zgChainDistModuleAcc, Grantee: govModuleAcc, Pagination: &query.PageRequest{Limit: 1000, CountTotal: true}})
 	suite.Require().NoError(err)
 	suite.Require().Equal(authzAfterGrants.Pagination.Total, uint64(len(authzAfterGrants.Grants)), "expected all grants to have been requested")
 
@@ -67,7 +69,7 @@ func (suite *IntegrationTestSuite) TestAuthzParamChanges() {
 	grant := authzAfterGrants.Grants[0]
 
 	var authorization authz.Authorization
-	suite.Kava.EncodingConfig.Marshaler.UnpackAny(grant.Authorization, &authorization)
+	suite.ZgChain.EncodingConfig.Marshaler.UnpackAny(grant.Authorization, &authorization)
 
 	genericAuthorization, ok := authorization.(*authz.GenericAuthorization)
 	suite.Require().True(ok, "expected generic authorization")
@@ -88,7 +90,7 @@ func (suite *IntegrationTestSuite) TestModuleAccountGovTransfers() {
 
 	// module accounts for gov transfer test cases
 	communityAcc := sdk.MustAccAddressFromBech32(communityModuleAcc)
-	kavadistAcc := sdk.MustAccAddressFromBech32(kavadistModuleAcc)
+	zgChainDistAcc := sdk.MustAccAddressFromBech32(zgChainDistModuleAcc)
 
 	testCases := []struct {
 		name     string
@@ -99,14 +101,14 @@ func (suite *IntegrationTestSuite) TestModuleAccountGovTransfers() {
 		{
 			name:     "transfer from community to kavadist for incentive rewards",
 			sender:   communityAcc,
-			receiver: kavadistAcc,
-			amount:   ukava(100e6),
+			receiver: zgChainDistAcc,
+			amount:   a0gi(big.NewInt(100)),
 		},
 		{
 			name:     "transfer from kavadist to community",
-			sender:   kavadistAcc,
+			sender:   zgChainDistAcc,
 			receiver: communityAcc,
-			amount:   ukava(50e6),
+			amount:   a0gi(big.NewInt(50)),
 		},
 	}
 
@@ -136,42 +138,42 @@ func (suite *IntegrationTestSuite) TestModuleAccountGovTransfers() {
 }
 
 func (suite *IntegrationTestSuite) submitAndPassProposal(msgs []sdk.Msg) int64 {
-	govParamsRes, err := suite.Kava.Gov.Params(context.Background(), &govv1.QueryParamsRequest{
+	govParamsRes, err := suite.ZgChain.Gov.Params(context.Background(), &govv1.QueryParamsRequest{
 		ParamsType: govv1.ParamDeposit,
 	})
 	suite.NoError(err)
 
-	kavaAcc := suite.Kava.GetAccount(testutil.FundedAccountName)
+	zgChainAcc := suite.ZgChain.GetAccount(testutil.FundedAccountName)
 
 	proposalMsg, err := govv1.NewMsgSubmitProposal(
 		msgs,
 		govParamsRes.DepositParams.MinDeposit,
-		kavaAcc.SdkAddress.String(),
+		zgChainAcc.SdkAddress.String(),
 		"",
 	)
 	suite.NoError(err)
 
 	gasLimit := 1e6
-	fee := ukava(1000)
+	fee := sdk.NewCoin(chaincfg.BaseDenom, sdk.NewInt(1e15))
 
-	req := util.KavaMsgRequest{
+	req := util.ZgChainMsgRequest{
 		Msgs:      []sdk.Msg{proposalMsg},
 		GasLimit:  uint64(gasLimit),
 		FeeAmount: sdk.NewCoins(fee),
 		Memo:      "this is a proposal please accept me",
 	}
-	res := kavaAcc.SignAndBroadcastKavaTx(req)
+	res := zgChainAcc.SignAndBroadcastZgChainTx(req)
 	suite.Require().NoError(res.Err)
 
 	// Wait for proposal to be submitted
-	txRes, err := util.WaitForSdkTxCommit(suite.Kava.Tx, res.Result.TxHash, 6*time.Second)
+	txRes, err := util.WaitForSdkTxCommit(suite.ZgChain.Tx, res.Result.TxHash, 6*time.Second)
 	suite.Require().NoError(err)
 
 	var govRes govv1.MsgSubmitProposalResponse
 	suite.decodeTxMsgResponse(txRes, &govRes)
 
 	// 2. Vote for proposal from whale account
-	whale := suite.Kava.GetAccount(testutil.FundedAccountName)
+	whale := suite.ZgChain.GetAccount(testutil.FundedAccountName)
 	voteMsg := govv1.NewMsgVote(
 		whale.SdkAddress,
 		govRes.ProposalId,
@@ -179,21 +181,21 @@ func (suite *IntegrationTestSuite) submitAndPassProposal(msgs []sdk.Msg) int64 {
 		"",
 	)
 
-	voteReq := util.KavaMsgRequest{
+	voteReq := util.ZgChainMsgRequest{
 		Msgs:      []sdk.Msg{voteMsg},
 		GasLimit:  uint64(gasLimit),
 		FeeAmount: sdk.NewCoins(fee),
 		Memo:      "voting",
 	}
-	voteRes := whale.SignAndBroadcastKavaTx(voteReq)
+	voteRes := whale.SignAndBroadcastZgChainTx(voteReq)
 	suite.Require().NoError(voteRes.Err)
 
-	_, err = util.WaitForSdkTxCommit(suite.Kava.Tx, voteRes.Result.TxHash, 6*time.Second)
+	_, err = util.WaitForSdkTxCommit(suite.ZgChain.Tx, voteRes.Result.TxHash, 6*time.Second)
 	suite.Require().NoError(err)
 
 	// 3. Wait until proposal passes
 	suite.Require().Eventually(func() bool {
-		proposalRes, err := suite.Kava.Gov.Proposal(context.Background(), &govv1.QueryProposalRequest{
+		proposalRes, err := suite.ZgChain.Gov.Proposal(context.Background(), &govv1.QueryProposalRequest{
 			ProposalId: govRes.ProposalId,
 		})
 		suite.NoError(err)
@@ -215,7 +217,7 @@ func (suite *IntegrationTestSuite) submitAndPassProposal(msgs []sdk.Msg) int64 {
 	perPage := 100
 
 	// Get the block the proposal was passed in
-	passBlock, err := suite.Kava.TmSignClient.BlockSearch(
+	passBlock, err := suite.ZgChain.TmSignClient.BlockSearch(
 		context.Background(),
 		fmt.Sprintf(
 			"active_proposal.proposal_result = 'proposal_passed' AND active_proposal.proposal_id = %d",
@@ -240,7 +242,7 @@ func (suite *IntegrationTestSuite) getBankTransferAmountAtBlock(
 	receiver sdk.AccAddress,
 ) []sdk.Coin {
 	// Fetch block results for paid staking rewards in the block
-	blockRes, err := suite.Kava.TmSignClient.BlockResults(
+	blockRes, err := suite.ZgChain.TmSignClient.BlockResults(
 		context.Background(),
 		&blockHeight,
 	)

@@ -61,7 +61,7 @@ func (suite *MsgServerTestSuite) SetupTest() {
 		[]types.Proposal{},
 		[]types.Vote{},
 	)
-	suite.communityPoolAmt = sdk.NewCoins(sdk.NewCoin("ukava", sdkmath.NewInt(1000)))
+	suite.communityPoolAmt = sdk.NewCoins(sdk.NewCoin("neuron", sdkmath.NewInt(1000000000000000)))
 	suite.app.InitializeFromGenesisStates(
 		app.GenesisState{types.ModuleName: cdc.MustMarshalJSON(testGenesis)},
 		// TODO: not used?

@@ -7,13 +7,13 @@ package e2e_test
 // 	afterUpgradeCtx := util.CtxAtHeight(suite.UpgradeHeight)
 
 // 	// Before params
-// 	incentiveParamsBefore, err := suite.Kava.Incentive.Params(
+// 	incentiveParamsBefore, err := suite.ZgChain.Incentive.Params(
 // 		beforeUpgradeCtx,
 // 		&incentivetypes.QueryParamsRequest{},
 // 	)
 // 	suite.NoError(err)
 
-// 	incentiveParamsAfter, err := suite.Kava.Incentive.Params(
+// 	incentiveParamsAfter, err := suite.ZgChain.Incentive.Params(
 // 		afterUpgradeCtx,
 // 		&incentivetypes.QueryParamsRequest{},
 // 	)

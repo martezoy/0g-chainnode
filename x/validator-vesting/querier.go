@@ -14,7 +14,7 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
-const SafuFund int64 = 10000000 // 10 million KAVA
+const SafuFund int64 = 10000000 // 10 million A0GI
 
 // NewQuerier is the module level router for state queries
 func NewQuerier(bk types.BankKeeper, legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
@@ -41,7 +41,7 @@ func NewQuerier(bk types.BankKeeper, legacyQuerierCdc *codec.LegacyAmino) sdk.Qu
 }
 
 func queryGetTotalSupply(ctx sdk.Context, req abci.RequestQuery, bk types.BankKeeper, legacyQuerierCdc *codec.LegacyAmino) ([]byte, error) {
-	totalSupply := bk.GetSupply(ctx, "ukava").Amount
+	totalSupply := bk.GetSupply(ctx, "a0gi").Amount
 	supplyInt := sdk.NewDecFromInt(totalSupply).Mul(sdk.MustNewDecFromStr("0.000001")).TruncateInt64()
 	bz, err := legacyQuerierCdc.MarshalJSON(supplyInt)
 	if err != nil {
@@ -51,7 +51,7 @@ func queryGetTotalSupply(ctx sdk.Context, req abci.RequestQuery, bk types.BankKe
 }
 
 func queryGetCirculatingSupply(ctx sdk.Context, req abci.RequestQuery, bk types.BankKeeper, legacyQuerierCdc *codec.LegacyAmino) ([]byte, error) {
-	totalSupply := bk.GetSupply(ctx, "ukava").Amount
+	totalSupply := bk.GetSupply(ctx, "a0gi").Amount
 	supplyInt := getCirculatingSupply(ctx.BlockTime(), totalSupply)
 	bz, err := legacyQuerierCdc.MarshalJSON(supplyInt)
 	if err != nil {

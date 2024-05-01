@@ -11,13 +11,13 @@ import (
 	evmutiltypes "github.com/0glabs/0g-chain/x/evmutil/types"
 )
 
-// InitKavaEvmData is run after the chain is running, but before the tests are run.
+// InitZgChainEvmData is run after the chain is running, but before the tests are run.
 // It is used to initialize some EVM state, such as deploying contracts.
-func (suite *E2eTestSuite) InitKavaEvmData() {
-	whale := suite.Kava.GetAccount(FundedAccountName)
+func (suite *E2eTestSuite) InitZgChainEvmData() {
+	whale := suite.ZgChain.GetAccount(FundedAccountName)
 
 	// ensure funded account has nonzero erc20 balance
-	balance := suite.Kava.GetErc20Balance(suite.DeployedErc20.Address, whale.EvmAddress)
+	balance := suite.ZgChain.GetErc20Balance(suite.DeployedErc20.Address, whale.EvmAddress)
 	if balance.Cmp(big.NewInt(0)) != 1 {
 		panic(fmt.Sprintf(
 			"expected funded account (%s) to have erc20 balance of token %s",
@@ -27,7 +27,7 @@ func (suite *E2eTestSuite) InitKavaEvmData() {
 	}
 
 	// expect the erc20 to be enabled for conversion to sdk.Coin
-	params, err := suite.Kava.Evmutil.Params(context.Background(), &evmutiltypes.QueryParamsRequest{})
+	params, err := suite.ZgChain.Evmutil.Params(context.Background(), &evmutiltypes.QueryParamsRequest{})
 	if err != nil {
 		panic(fmt.Sprintf("failed to fetch evmutil params during init: %s", err))
 	}
@@ -42,7 +42,7 @@ func (suite *E2eTestSuite) InitKavaEvmData() {
 	if !found {
 		panic(fmt.Sprintf("erc20 %s must be enabled for conversion to cosmos coin", erc20Addr))
 	}
-	suite.Kava.RegisterErc20(suite.DeployedErc20.Address)
+	suite.ZgChain.RegisterErc20(suite.DeployedErc20.Address)
 
 	// deploy an example contract
 	greeterAddr, _, _, err := greeter.DeployGreeter(
@@ -51,13 +51,13 @@ func (suite *E2eTestSuite) InitKavaEvmData() {
 		"what's up!",
 	)
 	suite.NoError(err, "failed to deploy a contract to the EVM")
-	suite.Kava.ContractAddrs["greeter"] = greeterAddr
+	suite.ZgChain.ContractAddrs["greeter"] = greeterAddr
 }
 
-// FundKavaErc20Balance sends the pre-deployed ERC20 token to the `toAddress`.
-func (suite *E2eTestSuite) FundKavaErc20Balance(toAddress common.Address, amount *big.Int) EvmTxResponse {
+// FundZgChainErc20Balance sends the pre-deployed ERC20 token to the `toAddress`.
+func (suite *E2eTestSuite) FundZgChainErc20Balance(toAddress common.Address, amount *big.Int) EvmTxResponse {
 	// funded account should have erc20 balance
-	whale := suite.Kava.GetAccount(FundedAccountName)
+	whale := suite.ZgChain.GetAccount(FundedAccountName)
 	res, err := whale.TransferErc20(suite.DeployedErc20.Address, toAddress, amount)
 	suite.NoError(err)
 	return res

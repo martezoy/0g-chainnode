@@ -43,7 +43,7 @@ func GetCmdIssueTokens() *cobra.Command {
 		Use:   "issue [tokens] [receiver]",
 		Short: "issue new tokens to the receiver address",
 		Long:  "The asset owner issues new tokens that will be credited to the receiver address",
-		Example: fmt.Sprintf(`$ %s tx %s issue 20000000usdtoken kava15qdefkmwswysgg4qxgqpqr35k3m49pkx2jdfnw
+		Example: fmt.Sprintf(`$ %s tx %s issue 20000000usdtoken 0g15qdefkmwswysgg4qxgqpqr35k3m49pkx2jdfnw
 		`, version.AppName, types.ModuleName),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -106,7 +106,7 @@ func GetCmdBlockAddress() *cobra.Command {
 		Use:   "block [address] [denom]",
 		Short: "block an address for the input denom",
 		Long:  "The asset owner blocks an address from holding coins of that denomination. Any tokens of the input denomination held by the address will be sent to the owner address",
-		Example: fmt.Sprintf(`$ %s tx %s block kava15qdefkmwswysgg4qxgqpqr35k3m49pkx2jdfnw usdtoken
+		Example: fmt.Sprintf(`$ %s tx %s block 0g15qdefkmwswysgg4qxgqpqr35k3m49pkx2jdfnw usdtoken
 		`, version.AppName, types.ModuleName),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -139,7 +139,7 @@ func GetCmdUnblockAddress() *cobra.Command {
 		Use:   "unblock [address] [denom]",
 		Short: "unblock an address for the input denom",
 		Long:  "The asset owner unblocks an address from holding coins of that denomination.",
-		Example: fmt.Sprintf(`$ %s tx %s unblock kava15qdefkmwswysgg4qxgqpqr35k3m49pkx2jdfnw usdtoken
+		Example: fmt.Sprintf(`$ %s tx %s unblock 0g15qdefkmwswysgg4qxgqpqr35k3m49pkx2jdfnw usdtoken
 		`, version.AppName, types.ModuleName),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {

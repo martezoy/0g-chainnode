@@ -15,7 +15,7 @@ import (
 var (
 	coinsSingle       = sdk.NewCoins(sdk.NewInt64Coin("bnb", 50000))
 	binanceAddrs      = []sdk.AccAddress{}
-	kavaAddrs         = []sdk.AccAddress{}
+	zgAddrs           = []sdk.AccAddress{}
 	randomNumberBytes = []byte{15}
 	timestampInt64    = int64(100)
 	randomNumberHash  = tmbytes.HexBytes(types.CalculateRandomHash(randomNumberBytes, timestampInt64))
@@ -24,14 +24,14 @@ var (
 func init() {
 	app.SetSDKConfig()
 
-	// Must be set after SetSDKConfig to use kava Bech32 prefix instead of cosmos
+	// Must be set after SetSDKConfig to use 0g Bech32 prefix instead of cosmos
 	binanceAddrs = []sdk.AccAddress{
 		sdk.AccAddress(crypto.AddressHash([]byte("BinanceTest1"))),
 		sdk.AccAddress(crypto.AddressHash([]byte("BinanceTest2"))),
 	}
-	kavaAddrs = []sdk.AccAddress{
-		sdk.AccAddress(crypto.AddressHash([]byte("KavaTest1"))),
-		sdk.AccAddress(crypto.AddressHash([]byte("KavaTest2"))),
+	zgAddrs = []sdk.AccAddress{
+		sdk.AccAddress(crypto.AddressHash([]byte("0gTest1"))),
+		sdk.AccAddress(crypto.AddressHash([]byte("0gTest2"))),
 	}
 }
 
@@ -57,12 +57,12 @@ func (suite *MsgTestSuite) TestMsgCreateAtomicSwap() {
 		heightSpan          uint64
 		expectPass          bool
 	}{
-		{"normal cross-chain", binanceAddrs[0], kavaAddrs[0], kavaAddrs[0].String(), binanceAddrs[0].String(), randomNumberHash.String(), timestampInt64, coinsSingle, 500, true},
-		{"without other chain fields", binanceAddrs[0], kavaAddrs[0], "", "", randomNumberHash.String(), timestampInt64, coinsSingle, 500, false},
-		{"invalid amount", binanceAddrs[0], kavaAddrs[0], kavaAddrs[0].String(), binanceAddrs[0].String(), randomNumberHash.String(), timestampInt64, nil, 500, false},
-		{"invalid from address", sdk.AccAddress{}, kavaAddrs[0], kavaAddrs[0].String(), binanceAddrs[0].String(), randomNumberHash.String(), timestampInt64, coinsSingle, 500, false},
-		{"invalid to address", binanceAddrs[0], sdk.AccAddress{}, kavaAddrs[0].String(), binanceAddrs[0].String(), randomNumberHash.String(), timestampInt64, coinsSingle, 500, false},
-		{"invalid rand hash", binanceAddrs[0], kavaAddrs[0], kavaAddrs[0].String(), binanceAddrs[0].String(), "ff", timestampInt64, coinsSingle, 500, false},
+		{"normal cross-chain", binanceAddrs[0], zgAddrs[0], zgAddrs[0].String(), binanceAddrs[0].String(), randomNumberHash.String(), timestampInt64, coinsSingle, 500, true},
+		{"without other chain fields", binanceAddrs[0], zgAddrs[0], "", "", randomNumberHash.String(), timestampInt64, coinsSingle, 500, false},
+		{"invalid amount", binanceAddrs[0], zgAddrs[0], zgAddrs[0].String(), binanceAddrs[0].String(), randomNumberHash.String(), timestampInt64, nil, 500, false},
+		{"invalid from address", sdk.AccAddress{}, zgAddrs[0], zgAddrs[0].String(), binanceAddrs[0].String(), randomNumberHash.String(), timestampInt64, coinsSingle, 500, false},
+		{"invalid to address", binanceAddrs[0], sdk.AccAddress{}, zgAddrs[0].String(), binanceAddrs[0].String(), randomNumberHash.String(), timestampInt64, coinsSingle, 500, false},
+		{"invalid rand hash", binanceAddrs[0], zgAddrs[0], zgAddrs[0].String(), binanceAddrs[0].String(), "ff", timestampInt64, coinsSingle, 500, false},
 	}
 
 	for i, tc := range tests {

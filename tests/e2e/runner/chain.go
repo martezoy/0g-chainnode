@@ -3,7 +3,7 @@ package runner
 import (
 	"errors"
 	"fmt"
-
+"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/ethereum/go-ethereum/ethclient"
 	rpchttpclient "github.com/tendermint/tendermint/rpc/client/http"
 	"google.golang.org/grpc"
@@ -75,20 +75,20 @@ func (c *Chains) Register(name string, chain *ChainDetails) error {
 // the Chain details are all hardcoded because they are currently fixed by kvtool.
 // someday they may be accepted as configurable parameters.
 var (
-	kvtoolKavaChain = ChainDetails{
+	kvtoolZgChainChain = ChainDetails{
 		RpcUrl:    "http://localhost:26657",
 		GrpcUrl:   "http://localhost:9090",
 		EvmRpcUrl: "http://localhost:8545",
 
-		ChainId:      "kavalocalnet_8888-1",
-		StakingDenom: "ukava",
+		ChainId:      "0gchainlocalnet_8888-1",
+		StakingDenom: chaincfg.DisplayDenom,
 	}
 	kvtoolIbcChain = ChainDetails{
 		RpcUrl:    "http://localhost:26658",
 		GrpcUrl:   "http://localhost:9092",
 		EvmRpcUrl: "http://localhost:8547",
 
-		ChainId:      "kavalocalnet_8889-2",
+		ChainId:      "0gchainlocalnet_8889-2",
 		StakingDenom: "uatom",
 	}
 )
