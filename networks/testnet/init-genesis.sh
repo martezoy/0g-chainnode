@@ -166,6 +166,7 @@ done
 
 # Create genesis at node0 and copy to other nodes
 0gchaind collect-gentxs --home "$ROOT_DIR/node0" --gentx-dir "$ROOT_DIR/gentxs" >/dev/null 2>&1
+sed -i '/persistent_peers = /c\persistent_peers = ""' "$ROOT_DIR"/node0/config/config.toml
 0gchaind validate-genesis --home "$ROOT_DIR/node0"
 for ((i=1; i<$NUM_NODES; i++)) do
     cp "$ROOT_DIR"/node0/config/genesis.json "$ROOT_DIR"/node$i/config/genesis.json
