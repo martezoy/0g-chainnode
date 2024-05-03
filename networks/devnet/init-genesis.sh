@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ROOT_DIR=${ROOT_DIR:-testnet}
+ROOT_DIR=${ROOT_DIR:-devnet}
 CHAIN_ID=${CHAIN_ID:-zgtendermint_16600-1}
 
 # Usage: init-genesis.sh IP1 KEYRING_PASSWORD
