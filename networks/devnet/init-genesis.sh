@@ -33,9 +33,9 @@ set -e
 IFS=","; declare -a IPS=($1); unset IFS
 
 NUM_NODES=${#IPS[@]}
-VLIDATOR_BALANCE=15000000000000000000000000neuron
-FAUCET_BALANCE=40000000000000000000000000neuron
-STAKING=10000000000000000000000000neuron
+VLIDATOR_BALANCE=15000000a0gi
+FAUCET_BALANCE=40000000a0gi
+STAKING=10000000a0gi
 
 # Init configs
 for ((i=0; i<$NUM_NODES; i++)) do
@@ -49,7 +49,7 @@ for ((i=0; i<$NUM_NODES; i++)) do
     0gchaind init "node$i" --home "$HOMEDIR" --chain-id "$CHAIN_ID" >/dev/null 2>&1
 
     # Replace stake with neuron
-    sed -in-place='' 's/stake/neuron/g' "$GENESIS"
+    sed -in-place='' 's/stake/a0gi/g' "$GENESIS"
 
     # Replace the default evm denom of aphoton with neuron
     sed -in-place='' 's/aphoton/neuron/g' "$GENESIS"
