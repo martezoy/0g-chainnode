@@ -10,7 +10,6 @@ import (
 
 	sdkmath "cosmossdk.io/math"
 	"github.com/0glabs/0g-chain/app"
-	"github.com/0glabs/0g-chain/chaincfg"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -63,11 +62,11 @@ func (suite *SimulateRequestTestSuite) TestSimulateRequest() {
 			bank.MsgSend{
 				FromAddress: fromAddr,
 				ToAddress:   toAddr,
-				Amount:      sdk.NewCoins(sdk.NewCoin(chaincfg.DisplayDenom, sdkmath.NewInt(1e6))),
+				Amount:      sdk.NewCoins(sdk.NewCoin("ua0gi", sdkmath.NewInt(1e6))),
 			},
 		},
 		Fee: auth.StdFee{
-			Amount: sdk.NewCoins(sdk.NewCoin(chaincfg.DisplayDenom, sdkmath.NewInt(5e4))),
+			Amount: sdk.NewCoins(sdk.NewCoin("ua0gi", sdkmath.NewInt(5e4))),
 			Gas:    1e6,
 		},
 		Memo: "test memo",

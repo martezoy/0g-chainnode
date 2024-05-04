@@ -50,7 +50,7 @@ func (suite *invariantTestSuite) SetupValidState() {
 	suite.FundModuleAccountWithZgChain(
 		types.ModuleName,
 		sdk.NewCoins(
-			sdk.NewCoin(chaincfg.DisplayDenom, sdkmath.NewInt(2)), // ( sum of all minor balances ) / conversion multiplier
+			sdk.NewCoin("ua0gi", sdkmath.NewInt(2)), // ( sum of all minor balances ) / conversion multiplier
 		),
 	)
 

@@ -11,7 +11,6 @@ import (
 
 func main() {
 	chaincfg.SetSDKConfig().Seal()
-	chaincfg.RegisterDenoms()
 
 	rootCmd := NewRootCmd()
 
