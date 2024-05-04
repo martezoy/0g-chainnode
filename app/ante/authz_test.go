@@ -16,7 +16,6 @@ import (
 
 	"github.com/0glabs/0g-chain/app"
 	"github.com/0glabs/0g-chain/app/ante"
-	"github.com/0glabs/0g-chain/chaincfg"
 )
 
 func newMsgGrant(granter sdk.AccAddress, grantee sdk.AccAddress, a authz.Authorization, expiration time.Time) *authz.MsgGrant {
@@ -59,7 +58,7 @@ func TestAuthzLimiterDecorator(t *testing.T) {
 				banktypes.NewMsgSend(
 					testAddresses[0],
 					testAddresses[1],
-					sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 100)),
+					sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 100e6)),
 				),
 			},
 			checkTx: false,
@@ -129,7 +128,7 @@ func TestAuthzLimiterDecorator(t *testing.T) {
 					[]sdk.Msg{banktypes.NewMsgSend(
 						testAddresses[0],
 						testAddresses[3],
-						sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 100)),
+						sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 100e6)),
 					)}),
 			},
 			checkTx: false,
@@ -162,7 +161,7 @@ func TestAuthzLimiterDecorator(t *testing.T) {
 						banktypes.NewMsgSend(
 							testAddresses[0],
 							testAddresses[3],
-							sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 100)),
+							sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 100e6)),
 						),
 						&evmtypes.MsgEthereumTx{},
 					},
