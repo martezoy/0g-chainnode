@@ -49,34 +49,34 @@ $BINARY config keyring-backend test
 # Create validator keys and add account to genesis
 validatorKeyName="validator"
 printf "$validatorMnemonic\n" | $BINARY keys add $validatorKeyName --recover
-$BINARY add-genesis-account $validatorKeyName 2000000000000000000000neuron
+$BINARY add-genesis-account $validatorKeyName 2000000000000000000000ua0gi
 
 # Create faucet keys and add account to genesis
 faucetKeyName="faucet"
 printf "$faucetMnemonic\n" | $BINARY keys add $faucetKeyName --recover
-$BINARY add-genesis-account $faucetKeyName 1000000000000000000000neuron
+$BINARY add-genesis-account $faucetKeyName 1000000000000000000000ua0gi
 
 evmFaucetKeyName="evm-faucet"
 printf "$evmFaucetMnemonic\n" | $BINARY keys add $evmFaucetKeyName --eth --recover
-$BINARY add-genesis-account $evmFaucetKeyName 1000000000000000000000neuron
+$BINARY add-genesis-account $evmFaucetKeyName 1000000000000000000000ua0gi
 
 userKeyName="user"
 printf "$userMnemonic\n" | $BINARY keys add $userKeyName --eth --recover
-$BINARY add-genesis-account $userKeyName 1000000000000000000000neuron,1000000000usdx
+$BINARY add-genesis-account $userKeyName 1000000000000000000000ua0gi,1000000000usdx
 
 relayerKeyName="relayer"
 printf "$relayerMnemonic\n" | $BINARY keys add $relayerKeyName --eth --recover
-$BINARY add-genesis-account $relayerKeyName 1000000000000000000000neuron
+$BINARY add-genesis-account $relayerKeyName 1000000000000000000000ua0gi
 
 storageContractAcc="0g1vsjpjgw8p5f4x0nwp8ernl9lkszewcqqss7r5d"
-$BINARY add-genesis-account $storageContractAcc 1000000000000000000000neuron
+$BINARY add-genesis-account $storageContractAcc 1000000000000000000000ua0gi
 
 # Create a delegation tx for the validator and add to genesis
-$BINARY gentx $validatorKeyName 1000000000000000000000neuron --keyring-backend test --chain-id $chainID
+$BINARY gentx $validatorKeyName 1000000000000000000000ua0gi --keyring-backend test --chain-id $chainID
 $BINARY collect-gentxs
 
-# Replace stake with ukava
-sed -in-place='' 's/stake/neuron/g' $DATA/config/genesis.json
+# Replace stake with ua0gi
+sed -in-place='' 's/stake/ua0gi/g' $DATA/config/genesis.json
 
 # Replace the default evm denom of aphoton with neuron
 sed -in-place='' 's/aphoton/neuron/g' $DATA/config/genesis.json
