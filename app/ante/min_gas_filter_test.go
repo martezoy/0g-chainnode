@@ -13,7 +13,6 @@ import (
 
 	"github.com/0glabs/0g-chain/app"
 	"github.com/0glabs/0g-chain/app/ante"
-	"github.com/0glabs/0g-chain/chaincfg"
 )
 
 func mustParseDecCoins(value string) sdk.DecCoins {
@@ -31,7 +30,7 @@ func TestEvmMinGasFilter(t *testing.T) {
 
 	ctx := tApp.NewContext(true, tmproto.Header{Height: 1, Time: tmtime.Now()})
 	tApp.GetEvmKeeper().SetParams(ctx, evmtypes.Params{
-		EvmDenom: chaincfg.BaseDenom,
+		EvmDenom: "neuron",
 	})
 
 	testCases := []struct {
@@ -45,29 +44,29 @@ func TestEvmMinGasFilter(t *testing.T) {
 			mustParseDecCoins(""),
 		},
 		{
-			"zero a0gi gas price",
-			mustParseDecCoins("0a0gi"),
-			mustParseDecCoins("0a0gi"),
+			"zero ua0gi gas price",
+			mustParseDecCoins("0ua0gi"),
+			mustParseDecCoins("0ua0gi"),
 		},
 		{
-			"non-zero a0gi gas price",
-			mustParseDecCoins("0.001a0gi"),
-			mustParseDecCoins("0.001a0gi"),
+			"non-zero ua0gi gas price",
+			mustParseDecCoins("0.001ua0gi"),
+			mustParseDecCoins("0.001ua0gi"),
 		},
 		{
-			"zero a0gi gas price, min neuron price",
-			mustParseDecCoins("0a0gi;100000neuron"),
-			mustParseDecCoins("0a0gi"), // neuron is removed
+			"zero ua0gi gas price, min neuron price",
+			mustParseDecCoins("0ua0gi;100000neuron"),
+			mustParseDecCoins("0ua0gi"), // neuron is removed
 		},
 		{
-			"zero a0gi gas price, min neuron price, other token",
-			mustParseDecCoins("0a0gi;100000neuron;0.001other"),
-			mustParseDecCoins("0a0gi;0.001other"), // neuron is removed
+			"zero ua0gi gas price, min neuron price, other token",
+			mustParseDecCoins("0ua0gi;100000neuron;0.001other"),
+			mustParseDecCoins("0ua0gi;0.001other"), // neuron is removed
 		},
 		{
-			"non-zero a0gi gas price, min neuron price",
-			mustParseDecCoins("0.25a0gi;100000neuron;0.001other"),
-			mustParseDecCoins("0.25a0gi;0.001other"), // neuron is removed
+			"non-zero ua0gi gas price, min neuron price",
+			mustParseDecCoins("0.25ua0gi;100000neuron;0.001other"),
+			mustParseDecCoins("0.25ua0gi;0.001other"), // neuron is removed
 		},
 	}
 
