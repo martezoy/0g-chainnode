@@ -5,7 +5,6 @@ import (
 	"io"
 	"net/http"
 
-	sdkmath "cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	nodeservice "github.com/cosmos/cosmos-sdk/client/grpc/node"
@@ -264,9 +263,6 @@ type App struct {
 }
 
 func init() {
-	// 1stake = 1 ukava = 1_000_000_000_000 akava = 1_000_000_000_000 neuron
-	conversionMultiplier := sdkmath.NewIntFromUint64(1_000_000_000_000)
-	sdk.DefaultPowerReduction = sdk.DefaultPowerReduction.Mul(conversionMultiplier)
 }
 
 // NewApp returns a reference to an initialized App.
