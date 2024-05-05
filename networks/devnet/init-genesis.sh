@@ -33,9 +33,9 @@ set -e
 IFS=","; declare -a IPS=($1); unset IFS
 
 NUM_NODES=${#IPS[@]}
-VLIDATOR_BALANCE=15000000a0gi
-FAUCET_BALANCE=40000000a0gi
-STAKING=10000000a0gi
+VLIDATOR_BALANCE=15000000000000000000ua0gi
+FAUCET_BALANCE=40000000000000000000ua0gi
+STAKING=10000000000000000000ua0gi
 
 # Init configs
 for ((i=0; i<$NUM_NODES; i++)) do
@@ -49,7 +49,7 @@ for ((i=0; i<$NUM_NODES; i++)) do
     0gchaind init "node$i" --home "$HOMEDIR" --chain-id "$CHAIN_ID" >/dev/null 2>&1
 
     # Replace stake with neuron
-    sed -in-place='' 's/stake/a0gi/g' "$GENESIS"
+    sed -in-place='' 's/stake/ua0gi/g' "$GENESIS"
 
     # Replace the default evm denom of aphoton with neuron
     sed -in-place='' 's/aphoton/neuron/g' "$GENESIS"
@@ -166,6 +166,7 @@ done
 
 # Create genesis at node0 and copy to other nodes
 0gchaind collect-gentxs --home "$ROOT_DIR/node0" --gentx-dir "$ROOT_DIR/gentxs" >/dev/null 2>&1
+sed -i '/persistent_peers = /c\persistent_peers = ""' "$ROOT_DIR"/node0/config/config.toml
 0gchaind validate-genesis --home "$ROOT_DIR/node0"
 for ((i=1; i<$NUM_NODES; i++)) do
     cp "$ROOT_DIR"/node0/config/genesis.json "$ROOT_DIR"/node$i/config/genesis.json
