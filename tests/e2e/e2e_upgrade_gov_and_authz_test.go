@@ -12,7 +12,6 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	govv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 
-	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/tests/e2e/testutil"
 	"github.com/0glabs/0g-chain/tests/util"
 )
@@ -154,7 +153,7 @@ func (suite *IntegrationTestSuite) submitAndPassProposal(msgs []sdk.Msg) int64 {
 	suite.NoError(err)
 
 	gasLimit := 1e6
-	fee := sdk.NewCoin(chaincfg.BaseDenom, sdk.NewInt(1e15))
+	fee := sdk.NewCoin("neuron", sdk.NewInt(1e15))
 
 	req := util.ZgChainMsgRequest{
 		Msgs:      []sdk.Msg{proposalMsg},

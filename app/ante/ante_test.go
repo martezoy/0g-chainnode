@@ -66,7 +66,7 @@ func TestAppAnteHandler_AuthorizedMempool(t *testing.T) {
 		chainID,
 		app.NewFundedGenStateWithSameCoins(
 			tApp.AppCodec(),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 1e9)),
+			sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 1e9)),
 			testAddresses,
 		),
 		newBep3GenStateMulti(tApp.AppCodec(), deputy),
@@ -114,7 +114,7 @@ func TestAppAnteHandler_AuthorizedMempool(t *testing.T) {
 					banktypes.NewMsgSend(
 						tc.address,
 						testAddresses[0],
-						sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 1_000_000)),
+						sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 1_000_000)),
 					),
 				},
 				sdk.NewCoins(), // no fee

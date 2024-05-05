@@ -12,7 +12,6 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"github.com/0glabs/0g-chain/app"
-	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/evmutil/keeper"
 	"github.com/0glabs/0g-chain/x/evmutil/testutil"
 	"github.com/0glabs/0g-chain/x/evmutil/types"
@@ -161,7 +160,7 @@ func (suite *invariantTestSuite) TestSmallBalances() {
 	// increase minor balance at least above conversion multiplier
 	suite.Keeper.AddBalance(suite.Ctx, suite.Addrs[0], keeper.ConversionMultiplier)
 	// add same number of a0gi to avoid breaking other invariants
-	amt := sdk.NewCoins(sdk.NewInt64Coin(chaincfg.DisplayDenom, 1))
+	amt := sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 1))
 	suite.Require().NoError(
 		suite.App.FundModuleAccount(suite.Ctx, types.ModuleName, amt),
 	)

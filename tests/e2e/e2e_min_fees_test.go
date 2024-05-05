@@ -13,7 +13,6 @@ import (
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 
 	"github.com/0glabs/0g-chain/app"
-	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/tests/util"
 )
 
@@ -25,7 +24,7 @@ func (suite *IntegrationTestSuite) TestEthGasPriceReturnsMinFee() {
 	suite.NoError(err)
 
 	// evm uses neuron, get neuron min fee
-	evmMinGas := minGasPrices.AmountOf(chaincfg.BaseDenom).TruncateInt().BigInt()
+	evmMinGas := minGasPrices.AmountOf("neuron").TruncateInt().BigInt()
 
 	// returns eth_gasPrice, units in a0gi
 	gasPrice, err := suite.ZgChain.EvmClient.SuggestGasPrice(context.Background())
@@ -44,7 +43,7 @@ func (suite *IntegrationTestSuite) TestEvmRespectsMinFee() {
 	// get min gas price for evm (from app.toml)
 	minFees, err := getMinFeeFromAppToml(util.ZgChainHomePath())
 	suite.NoError(err)
-	minGasPrice := minFees.AmountOf(chaincfg.BaseDenom).TruncateInt()
+	minGasPrice := minFees.AmountOf("neuron").TruncateInt()
 
 	// attempt tx with less than min gas price (min fee - 1)
 	tooLowGasPrice := minGasPrice.Sub(sdk.OneInt()).BigInt()
