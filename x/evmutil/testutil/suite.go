@@ -37,7 +37,6 @@ import (
 	"github.com/tendermint/tendermint/version"
 
 	"github.com/0glabs/0g-chain/app"
-	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/evmutil/keeper"
 	"github.com/0glabs/0g-chain/x/evmutil/types"
 )
@@ -82,7 +81,7 @@ func (suite *Suite) SetupTest() {
 	suite.Addrs = addrs
 
 	evmGenesis := evmtypes.DefaultGenesisState()
-	evmGenesis.Params.EvmDenom = chaincfg.EvmDenom
+	evmGenesis.Params.EvmDenom = keeper.EvmDenom
 
 	feemarketGenesis := feemarkettypes.DefaultGenesisState()
 	feemarketGenesis.Params.EnableHeight = 1

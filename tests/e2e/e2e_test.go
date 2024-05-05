@@ -19,7 +19,6 @@ import (
 	emtypes "github.com/evmos/ethermint/types"
 
 	"github.com/0glabs/0g-chain/app"
-	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/tests/e2e/testutil"
 	"github.com/0glabs/0g-chain/tests/util"
 )
@@ -29,7 +28,7 @@ var (
 )
 
 func a0gi(amt *big.Int) sdk.Coin {
-	return sdk.NewCoin(chaincfg.DisplayDenom, sdkmath.NewIntFromBigInt(amt))
+	return sdk.NewCoin("ua0gi", sdkmath.NewIntFromBigInt(amt))
 }
 
 type IntegrationTestSuite struct {
@@ -67,7 +66,7 @@ func (suite *IntegrationTestSuite) TestFundedAccount() {
 
 	// check balance via SDK query
 	res, err := suite.ZgChain.Bank.Balance(context.Background(), banktypes.NewQueryBalanceRequest(
-		acc.SdkAddress, chaincfg.DisplayDenom,
+		acc.SdkAddress, "ua0gi",
 	))
 	suite.NoError(err)
 	suite.Equal(funds, *res.Balance)
@@ -110,7 +109,7 @@ func (suite *IntegrationTestSuite) TestTransferOverEVM() {
 
 	// expect (9 - gas used) A0GI remaining in account.
 	balance := suite.ZgChain.QuerySdkForBalances(acc.SdkAddress)
-	suite.Equal(sdkmath.NewInt(9e5).Sub(a0giUsedForGas), balance.AmountOf(chaincfg.DisplayDenom))
+	suite.Equal(sdkmath.NewInt(9e5).Sub(a0giUsedForGas), balance.AmountOf("ua0gi"))
 }
 
 // TestIbcTransfer transfers A0GI from the primary 0g-chain (suite.ZgChain) to the ibc chain (suite.Ibc).
@@ -158,7 +157,7 @@ func (suite *IntegrationTestSuite) TestIbcTransfer() {
 	// the balance should be deducted from 0g-chain account
 	suite.Eventually(func() bool {
 		balance := suite.ZgChain.QuerySdkForBalances(zgChainAcc.SdkAddress)
-		return balance.AmountOf(chaincfg.DisplayDenom).Equal(expectedSrcBalance.Amount)
+		return balance.AmountOf("ua0gi").Equal(expectedSrcBalance.Amount)
 	}, 10*time.Second, 1*time.Second)
 
 	// expect the balance to be transferred to the ibc chain!
