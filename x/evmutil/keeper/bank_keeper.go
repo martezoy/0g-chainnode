@@ -52,9 +52,17 @@ func (k EvmBankKeeper) GetBalance(ctx sdk.Context, addr sdk.AccAddress, denom st
 	}
 
 	spendableCoins := k.bk.SpendableCoins(ctx, addr)
-	ua0gi := spendableCoins.AmountOf(CosmosDenom)
-	neuron := k.neuronKeeper.GetBalance(ctx, addr)
-	total := ua0gi.Mul(ConversionMultiplier).Add(neuron)
+	cosmosDenomFromBank := spendableCoins.AmountOf(CosmosDenom)
+	evmDenomFromBank := spendableCoins.AmountOf(EvmDenom)
+	evmDenomFromEvmBank := k.neuronKeeper.GetBalance(ctx, addr)
+
+	var total sdkmath.Int
+
+	if cosmosDenomFromBank.IsPositive() {
+		total = cosmosDenomFromBank.Mul(ConversionMultiplier).Add(evmDenomFromBank).Add(evmDenomFromEvmBank)
+	} else {
+		total = evmDenomFromBank.Add(evmDenomFromEvmBank)
+	}
 	return sdk.NewCoin(EvmDenom, total)
 }
 
