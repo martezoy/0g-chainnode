@@ -3,7 +3,7 @@ package chaincfg
 import sdk "github.com/cosmos/cosmos-sdk/types"
 
 const (
-	AppName   = "0gchain"
+	AppName   = "0gchaind"
 	EnvPrefix = "0GCHAIN"
 )
 
