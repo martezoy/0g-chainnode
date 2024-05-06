@@ -73,7 +73,7 @@ for ((i=0; i<$NUM_NODES; i++)) do
     # cat "$GENESIS" | jq '.app_state["staking"]["params"]["bond_denom"]="a0gi"' >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
     # cat "$GENESIS" | jq '.app_state["gov"]["params"]["min_deposit"][0]["denom"]="a0gi"' >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
-    cat "$GENESIS" | jq '.app_state["staking"]["params"]["max_validators"]=200' >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+    cat "$GENESIS" | jq '.app_state["staking"]["params"]["max_validators"]=125' >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
     cat "$GENESIS" | jq '.app_state["slashing"]["params"]["signed_blocks_window"]="1000"' >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
     cat "$GENESIS" | jq '.app_state["consensus_params"]["block"]["time_iota_ms"]="3000"' >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
