@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/evmutil/keeper"
 	"github.com/0glabs/0g-chain/x/evmutil/testutil"
 	"github.com/0glabs/0g-chain/x/evmutil/types"
@@ -49,7 +50,7 @@ func (suite *invariantTestSuite) SetupValidState() {
 	suite.FundModuleAccountWithZgChain(
 		types.ModuleName,
 		sdk.NewCoins(
-			sdk.NewCoin("ua0gi", sdkmath.NewInt(2)), // ( sum of all minor balances ) / conversion multiplier
+			sdk.NewCoin(chaincfg.AuxiliaryDenom, sdkmath.NewInt(2)), // ( sum of all minor balances ) / conversion multiplier
 		),
 	)
 
@@ -159,8 +160,8 @@ func (suite *invariantTestSuite) TestSmallBalances() {
 
 	// increase minor balance at least above conversion multiplier
 	suite.Keeper.AddBalance(suite.Ctx, suite.Addrs[0], keeper.ConversionMultiplier)
-	// add same number of a0gi to avoid breaking other invariants
-	amt := sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 1))
+	// add same number of auxiliary denom to avoid breaking other invariants
+	amt := sdk.NewCoins(sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 1))
 	suite.Require().NoError(
 		suite.App.FundModuleAccount(suite.Ctx, types.ModuleName, amt),
 	)

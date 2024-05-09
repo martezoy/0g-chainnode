@@ -19,8 +19,8 @@ var (
 
 const (
 	// Amino names
-	requestDASName      = "evmos/das/MsgRequestDAS"
-	reportDASResultName = "evmos/das/MsgReportDASResult"
+	requestDASName      = "0g/das/MsgRequestDAS"
+	reportDASResultName = "0g/das/MsgReportDASResult"
 )
 
 // NOTE: This is required for the GetSignBytes function

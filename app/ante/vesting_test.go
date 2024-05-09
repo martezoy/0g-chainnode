@@ -14,6 +14,7 @@ import (
 
 	"github.com/0glabs/0g-chain/app"
 	"github.com/0glabs/0g-chain/app/ante"
+	"github.com/0glabs/0g-chain/chaincfg"
 )
 
 func TestVestingMempoolDecorator_MsgCreateVestingAccount_Unauthorized(t *testing.T) {
@@ -33,7 +34,7 @@ func TestVestingMempoolDecorator_MsgCreateVestingAccount_Unauthorized(t *testing
 			"MsgCreateVestingAccount",
 			vesting.NewMsgCreateVestingAccount(
 				testAddresses[0], testAddresses[1],
-				sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 100)),
+				sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(100)),
 				time.Date(1998, 1, 1, 0, 0, 0, 0, time.UTC).Unix(),
 				false,
 			),
@@ -44,7 +45,7 @@ func TestVestingMempoolDecorator_MsgCreateVestingAccount_Unauthorized(t *testing
 			"MsgCreateVestingAccount",
 			vesting.NewMsgCreatePermanentLockedAccount(
 				testAddresses[0], testAddresses[1],
-				sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 100)),
+				sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(100)),
 			),
 			true,
 			"MsgTypeURL /cosmos.vesting.v1beta1.MsgCreatePermanentLockedAccount not supported",
@@ -63,7 +64,7 @@ func TestVestingMempoolDecorator_MsgCreateVestingAccount_Unauthorized(t *testing
 			"other messages not affected",
 			banktypes.NewMsgSend(
 				testAddresses[0], testAddresses[1],
-				sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 100)),
+				sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(100)),
 			),
 			false,
 			"",

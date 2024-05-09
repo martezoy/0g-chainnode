@@ -6,6 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/evmutil/types"
 )
 
@@ -50,7 +51,7 @@ func FullyBackedInvariant(bankK types.BankKeeper, k Keeper) sdk.Invariant {
 		})
 
 		bankAddr := authtypes.NewModuleAddress(types.ModuleName)
-		bankBalance := bankK.GetBalance(ctx, bankAddr, CosmosDenom).Amount.Mul(ConversionMultiplier)
+		bankBalance := bankK.GetBalance(ctx, bankAddr, chaincfg.AuxiliaryDenom).Amount.Mul(ConversionMultiplier)
 
 		broken = totalMinorBalances.GT(bankBalance)
 

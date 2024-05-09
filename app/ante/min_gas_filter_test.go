@@ -13,6 +13,7 @@ import (
 
 	"github.com/0glabs/0g-chain/app"
 	"github.com/0glabs/0g-chain/app/ante"
+	"github.com/0glabs/0g-chain/chaincfg"
 )
 
 func mustParseDecCoins(value string) sdk.DecCoins {
@@ -30,7 +31,7 @@ func TestEvmMinGasFilter(t *testing.T) {
 
 	ctx := tApp.NewContext(true, tmproto.Header{Height: 1, Time: tmtime.Now()})
 	tApp.GetEvmKeeper().SetParams(ctx, evmtypes.Params{
-		EvmDenom: "neuron",
+		EvmDenom: chaincfg.BaseDenom,
 	})
 
 	testCases := []struct {
