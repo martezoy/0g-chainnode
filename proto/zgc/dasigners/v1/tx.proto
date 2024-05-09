@@ -1,0 +1,39 @@
+syntax = "proto3";
+package zgc.dasigners.v1;
+
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "zgc/das/v1/genesis.proto";
+import "zgc/dasigners/v1/dasigners.proto";
+
+option go_package = "github.com/0glabs/0g-chain/x/dasigners/v1/types";
+option (gogoproto.goproto_getters_all) = false;
+
+// Msg defines the dasigners Msg service
+service Msg {
+  rpc RegisterSigner(MsgRegisterSigner) returns (MsgRegisterSignerResponse);
+  rpc UpdateSocket(MsgUpdateSocket) returns (MsgUpdateSocketResponse);
+  rpc RegisterNextEpoch(MsgRegisterNextEpoch) returns (MsgRegisterNextEpochResponse);
+}
+
+message MsgRegisterSigner {
+  Signer signer = 1;
+  bytes signature = 2;
+}
+
+message MsgRegisterSignerResponse {}
+
+message MsgUpdateSocket {
+  string account = 1;
+  string socket = 2;
+}
+
+message MsgUpdateSocketResponse {}
+
+message MsgRegisterNextEpoch {
+  string account = 1;
+  bytes signature = 2;
+}
+
+message MsgRegisterNextEpochResponse {}
