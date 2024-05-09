@@ -11,21 +11,21 @@ option (gogoproto.goproto_getters_all) = false;
 
 // Msg defines the council Msg service
 service Msg {
-    rpc Register(MsgRegister) returns (MsgRegisterResponse);
-    rpc Vote(MsgVote) returns (MsgVoteResponse);
+  rpc Register(MsgRegister) returns (MsgRegisterResponse);
+  rpc Vote(MsgVote) returns (MsgVoteResponse);
 }
 
 message MsgRegister {
-    string voter = 1;
-    bytes key = 2;
+  string voter = 1;
+  bytes key = 2;
 }
 
 message MsgRegisterResponse {}
 
 message MsgVote {
-    uint64 council_id = 1 [(gogoproto.customname) = "CouncilID"];
-    string voter = 2;
-    repeated Ballot ballots = 3;
+  uint64 council_id = 1 [(gogoproto.customname) = "CouncilID"];
+  string voter = 2;
+  repeated Ballot ballots = 3;
 }
 
 message MsgVoteResponse {}

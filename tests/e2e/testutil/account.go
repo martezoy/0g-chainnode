@@ -142,8 +142,8 @@ func (chain *Chain) AddNewSigningAccountFromPrivKey(
 		evmResChan: evmResChan,
 
 		zgChainSigner: zgChainSigner,
-		sdkReqChan: sdkReqChan,
-		sdkResChan: sdkResChan,
+		sdkReqChan:    sdkReqChan,
+		sdkResChan:    sdkResChan,
 
 		EvmAuth: evmSigner.Auth,
 

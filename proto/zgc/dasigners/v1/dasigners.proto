@@ -1,0 +1,25 @@
+syntax = "proto3";
+package zgc.dasigners.v1;
+
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
+
+option go_package = "github.com/0glabs/0g-chain/x/dasigners/v1/types";
+option (gogoproto.goproto_getters_all) = false;
+
+message Signer {
+  // account defines the hex address of signer without 0x
+  string account = 1;
+  // socket defines the da node socket address
+  string socket = 2;
+  // pubkey_g1 defines the public key on bn254 G1
+  bytes pubkey_g1 = 3;
+  // pubkey_g1 defines the public key on bn254 G2
+  bytes pubkey_g2 = 4;
+}
+
+message EpochSignerSet {
+  repeated string signers = 1;
+}
