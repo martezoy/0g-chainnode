@@ -9,12 +9,13 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/validator-vesting/types"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
-const SafuFund int64 = 10000000 // 10 million A0GI
+const SafuFund int64 = 10000000 // 10 million (auxiliary denom)
 
 // NewQuerier is the module level router for state queries
 func NewQuerier(bk types.BankKeeper, legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
@@ -41,7 +42,7 @@ func NewQuerier(bk types.BankKeeper, legacyQuerierCdc *codec.LegacyAmino) sdk.Qu
 }
 
 func queryGetTotalSupply(ctx sdk.Context, req abci.RequestQuery, bk types.BankKeeper, legacyQuerierCdc *codec.LegacyAmino) ([]byte, error) {
-	totalSupply := bk.GetSupply(ctx, "ua0gi").Amount
+	totalSupply := bk.GetSupply(ctx, chaincfg.AuxiliaryDenom).Amount
 	supplyInt := sdk.NewDecFromInt(totalSupply).Mul(sdk.MustNewDecFromStr("0.000001")).TruncateInt64()
 	bz, err := legacyQuerierCdc.MarshalJSON(supplyInt)
 	if err != nil {
@@ -51,7 +52,7 @@ func queryGetTotalSupply(ctx sdk.Context, req abci.RequestQuery, bk types.BankKe
 }
 
 func queryGetCirculatingSupply(ctx sdk.Context, req abci.RequestQuery, bk types.BankKeeper, legacyQuerierCdc *codec.LegacyAmino) ([]byte, error) {
-	totalSupply := bk.GetSupply(ctx, "ua0gi").Amount
+	totalSupply := bk.GetSupply(ctx, chaincfg.AuxiliaryDenom).Amount
 	supplyInt := getCirculatingSupply(ctx.BlockTime(), totalSupply)
 	bz, err := legacyQuerierCdc.MarshalJSON(supplyInt)
 	if err != nil {

@@ -21,8 +21,8 @@ var (
 
 const (
 	// Amino names
-	registerName = "evmos/council/MsgRegister"
-	voteName     = "evmos/council/MsgVote"
+	registerName = "0g/council/MsgRegister"
+	voteName     = "0g/council/MsgVote"
 )
 
 // NOTE: This is required for the GetSignBytes function

@@ -13,6 +13,7 @@ import (
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 
 	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/tests/util"
 )
 
@@ -23,10 +24,10 @@ func (suite *IntegrationTestSuite) TestEthGasPriceReturnsMinFee() {
 	minGasPrices, err := getMinFeeFromAppToml(util.ZgChainHomePath())
 	suite.NoError(err)
 
-	// evm uses neuron, get neuron min fee
-	evmMinGas := minGasPrices.AmountOf("neuron").TruncateInt().BigInt()
+	// evm uses base denom, get base denom min fee
+	evmMinGas := minGasPrices.AmountOf(chaincfg.BaseDenom).TruncateInt().BigInt()
 
-	// returns eth_gasPrice, units in a0gi
+	// returns eth_gasPrice, units in auxiliary denom
 	gasPrice, err := suite.ZgChain.EvmClient.SuggestGasPrice(context.Background())
 	suite.NoError(err)
 
@@ -37,13 +38,13 @@ func (suite *IntegrationTestSuite) TestEvmRespectsMinFee() {
 	suite.SkipIfKvtoolDisabled()
 
 	// setup sender & receiver
-	sender := suite.ZgChain.NewFundedAccount("evm-min-fee-test-sender", sdk.NewCoins(a0gi(big.NewInt(1e3))))
+	sender := suite.ZgChain.NewFundedAccount("evm-min-fee-test-sender", sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(1e3)))
 	randoReceiver := util.SdkToEvmAddress(app.RandomAddress())
 
 	// get min gas price for evm (from app.toml)
 	minFees, err := getMinFeeFromAppToml(util.ZgChainHomePath())
 	suite.NoError(err)
-	minGasPrice := minFees.AmountOf("neuron").TruncateInt()
+	minGasPrice := minFees.AmountOf(chaincfg.BaseDenom).TruncateInt()
 
 	// attempt tx with less than min gas price (min fee - 1)
 	tooLowGasPrice := minGasPrice.Sub(sdk.OneInt()).BigInt()

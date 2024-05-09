@@ -106,7 +106,7 @@ func QueryCalcSwapIDCmd(queryRoute string) *cobra.Command {
 	return &cobra.Command{
 		Use:     "calc-swapid [random-number-hash] [sender] [sender-other-chain]",
 		Short:   "calculate swap ID for the given random number hash, sender, and sender other chain",
-		Example: "bep3 calc-swapid 0677bd8a303dd981810f34d8e5cc6507f13b391899b84d3c1be6c6045a17d747 kava1l0xsq2z7gqd7yly0g40y5836g0appumark77ny bnb1ud3q90r98l3mhd87kswv3h8cgrymzeljct8qn7",
+		Example: "bep3 calc-swapid 0677bd8a303dd981810f34d8e5cc6507f13b391899b84d3c1be6c6045a17d747 0g1l0xsq2z7gqd7yly0g40y5836g0appumark77ny bnb1ud3q90r98l3mhd87kswv3h8cgrymzeljct8qn7",
 		Args:    cobra.MinimumNArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -220,7 +220,7 @@ func QueryGetAtomicSwapsCmd(queryRoute string) *cobra.Command {
 		Short: "query atomic swaps with optional filters",
 		Long: strings.TrimSpace(`Query for all paginated atomic swaps that match optional filters:
 Example:
-$ kvcli q bep3 swaps --involve=kava1l0xsq2z7gqd7yly0g40y5836g0appumark77ny
+$ kvcli q bep3 swaps --involve=0g1l0xsq2z7gqd7yly0g40y5836g0appumark77ny
 $ kvcli q bep3 swaps --expiration=280
 $ kvcli q bep3 swaps --status=(Open|Completed|Expired)
 $ kvcli q bep3 swaps --direction=(Incoming|Outgoing)

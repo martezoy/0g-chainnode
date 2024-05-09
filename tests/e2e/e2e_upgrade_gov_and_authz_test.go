@@ -3,7 +3,6 @@ package e2e_test
 import (
 	"context"
 	"fmt"
-	"math/big"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -12,6 +11,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	govv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/tests/e2e/testutil"
 	"github.com/0glabs/0g-chain/tests/util"
 )
@@ -101,13 +101,13 @@ func (suite *IntegrationTestSuite) TestModuleAccountGovTransfers() {
 			name:     "transfer from community to kavadist for incentive rewards",
 			sender:   communityAcc,
 			receiver: zgChainDistAcc,
-			amount:   a0gi(big.NewInt(100)),
+			amount:   chaincfg.MakeCoinForAuxiliaryDenom(100),
 		},
 		{
 			name:     "transfer from kavadist to community",
 			sender:   zgChainDistAcc,
 			receiver: communityAcc,
-			amount:   a0gi(big.NewInt(50)),
+			amount:   chaincfg.MakeCoinForAuxiliaryDenom(50),
 		},
 	}
 
@@ -153,7 +153,7 @@ func (suite *IntegrationTestSuite) submitAndPassProposal(msgs []sdk.Msg) int64 {
 	suite.NoError(err)
 
 	gasLimit := 1e6
-	fee := sdk.NewCoin("neuron", sdk.NewInt(1e15))
+	fee := chaincfg.MakeCoinForBaseDenom(1e15)
 
 	req := util.ZgChainMsgRequest{
 		Msgs:      []sdk.Msg{proposalMsg},

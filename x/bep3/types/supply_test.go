@@ -5,12 +5,13 @@ import (
 	"time"
 
 	sdkmath "cosmossdk.io/math"
+	"github.com/0glabs/0g-chain/chaincfg"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 )
 
 func TestAssetSupplyValidate(t *testing.T) {
-	coin := sdk.NewCoin("a0gi", sdk.OneInt())
+	coin := chaincfg.MakeCoinForAuxiliaryDenom(1)
 	invalidCoin := sdk.Coin{Denom: "Invalid Denom", Amount: sdkmath.NewInt(-1)}
 	testCases := []struct {
 		msg     string
