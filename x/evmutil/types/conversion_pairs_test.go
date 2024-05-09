@@ -3,6 +3,7 @@ package types_test
 import (
 	"testing"
 
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/evmutil/testutil"
 	"github.com/0glabs/0g-chain/x/evmutil/types"
 	"github.com/stretchr/testify/require"
@@ -142,7 +143,7 @@ func TestConversionPairs_Validate(t *testing.T) {
 				),
 				types.NewConversionPair(
 					testutil.MustNewInternalEVMAddressFromString("0x000000000000000000000000000000000000000A"),
-					"a0gi",
+					chaincfg.AuxiliaryDenom,
 				),
 				types.NewConversionPair(
 					testutil.MustNewInternalEVMAddressFromString("0x000000000000000000000000000000000000000B"),
@@ -162,7 +163,7 @@ func TestConversionPairs_Validate(t *testing.T) {
 				),
 				types.NewConversionPair(
 					testutil.MustNewInternalEVMAddressFromString("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"),
-					"a0gi",
+					chaincfg.AuxiliaryDenom,
 				),
 				types.NewConversionPair(
 					testutil.MustNewInternalEVMAddressFromString("0x000000000000000000000000000000000000000B"),
@@ -183,16 +184,16 @@ func TestConversionPairs_Validate(t *testing.T) {
 				),
 				types.NewConversionPair(
 					testutil.MustNewInternalEVMAddressFromString("0x000000000000000000000000000000000000000A"),
-					"a0gi",
+					chaincfg.AuxiliaryDenom,
 				),
 				types.NewConversionPair(
 					testutil.MustNewInternalEVMAddressFromString("0x000000000000000000000000000000000000000B"),
-					"a0gi",
+					chaincfg.AuxiliaryDenom,
 				),
 			),
 			errArgs{
 				expectPass: false,
-				contains:   "found duplicate enabled conversion pair denom a0gi",
+				contains:   "found duplicate enabled conversion pair denom " + chaincfg.AuxiliaryDenom,
 			},
 		},
 		{
@@ -208,7 +209,7 @@ func TestConversionPairs_Validate(t *testing.T) {
 				),
 				types.NewConversionPair(
 					testutil.MustNewInternalEVMAddressFromString("0x000000000000000000000000000000000000000B"),
-					"a0gi",
+					chaincfg.AuxiliaryDenom,
 				),
 			),
 			errArgs{
@@ -240,12 +241,12 @@ func TestAllowedCosmosCoinERC20Token_Validate(t *testing.T) {
 	}{
 		{
 			name:   "valid token",
-			token:  types.NewAllowedCosmosCoinERC20Token("uatom", "0g-wrapped ATOM", "kATOM", 6),
+			token:  types.NewAllowedCosmosCoinERC20Token("uatom", "0gChain-wrapped ATOM", "kATOM", 6),
 			expErr: "",
 		},
 		{
 			name:   "valid - highest allowed decimals",
-			token:  types.NewAllowedCosmosCoinERC20Token("uatom", "0g-wrapped ATOM", "kATOM", 255),
+			token:  types.NewAllowedCosmosCoinERC20Token("uatom", "0gChain-wrapped ATOM", "kATOM", 255),
 			expErr: "",
 		},
 		{
@@ -280,7 +281,7 @@ func TestAllowedCosmosCoinERC20Token_Validate(t *testing.T) {
 		},
 		{
 			name:   "invalid - decimals higher than uint8",
-			token:  types.NewAllowedCosmosCoinERC20Token("uatom", "0g-wrapped ATOM", "kATOM", 256),
+			token:  types.NewAllowedCosmosCoinERC20Token("uatom", "0gChain-wrapped ATOM", "kATOM", 256),
 			expErr: "decimals must be less than 256",
 		},
 	}

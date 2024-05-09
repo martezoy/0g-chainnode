@@ -16,6 +16,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/bep3/keeper"
 	"github.com/0glabs/0g-chain/x/bep3/types"
 )
@@ -41,7 +42,7 @@ func (suite *QuerierTestSuite) SetupTest() {
 
 	// Set up auth GenesisState
 	_, addrs := app.GeneratePrivKeyAddressPairs(11)
-	coins := sdk.NewCoins(c("bnb", 10000000000), c("a0gi", 10000))
+	coins := sdk.NewCoins(c("bnb", 10000000000), c(chaincfg.AuxiliaryDenom, 10000))
 	authGS := app.NewFundedGenStateWithSameCoins(tApp.AppCodec(), coins, addrs)
 
 	tApp.InitializeFromGenesisStates(

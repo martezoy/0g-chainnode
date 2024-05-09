@@ -171,10 +171,10 @@ func NewVoteCmd() *cobra.Command {
 					tokens = val.GetTokens()
 				}
 			}
-			// the denom of token is neuron, need to convert to A0GI
-			a0gi := tokens.Quo(sdk.NewInt(1_000_000_000_000_000_000))
+			// the denom of token is base denom, need to convert to A0GI
+			a0giTokenCnt := tokens.Quo(sdk.NewInt(1_000_000_000_000_000_000))
 			// 1_000 0AGI token / vote
-			numBallots := a0gi.Quo(sdk.NewInt(1_000)).Uint64()
+			numBallots := a0giTokenCnt.Quo(sdk.NewInt(1_000)).Uint64()
 			ballots := make([]*types.Ballot, numBallots)
 			for i := range ballots {
 				ballotID := uint64(i)

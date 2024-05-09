@@ -12,6 +12,7 @@ import (
 
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/tests/e2e/testutil"
 	"github.com/0glabs/0g-chain/tests/util"
 	evmutiltypes "github.com/0glabs/0g-chain/x/evmutil/types"
@@ -63,7 +64,7 @@ func (suite *IntegrationTestSuite) setupAccountWithCosmosCoinERC20Balance(
 	tx := util.ZgChainMsgRequest{
 		Msgs:      []sdk.Msg{&msg},
 		GasLimit:  4e5,
-		FeeAmount: sdk.NewCoins(a0gi(big.NewInt(400))),
+		FeeAmount: sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(400)),
 		Data:      "converting sdk coin to erc20",
 	}
 	res := user.SignAndBroadcastZgChainTx(tx)
@@ -102,7 +103,7 @@ func (suite *IntegrationTestSuite) TestConvertCosmosCoinsToFromERC20() {
 	tx := util.ZgChainMsgRequest{
 		Msgs:      []sdk.Msg{&convertToErc20Msg},
 		GasLimit:  2e6,
-		FeeAmount: sdk.NewCoins(a0gi(big.NewInt(2000))),
+		FeeAmount: sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(2000)),
 		Data:      "converting sdk coin to erc20",
 	}
 	res := user.SignAndBroadcastZgChainTx(tx)
@@ -144,7 +145,7 @@ func (suite *IntegrationTestSuite) TestConvertCosmosCoinsToFromERC20() {
 	tx = util.ZgChainMsgRequest{
 		Msgs:      []sdk.Msg{&convertFromErc20Msg},
 		GasLimit:  2e5,
-		FeeAmount: sdk.NewCoins(a0gi(big.NewInt(200))),
+		FeeAmount: sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(200)),
 		Data:      "converting erc20 to cosmos coin",
 	}
 	res = user.SignAndBroadcastZgChainTx(tx)
@@ -183,7 +184,7 @@ func (suite *IntegrationTestSuite) TestEIP712ConvertCosmosCoinsToFromERC20() {
 		user,
 		suite.ZgChain,
 		2e6,
-		sdk.NewCoins(a0gi(big.NewInt(1e4))),
+		sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(1e4)),
 		[]sdk.Msg{&convertToErc20Msg},
 		"this is a memo",
 	).GetTx()
@@ -237,7 +238,7 @@ func (suite *IntegrationTestSuite) TestEIP712ConvertCosmosCoinsToFromERC20() {
 		user,
 		suite.ZgChain,
 		2e5,
-		sdk.NewCoins(a0gi(big.NewInt(200))),
+		sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(200)),
 		[]sdk.Msg{&convertFromErc20Msg},
 		"",
 	).GetTx()
@@ -331,7 +332,7 @@ func (suite *IntegrationTestSuite) TestConvertCosmosCoins_ERC20Magic() {
 		"cosmo-coin-converter-complex-alice", initialAliceAmount,
 	)
 
-	gasMoney := sdk.NewCoins(a0gi(big.NewInt(1e5)))
+	gasMoney := sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(1e5))
 	bob := suite.ZgChain.NewFundedAccount("cosmo-coin-converter-complex-bob", gasMoney)
 	amount := big.NewInt(1e3) // test assumes this is half of alice's balance.
 
@@ -412,7 +413,7 @@ func (suite *IntegrationTestSuite) TestConvertCosmosCoins_ERC20Magic() {
 	convertTx := util.ZgChainMsgRequest{
 		Msgs:      []sdk.Msg{&convertMsg},
 		GasLimit:  2e5,
-		FeeAmount: sdk.NewCoins(a0gi(big.NewInt(200))),
+		FeeAmount: sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(200)),
 		Data:      "bob converts his new erc20 to an sdk.Coin",
 	}
 	convertRes := bob.SignAndBroadcastZgChainTx(convertTx)

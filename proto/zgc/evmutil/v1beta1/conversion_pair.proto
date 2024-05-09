@@ -13,7 +13,7 @@ message ConversionPair {
   option (gogoproto.goproto_getters) = false;
 
   // ERC20 address of the token on the 0gChain EVM
-  bytes zgChain_erc20_address = 1 [
+  bytes zgchain_erc20_address = 1 [
     (gogoproto.customname) = "ZgChainERC20Address",
     (gogoproto.casttype) = "HexBytes"
   ];

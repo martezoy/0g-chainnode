@@ -12,6 +12,7 @@ import (
 
 	"github.com/0glabs/0g-chain/app"
 	"github.com/0glabs/0g-chain/app/ante"
+	"github.com/0glabs/0g-chain/chaincfg"
 )
 
 var _ sdk.AnteHandler = (&MockAnteHandler{}).AnteHandle
@@ -45,7 +46,7 @@ func TestAuthenticatedMempoolDecorator_AnteHandle_NotCheckTx(t *testing.T) {
 			banktypes.NewMsgSend(
 				testAddresses[0],
 				testAddresses[1],
-				sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 100_000_000)),
+				sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(100_000_000)),
 			),
 		},
 		sdk.NewCoins(), // no fee
@@ -80,12 +81,12 @@ func TestAuthenticatedMempoolDecorator_AnteHandle_Pass(t *testing.T) {
 			banktypes.NewMsgSend(
 				testAddresses[0],
 				testAddresses[1],
-				sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 100)),
+				sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(100)),
 			),
 			banktypes.NewMsgSend(
 				testAddresses[2],
 				testAddresses[1],
-				sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 100)),
+				sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(100)),
 			),
 		},
 		sdk.NewCoins(), // no fee
@@ -121,7 +122,7 @@ func TestAuthenticatedMempoolDecorator_AnteHandle_Reject(t *testing.T) {
 			banktypes.NewMsgSend(
 				testAddresses[0],
 				testAddresses[1],
-				sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 100)),
+				sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(100)),
 			),
 		},
 		sdk.NewCoins(), // no fee

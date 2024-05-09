@@ -3,13 +3,14 @@ package types
 import (
 	"testing"
 
+	"github.com/0glabs/0g-chain/chaincfg"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 )
 
 func TestRawPriceKey_Iteration(t *testing.T) {
 	// An iterator key should only match price keys with the same market
-	iteratorKey := RawPriceIteratorKey("a0gi:usd")
+	iteratorKey := RawPriceIteratorKey(chaincfg.AuxiliaryDenom + ":usd")
 
 	addr := sdk.AccAddress("test addr")
 
@@ -20,12 +21,12 @@ func TestRawPriceKey_Iteration(t *testing.T) {
 	}{
 		{
 			name:      "equal marketID is included in iteration",
-			priceKey:  RawPriceKey("a0gi:usd", addr),
+			priceKey:  RawPriceKey(chaincfg.AuxiliaryDenom+":usd", addr),
 			expectErr: false,
 		},
 		{
 			name:      "prefix overlapping marketID excluded from iteration",
-			priceKey:  RawPriceKey("a0gi:usd:30", addr),
+			priceKey:  RawPriceKey(chaincfg.AuxiliaryDenom+":usd:30", addr),
 			expectErr: true,
 		},
 	}
