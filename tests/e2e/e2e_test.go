@@ -25,7 +25,7 @@ import (
 )
 
 var (
-	minEvmGasPrice = big.NewInt(1e10) // base denom
+	minEvmGasPrice = big.NewInt(1e10) // evm denom
 )
 
 type IntegrationTestSuite struct {
@@ -54,7 +54,7 @@ func (suite *IntegrationTestSuite) TestChainID() {
 
 // example test that funds a new account & queries its balance
 func (suite *IntegrationTestSuite) TestFundedAccount() {
-	funds := chaincfg.MakeCoinForAuxiliaryDenom(1e3)
+	funds := chaincfg.MakeCoinForGasDenom(1e3)
 	acc := suite.ZgChain.NewFundedAccount("example-acc", sdk.NewCoins(funds))
 
 	// check that the sdk & evm signers are for the same account
@@ -63,21 +63,21 @@ func (suite *IntegrationTestSuite) TestFundedAccount() {
 
 	// check balance via SDK query
 	res, err := suite.ZgChain.Bank.Balance(context.Background(), banktypes.NewQueryBalanceRequest(
-		acc.SdkAddress, chaincfg.AuxiliaryDenom,
+		acc.SdkAddress, chaincfg.GasDenom,
 	))
 	suite.NoError(err)
 	suite.Equal(funds, *res.Balance)
 
 	// check balance via EVM query
-	baseDenomBal, err := suite.ZgChain.EvmClient.BalanceAt(context.Background(), acc.EvmAddress, nil)
+	evmDenomBal, err := suite.ZgChain.EvmClient.BalanceAt(context.Background(), acc.EvmAddress, nil)
 	suite.NoError(err)
-	suite.Equal(funds.Amount.MulRaw(1e12).BigInt(), baseDenomBal)
+	suite.Equal(funds.Amount.MulRaw(1e12).BigInt(), evmDenomBal)
 }
 
 // example test that signs & broadcasts an EVM tx
 func (suite *IntegrationTestSuite) TestTransferOverEVM() {
 	// fund an account that can perform the transfer
-	initialFunds := chaincfg.MakeCoinForAuxiliaryDenom(1e6) // 1 (auxiliary denom)
+	initialFunds := chaincfg.MakeCoinForGasDenom(1e6) // 1 (gas denom)
 	acc := suite.ZgChain.NewFundedAccount("evm-test-transfer", sdk.NewCoins(initialFunds))
 
 	// get a rando account to send 0gchain to
@@ -89,10 +89,10 @@ func (suite *IntegrationTestSuite) TestTransferOverEVM() {
 	suite.NoError(err)
 	suite.Equal(uint64(0), nonce) // sanity check. the account should have no prior txs
 
-	// transfer auxiliary denom over EVM
-	AuxiliaryDenomToTransfer := big.NewInt(1e17) // .1 (auxiliary denom); base denom has 18 decimals.
+	// transfer gas denom over EVM
+	GasDenomToTransfer := big.NewInt(1e17) // .1 (gas denom); evm denom has 18 decimals.
 	req := util.EvmTxRequest{
-		Tx:   ethtypes.NewTransaction(nonce, to, AuxiliaryDenomToTransfer, 1e5, minEvmGasPrice, nil),
+		Tx:   ethtypes.NewTransaction(nonce, to, GasDenomToTransfer, 1e5, minEvmGasPrice, nil),
 		Data: "any ol' data to track this through the system",
 	}
 	res := acc.SignAndBroadcastEvmTx(req)
@@ -100,31 +100,31 @@ func (suite *IntegrationTestSuite) TestTransferOverEVM() {
 	suite.Equal(ethtypes.ReceiptStatusSuccessful, res.Receipt.Status)
 
 	// evm txs refund unused gas. so to know the expected balance we need to know how much gas was used.
-	AuxiliaryDenomUsedForGas := sdkmath.NewIntFromBigInt(minEvmGasPrice).
+	GasDenomUsedForGas := sdkmath.NewIntFromBigInt(minEvmGasPrice).
 		Mul(sdkmath.NewIntFromUint64(res.Receipt.GasUsed)).
-		QuoRaw(1e12) // convert base denom to auxiliary denom
+		QuoRaw(1e12) // convert evm denom to gas denom
 
-	// expect (9 - gas used) (auxiliary denom) remaining in account.
+	// expect (9 - gas used) (gas denom) remaining in account.
 	balance := suite.ZgChain.QuerySdkForBalances(acc.SdkAddress)
-	suite.Equal(sdkmath.NewInt(9e5).Sub(AuxiliaryDenomUsedForGas), balance.AmountOf(chaincfg.AuxiliaryDenom))
+	suite.Equal(sdkmath.NewInt(9e5).Sub(GasDenomUsedForGas), balance.AmountOf(chaincfg.GasDenom))
 }
 
-// TestIbcTransfer transfers (auxiliary denom) from the primary 0g-chain (suite.ZgChain) to the ibc chain (suite.Ibc).
+// TestIbcTransfer transfers (gas denom) from the primary 0g-chain (suite.ZgChain) to the ibc chain (suite.Ibc).
 // Note that because the IBC chain also runs 0g-chain's binary, this tests both the sending & receiving.
 func (suite *IntegrationTestSuite) TestIbcTransfer() {
 	suite.SkipIfIbcDisabled()
 
 	// ARRANGE
 	// setup 0g-chain account
-	funds := chaincfg.MakeCoinForAuxiliaryDenom(1e5) // .1 (auxiliary denom)
+	funds := chaincfg.MakeCoinForGasDenom(1e5) // .1 (gas denom)
 	zgChainAcc := suite.ZgChain.NewFundedAccount("ibc-transfer-0g-side", sdk.NewCoins(funds))
 	// setup ibc account
 	ibcAcc := suite.Ibc.NewFundedAccount("ibc-transfer-ibc-side", sdk.NewCoins())
 
 	gasLimit := int64(2e5)
-	fee := chaincfg.MakeCoinForAuxiliaryDenom(200)
+	fee := chaincfg.MakeCoinForGasDenom(200)
 
-	fundsToSend := chaincfg.MakeCoinForAuxiliaryDenom(5e4) // .005 (auxiliary denom)
+	fundsToSend := chaincfg.MakeCoinForGasDenom(5e4) // .005 (gas denom)
 	transferMsg := ibctypes.NewMsgTransfer(
 		testutil.IbcPort,
 		testutil.IbcChannel,
@@ -154,7 +154,7 @@ func (suite *IntegrationTestSuite) TestIbcTransfer() {
 	// the balance should be deducted from 0g-chain account
 	suite.Eventually(func() bool {
 		balance := suite.ZgChain.QuerySdkForBalances(zgChainAcc.SdkAddress)
-		return balance.AmountOf(chaincfg.AuxiliaryDenom).Equal(expectedSrcBalance.Amount)
+		return balance.AmountOf(chaincfg.GasDenom).Equal(expectedSrcBalance.Amount)
 	}, 10*time.Second, 1*time.Second)
 
 	// expect the balance to be transferred to the ibc chain!

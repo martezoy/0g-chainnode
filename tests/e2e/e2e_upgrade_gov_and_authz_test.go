@@ -101,13 +101,13 @@ func (suite *IntegrationTestSuite) TestModuleAccountGovTransfers() {
 			name:     "transfer from community to kavadist for incentive rewards",
 			sender:   communityAcc,
 			receiver: zgChainDistAcc,
-			amount:   chaincfg.MakeCoinForAuxiliaryDenom(100),
+			amount:   chaincfg.MakeCoinForGasDenom(100),
 		},
 		{
 			name:     "transfer from kavadist to community",
 			sender:   zgChainDistAcc,
 			receiver: communityAcc,
-			amount:   chaincfg.MakeCoinForAuxiliaryDenom(50),
+			amount:   chaincfg.MakeCoinForGasDenom(50),
 		},
 	}
 
@@ -153,7 +153,7 @@ func (suite *IntegrationTestSuite) submitAndPassProposal(msgs []sdk.Msg) int64 {
 	suite.NoError(err)
 
 	gasLimit := 1e6
-	fee := chaincfg.MakeCoinForBaseDenom(1e15)
+	fee := chaincfg.MakeCoinForEvmDenom(1e15)
 
 	req := util.ZgChainMsgRequest{
 		Msgs:      []sdk.Msg{proposalMsg},

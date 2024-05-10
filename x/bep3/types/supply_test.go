@@ -11,7 +11,7 @@ import (
 )
 
 func TestAssetSupplyValidate(t *testing.T) {
-	coin := chaincfg.MakeCoinForAuxiliaryDenom(1)
+	coin := chaincfg.MakeCoinForGasDenom(1)
 	invalidCoin := sdk.Coin{Denom: "Invalid Denom", Amount: sdkmath.NewInt(-1)}
 	testCases := []struct {
 		msg     string

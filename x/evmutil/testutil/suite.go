@@ -82,14 +82,14 @@ func (suite *Suite) SetupTest() {
 	suite.Addrs = addrs
 
 	evmGenesis := evmtypes.DefaultGenesisState()
-	evmGenesis.Params.EvmDenom = chaincfg.BaseDenom
+	evmGenesis.Params.EvmDenom = chaincfg.EvmDenom
 
 	feemarketGenesis := feemarkettypes.DefaultGenesisState()
 	feemarketGenesis.Params.EnableHeight = 1
 	feemarketGenesis.Params.NoBaseFee = false
 
 	cdc := suite.App.AppCodec()
-	coins := sdk.NewCoins(sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 1000_000_000_000_000_000))
+	coins := sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 1000_000_000_000_000_000))
 	authGS := app.NewFundedGenStateWithSameCoins(cdc, coins, []sdk.AccAddress{
 		sdk.AccAddress(suite.Key1.PubKey().Address()),
 		sdk.AccAddress(suite.Key2.PubKey().Address()),
@@ -186,28 +186,28 @@ func (suite *Suite) ModuleBalance(denom string) sdk.Int {
 }
 
 func (suite *Suite) FundAccountWithZgChain(addr sdk.AccAddress, coins sdk.Coins) {
-	AuxiliaryDenomAmt := coins.AmountOf(chaincfg.AuxiliaryDenom)
-	if AuxiliaryDenomAmt.IsPositive() {
-		err := suite.App.FundAccount(suite.Ctx, addr, sdk.NewCoins(sdk.NewCoin(chaincfg.AuxiliaryDenom, AuxiliaryDenomAmt)))
+	GasDenomAmt := coins.AmountOf(chaincfg.GasDenom)
+	if GasDenomAmt.IsPositive() {
+		err := suite.App.FundAccount(suite.Ctx, addr, sdk.NewCoins(sdk.NewCoin(chaincfg.GasDenom, GasDenomAmt)))
 		suite.Require().NoError(err)
 	}
-	baseDenomAmt := coins.AmountOf(chaincfg.BaseDenom)
-	if baseDenomAmt.IsPositive() {
-		err := suite.Keeper.SetBalance(suite.Ctx, addr, baseDenomAmt)
+	evmDenomAmt := coins.AmountOf(chaincfg.EvmDenom)
+	if evmDenomAmt.IsPositive() {
+		err := suite.Keeper.SetBalance(suite.Ctx, addr, evmDenomAmt)
 		suite.Require().NoError(err)
 	}
 }
 
 func (suite *Suite) FundModuleAccountWithZgChain(moduleName string, coins sdk.Coins) {
-	AuxiliaryDenomAmt := coins.AmountOf(chaincfg.AuxiliaryDenom)
-	if AuxiliaryDenomAmt.IsPositive() {
-		err := suite.App.FundModuleAccount(suite.Ctx, moduleName, sdk.NewCoins(sdk.NewCoin(chaincfg.AuxiliaryDenom, AuxiliaryDenomAmt)))
+	GasDenomAmt := coins.AmountOf(chaincfg.GasDenom)
+	if GasDenomAmt.IsPositive() {
+		err := suite.App.FundModuleAccount(suite.Ctx, moduleName, sdk.NewCoins(sdk.NewCoin(chaincfg.GasDenom, GasDenomAmt)))
 		suite.Require().NoError(err)
 	}
-	baseDenomAmt := coins.AmountOf(chaincfg.BaseDenom)
-	if baseDenomAmt.IsPositive() {
+	evmDenomAmt := coins.AmountOf(chaincfg.EvmDenom)
+	if evmDenomAmt.IsPositive() {
 		addr := suite.AccountKeeper.GetModuleAddress(moduleName)
-		err := suite.Keeper.SetBalance(suite.Ctx, addr, baseDenomAmt)
+		err := suite.Keeper.SetBalance(suite.Ctx, addr, evmDenomAmt)
 		suite.Require().NoError(err)
 	}
 }
@@ -218,7 +218,7 @@ func (suite *Suite) DeployERC20() types.InternalEVMAddress {
 	suite.App.FundModuleAccount(
 		suite.Ctx,
 		types.ModuleName,
-		sdk.NewCoins(sdk.NewCoin(chaincfg.AuxiliaryDenom, sdkmath.NewInt(0))),
+		sdk.NewCoins(sdk.NewCoin(chaincfg.GasDenom, sdkmath.NewInt(0))),
 	)
 
 	contractAddr, err := suite.Keeper.DeployTestMintableERC20Contract(suite.Ctx, "USDC", "USDC", uint8(18))
@@ -319,7 +319,7 @@ func (suite *Suite) SendTx(
 	// Mint the max gas to the FeeCollector to ensure balance in case of refund
 	suite.MintFeeCollector(sdk.NewCoins(
 		sdk.NewCoin(
-			chaincfg.AuxiliaryDenom,
+			chaincfg.GasDenom,
 			sdkmath.NewInt(baseFee.Int64()*int64(gasRes.Gas*2)),
 		)))
 

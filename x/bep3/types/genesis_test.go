@@ -20,7 +20,7 @@ type GenesisTestSuite struct {
 }
 
 func (suite *GenesisTestSuite) SetupTest() {
-	coin := chaincfg.MakeCoinForAuxiliaryDenom(1)
+	coin := chaincfg.MakeCoinForGasDenom(1)
 	suite.swaps = atomicSwaps(10)
 
 	supply := types.NewAssetSupply(coin, coin, coin, coin, time.Duration(0))

@@ -36,7 +36,7 @@ func (suite *MsgServerTestSuite) SetupTest() {
 
 	// Set up genesis state and initialize
 	_, addrs := app.GeneratePrivKeyAddressPairs(3)
-	coins := sdk.NewCoins(c("bnb", 10000000000), c(chaincfg.AuxiliaryDenom, 10000))
+	coins := sdk.NewCoins(c("bnb", 10000000000), c(chaincfg.GasDenom, 10000))
 	authGS := app.NewFundedGenStateWithSameCoins(tApp.AppCodec(), coins, addrs)
 	tApp.InitializeFromGenesisStates(authGS, NewBep3GenStateMulti(cdc, addrs[0]))
 

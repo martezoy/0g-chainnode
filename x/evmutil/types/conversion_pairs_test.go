@@ -143,7 +143,7 @@ func TestConversionPairs_Validate(t *testing.T) {
 				),
 				types.NewConversionPair(
 					testutil.MustNewInternalEVMAddressFromString("0x000000000000000000000000000000000000000A"),
-					chaincfg.AuxiliaryDenom,
+					chaincfg.GasDenom,
 				),
 				types.NewConversionPair(
 					testutil.MustNewInternalEVMAddressFromString("0x000000000000000000000000000000000000000B"),
@@ -163,7 +163,7 @@ func TestConversionPairs_Validate(t *testing.T) {
 				),
 				types.NewConversionPair(
 					testutil.MustNewInternalEVMAddressFromString("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"),
-					chaincfg.AuxiliaryDenom,
+					chaincfg.GasDenom,
 				),
 				types.NewConversionPair(
 					testutil.MustNewInternalEVMAddressFromString("0x000000000000000000000000000000000000000B"),
@@ -184,16 +184,16 @@ func TestConversionPairs_Validate(t *testing.T) {
 				),
 				types.NewConversionPair(
 					testutil.MustNewInternalEVMAddressFromString("0x000000000000000000000000000000000000000A"),
-					chaincfg.AuxiliaryDenom,
+					chaincfg.GasDenom,
 				),
 				types.NewConversionPair(
 					testutil.MustNewInternalEVMAddressFromString("0x000000000000000000000000000000000000000B"),
-					chaincfg.AuxiliaryDenom,
+					chaincfg.GasDenom,
 				),
 			),
 			errArgs{
 				expectPass: false,
-				contains:   "found duplicate enabled conversion pair denom " + chaincfg.AuxiliaryDenom,
+				contains:   "found duplicate enabled conversion pair denom " + chaincfg.GasDenom,
 			},
 		},
 		{
@@ -209,7 +209,7 @@ func TestConversionPairs_Validate(t *testing.T) {
 				),
 				types.NewConversionPair(
 					testutil.MustNewInternalEVMAddressFromString("0x000000000000000000000000000000000000000B"),
-					chaincfg.AuxiliaryDenom,
+					chaincfg.GasDenom,
 				),
 			),
 			errArgs{

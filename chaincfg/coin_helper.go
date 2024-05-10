@@ -44,12 +44,12 @@ func MakeCoinForStandardDenom(amount any) sdk.Coin {
 	return makeCoin(StandardDenom, toBigInt(amount))
 }
 
-func MakeCoinForAuxiliaryDenom(amount any) sdk.Coin {
-	return makeCoin(AuxiliaryDenom, toBigInt(amount))
+func MakeCoinForGasDenom(amount any) sdk.Coin {
+	return makeCoin(GasDenom, toBigInt(amount))
 }
 
-func MakeCoinForBaseDenom(amount any) sdk.Coin {
-	return makeCoin(BaseDenom, toBigInt(amount))
+func MakeCoinForEvmDenom(amount any) sdk.Coin {
+	return makeCoin(EvmDenom, toBigInt(amount))
 }
 
 func makeCoin(denom string, amount *big.Int) sdk.Coin {
