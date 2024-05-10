@@ -104,7 +104,8 @@ func (k Keeper) SetSigner(ctx sdk.Context, signer types.Signer) error {
 func (k Keeper) IterateSigners(ctx sdk.Context, fn func(index int64, signer types.Signer) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
-	iterator := sdk.KVStorePrefixIterator(store, types.SignerKeyPrefix)
+	prefix := types.SignerKeyPrefix
+	iterator := sdk.KVStorePrefixIterator(store, prefix)
 	defer iterator.Close()
 
 	i := int64(0)
@@ -122,7 +123,7 @@ func (k Keeper) IterateSigners(ctx sdk.Context, fn func(index int64, signer type
 }
 
 func (k Keeper) GetEpochSignerSet(ctx sdk.Context, epoch uint64) (types.EpochSignerSet, bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.SignerKeyPrefix)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.EpochSignerSetKeyPrefix)
 	bz := store.Get(types.GetEpochSignerSetKeyFromEpoch(epoch))
 	if bz == nil {
 		return types.EpochSignerSet{}, false
@@ -155,13 +156,14 @@ func (k Keeper) GetRegistration(ctx sdk.Context, epoch uint64, account string) (
 func (k Keeper) IterateRegistrations(ctx sdk.Context, epoch uint64, fn func(account string, signature []byte) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
-	iterator := sdk.KVStorePrefixIterator(store, types.GetEpochRegistrationKeyPrefix(epoch))
+	prefix := types.GetEpochRegistrationKeyPrefix(epoch)
+	iterator := sdk.KVStorePrefixIterator(store, prefix)
 	defer iterator.Close()
 
 	i := int64(0)
 
 	for ; iterator.Valid(); iterator.Next() {
-		stop := fn(hex.EncodeToString(iterator.Key()), iterator.Value())
+		stop := fn(hex.EncodeToString((iterator.Key())[len(prefix):]), iterator.Value())
 
 		if stop {
 			break

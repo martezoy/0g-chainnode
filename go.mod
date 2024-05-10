@@ -216,7 +216,7 @@ replace (
 	// Use go-ethereum fork with precompiles
 	github.com/ethereum/go-ethereum => github.com/evmos/go-ethereum v1.10.26-evmos-rc2
 	// Use ethermint fork that respects min-gas-price with NoBaseFee true and london enabled, and includes eip712 support
-	github.com/evmos/ethermint => github.com/0glabs/ethermint v0.21.0-0g.v2.0.0
+	github.com/evmos/ethermint => github.com/0glabs/ethermint v0.21.0-0g.v2.0.1
 	// See https://github.com/cosmos/cosmos-sdk/pull/10401, https://github.com/cosmos/cosmos-sdk/commit/0592ba6158cd0bf49d894be1cef4faeec59e8320
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	// Use the cosmos modified protobufs

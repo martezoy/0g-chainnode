@@ -14,7 +14,7 @@ const (
 	StoreKey = ModuleName
 
 	// QuerierRoute Top level query string
-	QuerierRoute = ModuleName
+	QuerierRoute = "dasigners"
 )
 
 var (

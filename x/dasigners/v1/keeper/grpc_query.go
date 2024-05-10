@@ -43,7 +43,7 @@ func (k Keeper) EpochSignerSet(c context.Context, request *types.QueryEpochSigne
 	epochSignerSet := make([]*types.Signer, 0)
 	signers, found := k.GetEpochSignerSet(ctx, request.EpochNumber)
 	if !found {
-		return &types.QueryEpochSignerSetResponse{Signers: epochSignerSet}, nil
+		return &types.QueryEpochSignerSetResponse{Signers: epochSignerSet}, types.ErrEpochSignerSetNotFound
 	}
 	for _, account := range signers.Signers {
 		signer, found, err := k.GetSigner(ctx, account)
