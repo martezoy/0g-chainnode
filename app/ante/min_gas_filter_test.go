@@ -31,7 +31,7 @@ func TestEvmMinGasFilter(t *testing.T) {
 
 	ctx := tApp.NewContext(true, tmproto.Header{Height: 1, Time: tmtime.Now()})
 	tApp.GetEvmKeeper().SetParams(ctx, evmtypes.Params{
-		EvmDenom: chaincfg.BaseDenom,
+		EvmDenom: chaincfg.EvmDenom,
 	})
 
 	testCases := []struct {

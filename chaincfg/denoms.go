@@ -7,31 +7,31 @@ import (
 const (
 	StandardDenom = "a0gi"
 
-	AuxiliaryDenom = "ua0gi"
+	GasDenom = "ua0gi"
 
-	BaseDenom = "neuron"
+	EvmDenom = "neuron"
 
-	BondDenom = BaseDenom
+	BondDenom = EvmDenom
 
-	AuxiliaryDenomUnit = 6
+	GasDenomUnit = 6
 
-	BaseDenomUnit = 18
+	EvmDenomUnit = 18
 
-	AuxiliaryDenomConversionMultiplier = 1e12
-	BaseDenomConversionMultiplier      = 1e18
+	GasDenomConversionMultiplier = 1e12
+	EvmDenomConversionMultiplier = 1e18
 )
 
-// RegisterDenoms registers the base and auxiliary denominations to the SDK.
+// RegisterDenoms registers the base and gas denominations to the SDK.
 func RegisterDenoms() {
 	if err := sdk.RegisterDenom(StandardDenom, sdk.OneDec()); err != nil {
 		panic(err)
 	}
 
-	if err := sdk.RegisterDenom(AuxiliaryDenom, sdk.NewDecWithPrec(1, AuxiliaryDenomUnit)); err != nil {
+	if err := sdk.RegisterDenom(GasDenom, sdk.NewDecWithPrec(1, GasDenomUnit)); err != nil {
 		panic(err)
 	}
 
-	if err := sdk.RegisterDenom(BaseDenom, sdk.NewDecWithPrec(1, BaseDenomUnit)); err != nil {
+	if err := sdk.RegisterDenom(EvmDenom, sdk.NewDecWithPrec(1, EvmDenomUnit)); err != nil {
 		panic(err)
 	}
 }

@@ -234,18 +234,18 @@ message Tip {
   string tipper = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 }
 
-// AuxSignerData is the intermediary format that an auxiliary signer (e.g. a
+// AuxSignerData is the intermediary format that an gas signer (e.g. a
 // tipper) builds and sends to the fee payer (who will build and broadcast the
 // actual tx). AuxSignerData is not a valid tx in itself, and will be rejected
 // by the node if sent directly as-is.
 //
 // Since: cosmos-sdk 0.46
 message AuxSignerData {
-  // address is the bech32-encoded address of the auxiliary signer. If using
+  // address is the bech32-encoded address of the gas signer. If using
   // AuxSignerData across different chains, the bech32 prefix of the target
   // chain (where the final transaction is broadcasted) should be used.
   string address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  // sign_doc is the SIGN_MODE_DIRECT_AUX sign doc that the auxiliary signer
+  // sign_doc is the SIGN_MODE_DIRECT_AUX sign doc that the gas signer
   // signs. Note: we use the same sign doc even if we're signing with
   // LEGACY_AMINO_JSON.
   SignDocDirectAux sign_doc = 2;

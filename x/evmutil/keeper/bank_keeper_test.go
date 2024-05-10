@@ -27,8 +27,8 @@ func (suite *evmBankKeeperTestSuite) SetupTest() {
 }
 
 func (suite *evmBankKeeperTestSuite) TestGetBalance_ReturnsSpendable() {
-	startingCoins := sdk.NewCoins(sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 10))
-	startingBaseDenom := sdkmath.NewInt(100)
+	startingCoins := sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 10))
+	startingEvmDenom := sdkmath.NewInt(100)
 
 	now := tmtime.Now()
 	endTime := now.Add(24 * time.Hour)
@@ -38,20 +38,20 @@ func (suite *evmBankKeeperTestSuite) TestGetBalance_ReturnsSpendable() {
 
 	err := suite.App.FundAccount(suite.Ctx, suite.Addrs[0], startingCoins)
 	suite.Require().NoError(err)
-	err = suite.Keeper.SetBalance(suite.Ctx, suite.Addrs[0], startingBaseDenom)
+	err = suite.Keeper.SetBalance(suite.Ctx, suite.Addrs[0], startingEvmDenom)
 	suite.Require().NoError(err)
 
-	coin := suite.EvmBankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.BaseDenom)
-	suite.Require().Equal(startingBaseDenom, coin.Amount)
+	coin := suite.EvmBankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.EvmDenom)
+	suite.Require().Equal(startingEvmDenom, coin.Amount)
 
 	ctx := suite.Ctx.WithBlockTime(now.Add(12 * time.Hour))
-	coin = suite.EvmBankKeeper.GetBalance(ctx, suite.Addrs[0], chaincfg.BaseDenom)
+	coin = suite.EvmBankKeeper.GetBalance(ctx, suite.Addrs[0], chaincfg.EvmDenom)
 	suite.Require().Equal(sdkmath.NewIntFromUint64(5_000_000_000_100), coin.Amount)
 }
 
 func (suite *evmBankKeeperTestSuite) TestGetBalance_NotEvmDenom() {
 	suite.Require().Panics(func() {
-		suite.EvmBankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.AuxiliaryDenom)
+		suite.EvmBankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.GasDenom)
 	})
 	suite.Require().Panics(func() {
 		suite.EvmBankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], "busd")
@@ -65,39 +65,39 @@ func (suite *evmBankKeeperTestSuite) TestGetBalance() {
 		expAmount      sdkmath.Int
 	}{
 		{
-			"auxiliary denom with base denom",
+			"gas denom with evm denom",
 			sdk.NewCoins(
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 100),
-				sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 10),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 100),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 10),
 			),
 			sdkmath.NewInt(10_000_000_000_100),
 		},
 		{
-			"just base denom",
+			"just evm denom",
 			sdk.NewCoins(
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 100),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 100),
 				sdk.NewInt64Coin("busd", 100),
 			),
 			sdkmath.NewInt(100),
 		},
 		{
-			"just auxiliary denom",
+			"just gas denom",
 			sdk.NewCoins(
-				sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 10),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 10),
 				sdk.NewInt64Coin("busd", 100),
 			),
 			sdkmath.NewInt(10_000_000_000_000),
 		},
 		{
-			"no auxiliary denom or base denom",
+			"no gas denom or evm denom",
 			sdk.NewCoins(),
 			sdk.ZeroInt(),
 		},
 		{
-			"with avaka that is more than 1 auxiliary denom",
+			"with avaka that is more than 1 gas denom",
 			sdk.NewCoins(
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 20_000_000_000_220),
-				sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 11),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 20_000_000_000_220),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 11),
 			),
 			sdkmath.NewInt(31_000_000_000_220),
 		},
@@ -108,7 +108,7 @@ func (suite *evmBankKeeperTestSuite) TestGetBalance() {
 			suite.SetupTest()
 
 			suite.FundAccountWithZgChain(suite.Addrs[0], tt.startingAmount)
-			coin := suite.EvmBankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.BaseDenom)
+			coin := suite.EvmBankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.EvmDenom)
 			suite.Require().Equal(tt.expAmount, coin.Amount)
 		})
 	}
@@ -116,8 +116,8 @@ func (suite *evmBankKeeperTestSuite) TestGetBalance() {
 
 func (suite *evmBankKeeperTestSuite) TestSendCoinsFromModuleToAccount() {
 	startingModuleCoins := sdk.NewCoins(
-		sdk.NewInt64Coin(chaincfg.BaseDenom, 200),
-		sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 100),
+		sdk.NewInt64Coin(chaincfg.EvmDenom, 200),
+		sdk.NewInt64Coin(chaincfg.GasDenom, 100),
 	)
 	tests := []struct {
 		name           string
@@ -127,102 +127,102 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromModuleToAccount() {
 		hasErr         bool
 	}{
 		{
-			"send more than 1 auxiliary denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 12_000_000_000_010)),
+			"send more than 1 gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 12_000_000_000_010)),
 			sdk.Coins{},
 			sdk.NewCoins(
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 10),
-				sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 12),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 10),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 12),
 			),
 			false,
 		},
 		{
-			"send less than 1 auxiliary denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 122)),
+			"send less than 1 gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 122)),
 			sdk.Coins{},
 			sdk.NewCoins(
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 122),
-				sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 0),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 122),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 0),
 			),
 			false,
 		},
 		{
-			"send an exact amount of auxiliary denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 98_000_000_000_000)),
+			"send an exact amount of gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 98_000_000_000_000)),
 			sdk.Coins{},
 			sdk.NewCoins(
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 0o0),
-				sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 98),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 0o0),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 98),
 			),
 			false,
 		},
 		{
-			"send no base denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 0)),
+			"send no evm denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 0)),
 			sdk.Coins{},
 			sdk.NewCoins(
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 0),
-				sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 0),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 0),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 0),
 			),
 			false,
 		},
 		{
 			"errors if sending other coins",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 500), sdk.NewInt64Coin("busd", 1000)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 500), sdk.NewInt64Coin("busd", 1000)),
 			sdk.Coins{},
 			sdk.Coins{},
 			true,
 		},
 		{
-			"errors if not enough total base denom to cover",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 100_000_000_001_000)),
+			"errors if not enough total evm denom to cover",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100_000_000_001_000)),
 			sdk.Coins{},
 			sdk.Coins{},
 			true,
 		},
 		{
-			"errors if not enough auxiliary denom to cover",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 200_000_000_000_000)),
+			"errors if not enough gas denom to cover",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 200_000_000_000_000)),
 			sdk.Coins{},
 			sdk.Coins{},
 			true,
 		},
 		{
-			"converts receiver's base denom to auxiliary denom if there's enough base denom after the transfer",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 99_000_000_000_200)),
+			"converts receiver's evm denom to gas denom if there's enough evm denom after the transfer",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 99_000_000_000_200)),
 			sdk.NewCoins(
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 999_999_999_900),
-				sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 1),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 999_999_999_900),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 1),
 			),
 			sdk.NewCoins(
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 100),
-				sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 101),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 100),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 101),
 			),
 			false,
 		},
 		{
-			"converts all of receiver's base denom to auxiliary denom even if somehow receiver has more than 1 auxiliary denom of base denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 12_000_000_000_100)),
+			"converts all of receiver's evm denom to gas denom even if somehow receiver has more than 1 gas denom of evm denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 12_000_000_000_100)),
 			sdk.NewCoins(
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 5_999_999_999_990),
-				sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 1),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 5_999_999_999_990),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 1),
 			),
 			sdk.NewCoins(
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 90),
-				sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 19),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 90),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 19),
 			),
 			false,
 		},
 		{
-			"swap 1 auxiliary denom for base denom if module account doesn't have enough base denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 99_000_000_001_000)),
+			"swap 1 gas denom for evm denom if module account doesn't have enough evm denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 99_000_000_001_000)),
 			sdk.NewCoins(
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 200),
-				sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 1),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 200),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 1),
 			),
 			sdk.NewCoins(
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 1200),
-				sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 100),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 1200),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 100),
 			),
 			false,
 		},
@@ -235,8 +235,8 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromModuleToAccount() {
 			suite.FundAccountWithZgChain(suite.Addrs[0], tt.startingAccBal)
 			suite.FundModuleAccountWithZgChain(evmtypes.ModuleName, startingModuleCoins)
 
-			// fund our module with some auxiliary denom to account for converting extra base denom back to auxiliary denom
-			suite.FundModuleAccountWithZgChain(types.ModuleName, sdk.NewCoins(sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 10)))
+			// fund our module with some gas denom to account for converting extra evm denom back to gas denom
+			suite.FundModuleAccountWithZgChain(types.ModuleName, sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 10)))
 
 			err := suite.EvmBankKeeper.SendCoinsFromModuleToAccount(suite.Ctx, evmtypes.ModuleName, suite.Addrs[0], tt.sendCoins)
 			if tt.hasErr {
@@ -246,24 +246,24 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromModuleToAccount() {
 				suite.Require().NoError(err)
 			}
 
-			// check auxiliary denom
-			AuxiliaryDenomSender := suite.BankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.AuxiliaryDenom)
-			suite.Require().Equal(tt.expAccBal.AmountOf(chaincfg.AuxiliaryDenom).Int64(), AuxiliaryDenomSender.Amount.Int64())
+			// check gas denom
+			GasDenomSender := suite.BankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.GasDenom)
+			suite.Require().Equal(tt.expAccBal.AmountOf(chaincfg.GasDenom).Int64(), GasDenomSender.Amount.Int64())
 
-			// check base denom
-			actualBaseDenom := suite.Keeper.GetBalance(suite.Ctx, suite.Addrs[0])
-			suite.Require().Equal(tt.expAccBal.AmountOf(chaincfg.BaseDenom).Int64(), actualBaseDenom.Int64())
+			// check evm denom
+			actualEvmDenom := suite.Keeper.GetBalance(suite.Ctx, suite.Addrs[0])
+			suite.Require().Equal(tt.expAccBal.AmountOf(chaincfg.EvmDenom).Int64(), actualEvmDenom.Int64())
 		})
 	}
 }
 
 func (suite *evmBankKeeperTestSuite) TestSendCoinsFromAccountToModule() {
 	startingAccCoins := sdk.NewCoins(
-		sdk.NewInt64Coin(chaincfg.BaseDenom, 200),
-		sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 100),
+		sdk.NewInt64Coin(chaincfg.EvmDenom, 200),
+		sdk.NewInt64Coin(chaincfg.GasDenom, 100),
 	)
 	startingModuleCoins := sdk.NewCoins(
-		sdk.NewInt64Coin(chaincfg.BaseDenom, 100_000_000_000),
+		sdk.NewInt64Coin(chaincfg.EvmDenom, 100_000_000_000),
 	)
 	tests := []struct {
 		name           string
@@ -273,36 +273,36 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromAccountToModule() {
 		hasErr         bool
 	}{
 		{
-			"send more than 1 auxiliary denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 12_000_000_000_010)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 190), sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 88)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 100_000_000_010), sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 12)),
+			"send more than 1 gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 12_000_000_000_010)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 190), sdk.NewInt64Coin(chaincfg.GasDenom, 88)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100_000_000_010), sdk.NewInt64Coin(chaincfg.GasDenom, 12)),
 			false,
 		},
 		{
-			"send less than 1 auxiliary denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 122)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 78), sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 100)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 100_000_000_122), sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 0)),
+			"send less than 1 gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 122)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 78), sdk.NewInt64Coin(chaincfg.GasDenom, 100)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100_000_000_122), sdk.NewInt64Coin(chaincfg.GasDenom, 0)),
 			false,
 		},
 		{
-			"send an exact amount of auxiliary denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 98_000_000_000_000)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 200), sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 2)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 100_000_000_000), sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 98)),
+			"send an exact amount of gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 98_000_000_000_000)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 200), sdk.NewInt64Coin(chaincfg.GasDenom, 2)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100_000_000_000), sdk.NewInt64Coin(chaincfg.GasDenom, 98)),
 			false,
 		},
 		{
-			"send no base denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 0)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 200), sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 100)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 100_000_000_000), sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 0)),
+			"send no evm denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 0)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 200), sdk.NewInt64Coin(chaincfg.GasDenom, 100)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100_000_000_000), sdk.NewInt64Coin(chaincfg.GasDenom, 0)),
 			false,
 		},
 		{
 			"errors if sending other coins",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 500), sdk.NewInt64Coin("busd", 1000)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 500), sdk.NewInt64Coin("busd", 1000)),
 			sdk.Coins{},
 			sdk.Coins{},
 			true,
@@ -310,39 +310,39 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromAccountToModule() {
 		{
 			"errors if have dup coins",
 			sdk.Coins{
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 12_000_000_000_000),
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 2_000_000_000_000),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 12_000_000_000_000),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 2_000_000_000_000),
 			},
 			sdk.Coins{},
 			sdk.Coins{},
 			true,
 		},
 		{
-			"errors if not enough total base denom to cover",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 100_000_000_001_000)),
+			"errors if not enough total evm denom to cover",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100_000_000_001_000)),
 			sdk.Coins{},
 			sdk.Coins{},
 			true,
 		},
 		{
-			"errors if not enough auxiliary denom to cover",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 200_000_000_000_000)),
+			"errors if not enough gas denom to cover",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 200_000_000_000_000)),
 			sdk.Coins{},
 			sdk.Coins{},
 			true,
 		},
 		{
-			"converts 1 auxiliary denom to base denom if not enough base denom to cover",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 99_001_000_000_000)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 999_000_000_200), sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 0)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 101_000_000_000), sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 99)),
+			"converts 1 gas denom to evm denom if not enough evm denom to cover",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 99_001_000_000_000)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 999_000_000_200), sdk.NewInt64Coin(chaincfg.GasDenom, 0)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 101_000_000_000), sdk.NewInt64Coin(chaincfg.GasDenom, 99)),
 			false,
 		},
 		{
-			"converts receiver's base denom to auxiliary denom if there's enough base denom after the transfer",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 5_900_000_000_200)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 100_000_000_000), sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 94)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 200), sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 6)),
+			"converts receiver's evm denom to gas denom if there's enough evm denom after the transfer",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 5_900_000_000_200)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100_000_000_000), sdk.NewInt64Coin(chaincfg.GasDenom, 94)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 200), sdk.NewInt64Coin(chaincfg.GasDenom, 6)),
 			false,
 		},
 	}
@@ -362,67 +362,67 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromAccountToModule() {
 			}
 
 			// check sender balance
-			AuxiliaryDenomSender := suite.BankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.AuxiliaryDenom)
-			suite.Require().Equal(tt.expSenderCoins.AmountOf(chaincfg.AuxiliaryDenom).Int64(), AuxiliaryDenomSender.Amount.Int64())
-			actualBaseDenom := suite.Keeper.GetBalance(suite.Ctx, suite.Addrs[0])
-			suite.Require().Equal(tt.expSenderCoins.AmountOf(chaincfg.BaseDenom).Int64(), actualBaseDenom.Int64())
+			GasDenomSender := suite.BankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.GasDenom)
+			suite.Require().Equal(tt.expSenderCoins.AmountOf(chaincfg.GasDenom).Int64(), GasDenomSender.Amount.Int64())
+			actualEvmDenom := suite.Keeper.GetBalance(suite.Ctx, suite.Addrs[0])
+			suite.Require().Equal(tt.expSenderCoins.AmountOf(chaincfg.EvmDenom).Int64(), actualEvmDenom.Int64())
 
 			// check module balance
 			moduleAddr := suite.AccountKeeper.GetModuleAddress(evmtypes.ModuleName)
-			AuxiliaryDenomSender = suite.BankKeeper.GetBalance(suite.Ctx, moduleAddr, chaincfg.AuxiliaryDenom)
-			suite.Require().Equal(tt.expModuleCoins.AmountOf(chaincfg.AuxiliaryDenom).Int64(), AuxiliaryDenomSender.Amount.Int64())
-			actualBaseDenom = suite.Keeper.GetBalance(suite.Ctx, moduleAddr)
-			suite.Require().Equal(tt.expModuleCoins.AmountOf(chaincfg.BaseDenom).Int64(), actualBaseDenom.Int64())
+			GasDenomSender = suite.BankKeeper.GetBalance(suite.Ctx, moduleAddr, chaincfg.GasDenom)
+			suite.Require().Equal(tt.expModuleCoins.AmountOf(chaincfg.GasDenom).Int64(), GasDenomSender.Amount.Int64())
+			actualEvmDenom = suite.Keeper.GetBalance(suite.Ctx, moduleAddr)
+			suite.Require().Equal(tt.expModuleCoins.AmountOf(chaincfg.EvmDenom).Int64(), actualEvmDenom.Int64())
 		})
 	}
 }
 
 func (suite *evmBankKeeperTestSuite) TestBurnCoins() {
-	startingAuxiliaryDenom := sdkmath.NewInt(100)
+	startingGasDenom := sdkmath.NewInt(100)
 	tests := []struct {
-		name              string
-		burnCoins         sdk.Coins
-		expAuxiliaryDenom sdkmath.Int
-		expBaseDenom      sdkmath.Int
-		hasErr            bool
-		baseDenomStart    sdkmath.Int
+		name          string
+		burnCoins     sdk.Coins
+		expGasDenom   sdkmath.Int
+		expEvmDenom   sdkmath.Int
+		hasErr        bool
+		evmDenomStart sdkmath.Int
 	}{
 		{
-			"burn more than 1 auxiliary denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 12_021_000_000_002)),
+			"burn more than 1 gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 12_021_000_000_002)),
 			sdkmath.NewInt(88),
 			sdkmath.NewInt(100_000_000_000),
 			false,
 			sdkmath.NewInt(121_000_000_002),
 		},
 		{
-			"burn less than 1 auxiliary denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 122)),
+			"burn less than 1 gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 122)),
 			sdkmath.NewInt(100),
 			sdkmath.NewInt(878),
 			false,
 			sdkmath.NewInt(1000),
 		},
 		{
-			"burn an exact amount of auxiliary denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 98_000_000_000_000)),
+			"burn an exact amount of gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 98_000_000_000_000)),
 			sdkmath.NewInt(2),
 			sdkmath.NewInt(10),
 			false,
 			sdkmath.NewInt(10),
 		},
 		{
-			"burn no base denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 0)),
-			startingAuxiliaryDenom,
+			"burn no evm denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 0)),
+			startingGasDenom,
 			sdk.ZeroInt(),
 			false,
 			sdk.ZeroInt(),
 		},
 		{
 			"errors if burning other coins",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 500), sdk.NewInt64Coin("busd", 1000)),
-			startingAuxiliaryDenom,
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 500), sdk.NewInt64Coin("busd", 1000)),
+			startingGasDenom,
 			sdkmath.NewInt(100),
 			true,
 			sdkmath.NewInt(100),
@@ -430,41 +430,41 @@ func (suite *evmBankKeeperTestSuite) TestBurnCoins() {
 		{
 			"errors if have dup coins",
 			sdk.Coins{
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 12_000_000_000_000),
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 2_000_000_000_000),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 12_000_000_000_000),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 2_000_000_000_000),
 			},
-			startingAuxiliaryDenom,
+			startingGasDenom,
 			sdk.ZeroInt(),
 			true,
 			sdk.ZeroInt(),
 		},
 		{
 			"errors if burn amount is negative",
-			sdk.Coins{sdk.Coin{Denom: chaincfg.BaseDenom, Amount: sdkmath.NewInt(-100)}},
-			startingAuxiliaryDenom,
+			sdk.Coins{sdk.Coin{Denom: chaincfg.EvmDenom, Amount: sdkmath.NewInt(-100)}},
+			startingGasDenom,
 			sdkmath.NewInt(50),
 			true,
 			sdkmath.NewInt(50),
 		},
 		{
-			"errors if not enough base denom to cover burn",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 100_999_000_000_000)),
+			"errors if not enough evm denom to cover burn",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100_999_000_000_000)),
 			sdkmath.NewInt(0),
 			sdkmath.NewInt(99_000_000_000),
 			true,
 			sdkmath.NewInt(99_000_000_000),
 		},
 		{
-			"errors if not enough auxiliary denom to cover burn",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 200_000_000_000_000)),
+			"errors if not enough gas denom to cover burn",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 200_000_000_000_000)),
 			sdkmath.NewInt(100),
 			sdk.ZeroInt(),
 			true,
 			sdk.ZeroInt(),
 		},
 		{
-			"converts 1 auxiliary denom to base denom if not enough base denom to cover",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 12_021_000_000_002)),
+			"converts 1 gas denom to evm denom if not enough evm denom to cover",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 12_021_000_000_002)),
 			sdkmath.NewInt(87),
 			sdkmath.NewInt(980_000_000_000),
 			false,
@@ -476,8 +476,8 @@ func (suite *evmBankKeeperTestSuite) TestBurnCoins() {
 		suite.Run(tt.name, func() {
 			suite.SetupTest()
 			startingCoins := sdk.NewCoins(
-				sdk.NewCoin(chaincfg.AuxiliaryDenom, startingAuxiliaryDenom),
-				sdk.NewCoin(chaincfg.BaseDenom, tt.baseDenomStart),
+				sdk.NewCoin(chaincfg.GasDenom, startingGasDenom),
+				sdk.NewCoin(chaincfg.EvmDenom, tt.evmDenomStart),
 			)
 			suite.FundModuleAccountWithZgChain(evmtypes.ModuleName, startingCoins)
 
@@ -489,53 +489,53 @@ func (suite *evmBankKeeperTestSuite) TestBurnCoins() {
 				suite.Require().NoError(err)
 			}
 
-			// check auxiliary denom
-			AuxiliaryDenomActual := suite.BankKeeper.GetBalance(suite.Ctx, suite.EvmModuleAddr, chaincfg.AuxiliaryDenom)
-			suite.Require().Equal(tt.expAuxiliaryDenom, AuxiliaryDenomActual.Amount)
+			// check gas denom
+			GasDenomActual := suite.BankKeeper.GetBalance(suite.Ctx, suite.EvmModuleAddr, chaincfg.GasDenom)
+			suite.Require().Equal(tt.expGasDenom, GasDenomActual.Amount)
 
-			// check base denom
-			baseDenomActual := suite.Keeper.GetBalance(suite.Ctx, suite.EvmModuleAddr)
-			suite.Require().Equal(tt.expBaseDenom, baseDenomActual)
+			// check evm denom
+			evmDenomActual := suite.Keeper.GetBalance(suite.Ctx, suite.EvmModuleAddr)
+			suite.Require().Equal(tt.expEvmDenom, evmDenomActual)
 		})
 	}
 }
 
 func (suite *evmBankKeeperTestSuite) TestMintCoins() {
 	tests := []struct {
-		name              string
-		mintCoins         sdk.Coins
-		AuxiliaryDenomCnt sdkmath.Int
-		baseDenomCnt      sdkmath.Int
-		hasErr            bool
-		baseDenomStart    sdkmath.Int
+		name          string
+		mintCoins     sdk.Coins
+		GasDenomCnt   sdkmath.Int
+		evmDenomCnt   sdkmath.Int
+		hasErr        bool
+		evmDenomStart sdkmath.Int
 	}{
 		{
-			"mint more than 1 auxiliary denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 12_021_000_000_002)),
+			"mint more than 1 gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 12_021_000_000_002)),
 			sdkmath.NewInt(12),
 			sdkmath.NewInt(21_000_000_002),
 			false,
 			sdk.ZeroInt(),
 		},
 		{
-			"mint less than 1 auxiliary denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 901_000_000_001)),
+			"mint less than 1 gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 901_000_000_001)),
 			sdk.ZeroInt(),
 			sdkmath.NewInt(901_000_000_001),
 			false,
 			sdk.ZeroInt(),
 		},
 		{
-			"mint an exact amount of auxiliary denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 123_000_000_000_000_000)),
+			"mint an exact amount of gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 123_000_000_000_000_000)),
 			sdkmath.NewInt(123_000),
 			sdk.ZeroInt(),
 			false,
 			sdk.ZeroInt(),
 		},
 		{
-			"mint no base denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 0)),
+			"mint no evm denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 0)),
 			sdk.ZeroInt(),
 			sdk.ZeroInt(),
 			false,
@@ -543,7 +543,7 @@ func (suite *evmBankKeeperTestSuite) TestMintCoins() {
 		},
 		{
 			"errors if minting other coins",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 500), sdk.NewInt64Coin("busd", 1000)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 500), sdk.NewInt64Coin("busd", 1000)),
 			sdk.ZeroInt(),
 			sdkmath.NewInt(100),
 			true,
@@ -552,8 +552,8 @@ func (suite *evmBankKeeperTestSuite) TestMintCoins() {
 		{
 			"errors if have dup coins",
 			sdk.Coins{
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 12_000_000_000_000),
-				sdk.NewInt64Coin(chaincfg.BaseDenom, 2_000_000_000_000),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 12_000_000_000_000),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 2_000_000_000_000),
 			},
 			sdk.ZeroInt(),
 			sdk.ZeroInt(),
@@ -562,23 +562,23 @@ func (suite *evmBankKeeperTestSuite) TestMintCoins() {
 		},
 		{
 			"errors if mint amount is negative",
-			sdk.Coins{sdk.Coin{Denom: chaincfg.BaseDenom, Amount: sdkmath.NewInt(-100)}},
+			sdk.Coins{sdk.Coin{Denom: chaincfg.EvmDenom, Amount: sdkmath.NewInt(-100)}},
 			sdk.ZeroInt(),
 			sdkmath.NewInt(50),
 			true,
 			sdkmath.NewInt(50),
 		},
 		{
-			"adds to existing base denom balance",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 12_021_000_000_002)),
+			"adds to existing evm denom balance",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 12_021_000_000_002)),
 			sdkmath.NewInt(12),
 			sdkmath.NewInt(21_000_000_102),
 			false,
 			sdkmath.NewInt(100),
 		},
 		{
-			"convert base denom balance to auxiliary denom if it exceeds 1 auxiliary denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 10_999_000_000_000)),
+			"convert evm denom balance to gas denom if it exceeds 1 gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 10_999_000_000_000)),
 			sdkmath.NewInt(12),
 			sdkmath.NewInt(1_200_000_001),
 			false,
@@ -589,8 +589,8 @@ func (suite *evmBankKeeperTestSuite) TestMintCoins() {
 	for _, tt := range tests {
 		suite.Run(tt.name, func() {
 			suite.SetupTest()
-			suite.FundModuleAccountWithZgChain(types.ModuleName, sdk.NewCoins(sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 10)))
-			suite.FundModuleAccountWithZgChain(evmtypes.ModuleName, sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, tt.baseDenomStart)))
+			suite.FundModuleAccountWithZgChain(types.ModuleName, sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 10)))
+			suite.FundModuleAccountWithZgChain(evmtypes.ModuleName, sdk.NewCoins(sdk.NewCoin(chaincfg.EvmDenom, tt.evmDenomStart)))
 
 			err := suite.EvmBankKeeper.MintCoins(suite.Ctx, evmtypes.ModuleName, tt.mintCoins)
 			if tt.hasErr {
@@ -600,13 +600,13 @@ func (suite *evmBankKeeperTestSuite) TestMintCoins() {
 				suite.Require().NoError(err)
 			}
 
-			// check auxiliary denom
-			AuxiliaryDenomActual := suite.BankKeeper.GetBalance(suite.Ctx, suite.EvmModuleAddr, chaincfg.AuxiliaryDenom)
-			suite.Require().Equal(tt.AuxiliaryDenomCnt, AuxiliaryDenomActual.Amount)
+			// check gas denom
+			GasDenomActual := suite.BankKeeper.GetBalance(suite.Ctx, suite.EvmModuleAddr, chaincfg.GasDenom)
+			suite.Require().Equal(tt.GasDenomCnt, GasDenomActual.Amount)
 
-			// check base denom
-			baseDenomActual := suite.Keeper.GetBalance(suite.Ctx, suite.EvmModuleAddr)
-			suite.Require().Equal(tt.baseDenomCnt, baseDenomActual)
+			// check evm denom
+			evmDenomActual := suite.Keeper.GetBalance(suite.Ctx, suite.EvmModuleAddr)
+			suite.Require().Equal(tt.evmDenomCnt, evmDenomActual)
 		})
 	}
 }
@@ -619,22 +619,22 @@ func (suite *evmBankKeeperTestSuite) TestValidateEvmCoins() {
 	}{
 		{
 			"valid coins",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 500)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 500)),
 			false,
 		},
 		{
 			"dup coins",
-			sdk.Coins{sdk.NewInt64Coin(chaincfg.BaseDenom, 500), sdk.NewInt64Coin(chaincfg.BaseDenom, 500)},
+			sdk.Coins{sdk.NewInt64Coin(chaincfg.EvmDenom, 500), sdk.NewInt64Coin(chaincfg.EvmDenom, 500)},
 			true,
 		},
 		{
 			"not evm coins",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 500)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 500)),
 			true,
 		},
 		{
 			"negative coins",
-			sdk.Coins{sdk.Coin{Denom: chaincfg.BaseDenom, Amount: sdkmath.NewInt(-500)}},
+			sdk.Coins{sdk.Coin{Denom: chaincfg.EvmDenom, Amount: sdkmath.NewInt(-500)}},
 			true,
 		},
 	}
@@ -650,8 +650,8 @@ func (suite *evmBankKeeperTestSuite) TestValidateEvmCoins() {
 	}
 }
 
-func (suite *evmBankKeeperTestSuite) TestConvertOneAuxiliaryDenomToBaseDenomIfNeeded() {
-	baseDenomNeeded := sdkmath.NewInt(200)
+func (suite *evmBankKeeperTestSuite) TestConvertOneGasDenomToEvmDenomIfNeeded() {
+	evmDenomNeeded := sdkmath.NewInt(200)
 	tests := []struct {
 		name          string
 		startingCoins sdk.Coins
@@ -659,21 +659,21 @@ func (suite *evmBankKeeperTestSuite) TestConvertOneAuxiliaryDenomToBaseDenomIfNe
 		success       bool
 	}{
 		{
-			"not enough auxiliary denom for conversion",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 100)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 100)),
+			"not enough gas denom for conversion",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100)),
 			false,
 		},
 		{
-			"converts 1 auxiliary denom to base denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 10), sdk.NewInt64Coin(chaincfg.BaseDenom, 100)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 9), sdk.NewInt64Coin(chaincfg.BaseDenom, 1_000_000_000_100)),
+			"converts 1 gas denom to evm denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 10), sdk.NewInt64Coin(chaincfg.EvmDenom, 100)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 9), sdk.NewInt64Coin(chaincfg.EvmDenom, 1_000_000_000_100)),
 			true,
 		},
 		{
 			"conversion not needed",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 10), sdk.NewInt64Coin(chaincfg.BaseDenom, 200)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 10), sdk.NewInt64Coin(chaincfg.BaseDenom, 200)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 10), sdk.NewInt64Coin(chaincfg.EvmDenom, 200)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 10), sdk.NewInt64Coin(chaincfg.EvmDenom, 200)),
 			true,
 		},
 	}
@@ -682,11 +682,11 @@ func (suite *evmBankKeeperTestSuite) TestConvertOneAuxiliaryDenomToBaseDenomIfNe
 			suite.SetupTest()
 
 			suite.FundAccountWithZgChain(suite.Addrs[0], tt.startingCoins)
-			err := suite.EvmBankKeeper.ConvertOneAuxiliaryDenomToBaseDenomIfNeeded(suite.Ctx, suite.Addrs[0], baseDenomNeeded)
-			moduleZgChain := suite.BankKeeper.GetBalance(suite.Ctx, suite.AccountKeeper.GetModuleAddress(types.ModuleName), chaincfg.AuxiliaryDenom)
+			err := suite.EvmBankKeeper.ConvertOneGasDenomToEvmDenomIfNeeded(suite.Ctx, suite.Addrs[0], evmDenomNeeded)
+			moduleZgChain := suite.BankKeeper.GetBalance(suite.Ctx, suite.AccountKeeper.GetModuleAddress(types.ModuleName), chaincfg.GasDenom)
 			if tt.success {
 				suite.Require().NoError(err)
-				if tt.startingCoins.AmountOf(chaincfg.BaseDenom).LT(baseDenomNeeded) {
+				if tt.startingCoins.AmountOf(chaincfg.EvmDenom).LT(evmDenomNeeded) {
 					suite.Require().Equal(sdk.OneInt(), moduleZgChain.Amount)
 				}
 			} else {
@@ -694,54 +694,54 @@ func (suite *evmBankKeeperTestSuite) TestConvertOneAuxiliaryDenomToBaseDenomIfNe
 				suite.Require().Equal(sdk.ZeroInt(), moduleZgChain.Amount)
 			}
 
-			baseDenomCnt := suite.Keeper.GetBalance(suite.Ctx, suite.Addrs[0])
-			suite.Require().Equal(tt.expectedCoins.AmountOf(chaincfg.BaseDenom), baseDenomCnt)
-			AuxiliaryDenomCoin := suite.BankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.AuxiliaryDenom)
-			suite.Require().Equal(tt.expectedCoins.AmountOf(chaincfg.AuxiliaryDenom), AuxiliaryDenomCoin.Amount)
+			evmDenomCnt := suite.Keeper.GetBalance(suite.Ctx, suite.Addrs[0])
+			suite.Require().Equal(tt.expectedCoins.AmountOf(chaincfg.EvmDenom), evmDenomCnt)
+			GasDenomCoin := suite.BankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.GasDenom)
+			suite.Require().Equal(tt.expectedCoins.AmountOf(chaincfg.GasDenom), GasDenomCoin.Amount)
 		})
 	}
 }
 
-func (suite *evmBankKeeperTestSuite) TestConvertBaseDenomToAuxiliaryDenom() {
+func (suite *evmBankKeeperTestSuite) TestConvertEvmDenomToGasDenom() {
 	tests := []struct {
 		name          string
 		startingCoins sdk.Coins
 		expectedCoins sdk.Coins
 	}{
 		{
-			"not enough auxiliary denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 100)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 100), sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 0)),
+			"not enough gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100), sdk.NewInt64Coin(chaincfg.GasDenom, 0)),
 		},
 		{
-			"converts base denom for 1 auxiliary denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 10), sdk.NewInt64Coin(chaincfg.BaseDenom, 1_000_000_000_003)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 11), sdk.NewInt64Coin(chaincfg.BaseDenom, 3)),
+			"converts evm denom for 1 gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 10), sdk.NewInt64Coin(chaincfg.EvmDenom, 1_000_000_000_003)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 11), sdk.NewInt64Coin(chaincfg.EvmDenom, 3)),
 		},
 		{
-			"converts more than 1 auxiliary denom of base denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 10), sdk.NewInt64Coin(chaincfg.BaseDenom, 8_000_000_000_123)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 18), sdk.NewInt64Coin(chaincfg.BaseDenom, 123)),
+			"converts more than 1 gas denom of evm denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 10), sdk.NewInt64Coin(chaincfg.EvmDenom, 8_000_000_000_123)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 18), sdk.NewInt64Coin(chaincfg.EvmDenom, 123)),
 		},
 	}
 	for _, tt := range tests {
 		suite.Run(tt.name, func() {
 			suite.SetupTest()
 
-			err := suite.App.FundModuleAccount(suite.Ctx, types.ModuleName, sdk.NewCoins(sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 10)))
+			err := suite.App.FundModuleAccount(suite.Ctx, types.ModuleName, sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 10)))
 			suite.Require().NoError(err)
 			suite.FundAccountWithZgChain(suite.Addrs[0], tt.startingCoins)
-			err = suite.EvmBankKeeper.ConvertBaseDenomToAuxiliaryDenom(suite.Ctx, suite.Addrs[0])
+			err = suite.EvmBankKeeper.ConvertEvmDenomToGasDenom(suite.Ctx, suite.Addrs[0])
 			suite.Require().NoError(err)
-			baseDenomCnt := suite.Keeper.GetBalance(suite.Ctx, suite.Addrs[0])
-			suite.Require().Equal(tt.expectedCoins.AmountOf(chaincfg.BaseDenom), baseDenomCnt)
-			AuxiliaryDenomCoin := suite.BankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.AuxiliaryDenom)
-			suite.Require().Equal(tt.expectedCoins.AmountOf(chaincfg.AuxiliaryDenom), AuxiliaryDenomCoin.Amount)
+			evmDenomCnt := suite.Keeper.GetBalance(suite.Ctx, suite.Addrs[0])
+			suite.Require().Equal(tt.expectedCoins.AmountOf(chaincfg.EvmDenom), evmDenomCnt)
+			GasDenomCoin := suite.BankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.GasDenom)
+			suite.Require().Equal(tt.expectedCoins.AmountOf(chaincfg.GasDenom), GasDenomCoin.Amount)
 		})
 	}
 }
 
-func (suite *evmBankKeeperTestSuite) TestSplitBaseDenomCoins() {
+func (suite *evmBankKeeperTestSuite) TestSplitEvmDenomCoins() {
 	tests := []struct {
 		name          string
 		coins         sdk.Coins
@@ -750,7 +750,7 @@ func (suite *evmBankKeeperTestSuite) TestSplitBaseDenomCoins() {
 	}{
 		{
 			"invalid coins",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 500)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 500)),
 			nil,
 			true,
 		},
@@ -761,33 +761,33 @@ func (suite *evmBankKeeperTestSuite) TestSplitBaseDenomCoins() {
 			false,
 		},
 		{
-			"auxiliary denom & base denom coins",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 8_000_000_000_123)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 8), sdk.NewInt64Coin(chaincfg.BaseDenom, 123)),
+			"gas denom & evm denom coins",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 8_000_000_000_123)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 8), sdk.NewInt64Coin(chaincfg.EvmDenom, 123)),
 			false,
 		},
 		{
-			"only base denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 10_123)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 10_123)),
+			"only evm denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 10_123)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 10_123)),
 			false,
 		},
 		{
-			"only auxiliary denom",
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.BaseDenom, 5_000_000_000_000)),
-			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 5)),
+			"only gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 5_000_000_000_000)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 5)),
 			false,
 		},
 	}
 	for _, tt := range tests {
 		suite.Run(tt.name, func() {
-			AuxiliaryDenomCoin, baseDenomCnt, err := keeper.SplitBaseDenomCoins(tt.coins)
+			GasDenomCoin, evmDenomCnt, err := keeper.SplitEvmDenomCoins(tt.coins)
 			if tt.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
-				suite.Require().Equal(tt.expectedCoins.AmountOf(chaincfg.AuxiliaryDenom), AuxiliaryDenomCoin.Amount)
-				suite.Require().Equal(tt.expectedCoins.AmountOf(chaincfg.BaseDenom), baseDenomCnt)
+				suite.Require().Equal(tt.expectedCoins.AmountOf(chaincfg.GasDenom), GasDenomCoin.Amount)
+				suite.Require().Equal(tt.expectedCoins.AmountOf(chaincfg.EvmDenom), evmDenomCnt)
 			}
 		})
 	}

@@ -62,11 +62,11 @@ func (suite *SimulateRequestTestSuite) TestSimulateRequest() {
 			bank.MsgSend{
 				FromAddress: fromAddr,
 				ToAddress:   toAddr,
-				Amount:      sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(1e6)),
+				Amount:      sdk.NewCoins(chaincfg.MakeCoinForGasDenom(1e6)),
 			},
 		},
 		Fee: auth.StdFee{
-			Amount: sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(5e4)),
+			Amount: sdk.NewCoins(chaincfg.MakeCoinForGasDenom(5e4)),
 			Gas:    1e6,
 		},
 		Memo: "test memo",

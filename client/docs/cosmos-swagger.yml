@@ -3121,7 +3121,7 @@ paths:
                     base:
                       type: string
                       description: >-
-                        base represents the base denom (should be the DenomUnit
+                        base represents the evm denom (should be the DenomUnit
                         with exponent = 0).
                     display:
                       type: string
@@ -3328,7 +3328,7 @@ paths:
                   base:
                     type: string
                     description: >-
-                      base represents the base denom (should be the DenomUnit
+                      base represents the evm denom (should be the DenomUnit
                       with exponent = 0).
                   display:
                     type: string
@@ -35597,7 +35597,7 @@ definitions:
       base:
         type: string
         description: >-
-          base represents the base denom (should be the DenomUnit with exponent
+          base represents the evm denom (should be the DenomUnit with exponent
           = 0).
       display:
         type: string
@@ -35764,7 +35764,7 @@ definitions:
           base:
             type: string
             description: >-
-              base represents the base denom (should be the DenomUnit with
+              base represents the evm denom (should be the DenomUnit with
               exponent = 0).
           display:
             type: string
@@ -35920,7 +35920,7 @@ definitions:
             base:
               type: string
               description: >-
-                base represents the base denom (should be the DenomUnit with
+                base represents the evm denom (should be the DenomUnit with
                 exponent = 0).
             display:
               type: string

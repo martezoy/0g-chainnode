@@ -61,7 +61,7 @@ func (suite *MsgServerTestSuite) SetupTest() {
 		[]types.Proposal{},
 		[]types.Vote{},
 	)
-	suite.communityPoolAmt = sdk.NewCoins(chaincfg.MakeCoinForBaseDenom(1000000000000000))
+	suite.communityPoolAmt = sdk.NewCoins(chaincfg.MakeCoinForEvmDenom(1000000000000000))
 	suite.app.InitializeFromGenesisStates(
 		app.GenesisState{types.ModuleName: cdc.MustMarshalJSON(testGenesis)},
 		// TODO: not used?
