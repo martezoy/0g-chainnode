@@ -23,6 +23,8 @@ func InitGenesis(ctx sdk.Context, keeper keeper.Keeper, gs types.GenesisState) {
 	}
 
 	keeper.SetCurrentCouncilID(ctx, gs.CurrentCouncilID)
+	keeper.SetVotingStartHeight(ctx, gs.VotingStartHeight)
+	keeper.SetVotingPeriod(ctx, gs.VotingPeriod)
 
 	for _, p := range gs.Councils {
 		keeper.SetCouncil(ctx, p)
