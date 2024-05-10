@@ -149,7 +149,7 @@ func GenesisStateWithSingleValidator(
 	balances := []banktypes.Balance{
 		{
 			Address: acc.GetAddress().String(),
-			Coins:   sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(100000000000000)),
+			Coins:   sdk.NewCoins(chaincfg.MakeCoinForGasDenom(100000000000000)),
 		},
 	}
 
@@ -212,7 +212,7 @@ func genesisStateWithValSet(
 	}
 	// set validators and delegations
 	currentStakingGenesis := stakingtypes.GetGenesisStateFromAppState(app.appCodec, genesisState)
-	currentStakingGenesis.Params.BondDenom = chaincfg.AuxiliaryDenom // TODO:
+	currentStakingGenesis.Params.BondDenom = chaincfg.GasDenom // TODO:
 
 	stakingGenesis := stakingtypes.NewGenesisState(
 		currentStakingGenesis.Params,
@@ -232,13 +232,13 @@ func genesisStateWithValSet(
 
 	for range delegations {
 		// add delegated tokens to total supply
-		totalSupply = totalSupply.Add(chaincfg.MakeCoinForAuxiliaryDenom(bondAmt))
+		totalSupply = totalSupply.Add(chaincfg.MakeCoinForGasDenom(bondAmt))
 	}
 
 	// add bonded amount to bonded pool module account
 	balances = append(balances, banktypes.Balance{
 		Address: authtypes.NewModuleAddress(stakingtypes.BondedPoolName).String(),
-		Coins:   sdk.Coins{chaincfg.MakeCoinForAuxiliaryDenom(bondAmt)},
+		Coins:   sdk.Coins{chaincfg.MakeCoinForGasDenom(bondAmt)},
 	})
 
 	bankGenesis := banktypes.NewGenesisState(

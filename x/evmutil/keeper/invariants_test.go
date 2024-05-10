@@ -50,7 +50,7 @@ func (suite *invariantTestSuite) SetupValidState() {
 	suite.FundModuleAccountWithZgChain(
 		types.ModuleName,
 		sdk.NewCoins(
-			sdk.NewCoin(chaincfg.AuxiliaryDenom, sdkmath.NewInt(2)), // ( sum of all minor balances ) / conversion multiplier
+			sdk.NewCoin(chaincfg.GasDenom, sdkmath.NewInt(2)), // ( sum of all minor balances ) / conversion multiplier
 		),
 	)
 
@@ -160,8 +160,8 @@ func (suite *invariantTestSuite) TestSmallBalances() {
 
 	// increase minor balance at least above conversion multiplier
 	suite.Keeper.AddBalance(suite.Ctx, suite.Addrs[0], keeper.ConversionMultiplier)
-	// add same number of auxiliary denom to avoid breaking other invariants
-	amt := sdk.NewCoins(sdk.NewInt64Coin(chaincfg.AuxiliaryDenom, 1))
+	// add same number of gas denom to avoid breaking other invariants
+	amt := sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 1))
 	suite.Require().NoError(
 		suite.App.FundModuleAccount(suite.Ctx, types.ModuleName, amt),
 	)

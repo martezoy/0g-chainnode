@@ -20,7 +20,7 @@ func (suite *IntegrationTestSuite) TestEthCallToGreeterContract() {
 	// this test manipulates state of the Greeter contract which means other tests shouldn't use it.
 
 	// setup funded account to interact with contract
-	user := suite.ZgChain.NewFundedAccount("greeter-contract-user", sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(1e6)))
+	user := suite.ZgChain.NewFundedAccount("greeter-contract-user", sdk.NewCoins(chaincfg.MakeCoinForGasDenom(1e6)))
 
 	greeterAddr := suite.ZgChain.ContractAddrs["greeter"]
 	contract, err := greeter.NewGreeter(greeterAddr, suite.ZgChain.EvmClient)
@@ -63,12 +63,12 @@ func (suite *IntegrationTestSuite) TestEthCallToErc20() {
 
 func (suite *IntegrationTestSuite) TestEip712BasicMessageAuthorization() {
 	// create new funded account
-	sender := suite.ZgChain.NewFundedAccount("eip712-msgSend", sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(2e4)))
+	sender := suite.ZgChain.NewFundedAccount("eip712-msgSend", sdk.NewCoins(chaincfg.MakeCoinForGasDenom(2e4)))
 	receiver := app.RandomAddress()
 
-	// setup message for sending some auxiliary denom to random receiver
+	// setup message for sending some gas denom to random receiver
 	msgs := []sdk.Msg{
-		banktypes.NewMsgSend(sender.SdkAddress, receiver, sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(1e3))),
+		banktypes.NewMsgSend(sender.SdkAddress, receiver, sdk.NewCoins(chaincfg.MakeCoinForGasDenom(1e3))),
 	}
 
 	// create tx
@@ -76,7 +76,7 @@ func (suite *IntegrationTestSuite) TestEip712BasicMessageAuthorization() {
 		sender,
 		suite.ZgChain,
 		1e6,
-		sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(1e4)),
+		sdk.NewCoins(chaincfg.MakeCoinForGasDenom(1e4)),
 		msgs,
 		"this is a memo",
 	).GetTx()
@@ -95,10 +95,10 @@ func (suite *IntegrationTestSuite) TestEip712BasicMessageAuthorization() {
 	_, err = util.WaitForSdkTxCommit(suite.ZgChain.Tx, res.TxResponse.TxHash, 6*time.Second)
 	suite.NoError(err)
 
-	// check that the message was processed & the auxiliary denom is transferred.
+	// check that the message was processed & the gas denom is transferred.
 	balRes, err := suite.ZgChain.Bank.Balance(context.Background(), &banktypes.QueryBalanceRequest{
 		Address: receiver.String(),
-		Denom:   chaincfg.AuxiliaryDenom,
+		Denom:   chaincfg.GasDenom,
 	})
 	suite.NoError(err)
 	suite.Equal(sdk.NewInt(1e3), balRes.Balance.Amount)
@@ -113,7 +113,7 @@ func (suite *IntegrationTestSuite) TestEip712BasicMessageAuthorization() {
 // 	sdkDenom := suite.DeployedErc20.CosmosDenom
 
 // 	// create new funded account
-// 	depositor := suite.ZgChain.NewFundedAccount("eip712-lend-depositor", sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(1e5)))
+// 	depositor := suite.ZgChain.NewFundedAccount("eip712-lend-depositor", sdk.NewCoins(chaincfg.MakeCoinForGasDenom(1e5)))
 // 	// give them erc20 balance to deposit
 // 	fundRes := suite.FundZgChainErc20Balance(depositor.EvmAddress, amount.BigInt())
 // 	suite.NoError(fundRes.Err)
@@ -143,7 +143,7 @@ func (suite *IntegrationTestSuite) TestEip712BasicMessageAuthorization() {
 // 		depositor,
 // 		suite.ZgChain,
 // 		1e6,
-// 		sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(1e4)),
+// 		sdk.NewCoins(chaincfg.MakeCoinForGasDenom(1e4)),
 // 		msgs,
 // 		"doing the USDT Earn workflow! erc20 -> sdk.Coin -> USDX hard deposit",
 // 	).GetTx()
@@ -189,7 +189,7 @@ func (suite *IntegrationTestSuite) TestEip712BasicMessageAuthorization() {
 // 	withdrawAndConvertBack := util.ZgChainMsgRequest{
 // 		Msgs:      []sdk.Msg{&withdraw, &convertBack},
 // 		GasLimit:  1e6,
-// 		FeeAmount: sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(1000)),
+// 		FeeAmount: sdk.NewCoins(chaincfg.MakeCoinForGasDenom(1000)),
 // 		Data:      "withdrawing from mint & converting back to erc20",
 // 	}
 // 	lastRes := depositor.SignAndBroadcastZgChainTx(withdrawAndConvertBack)

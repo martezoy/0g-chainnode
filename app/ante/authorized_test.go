@@ -46,7 +46,7 @@ func TestAuthenticatedMempoolDecorator_AnteHandle_NotCheckTx(t *testing.T) {
 			banktypes.NewMsgSend(
 				testAddresses[0],
 				testAddresses[1],
-				sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(100_000_000)),
+				sdk.NewCoins(chaincfg.MakeCoinForGasDenom(100_000_000)),
 			),
 		},
 		sdk.NewCoins(), // no fee
@@ -81,12 +81,12 @@ func TestAuthenticatedMempoolDecorator_AnteHandle_Pass(t *testing.T) {
 			banktypes.NewMsgSend(
 				testAddresses[0],
 				testAddresses[1],
-				sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(100)),
+				sdk.NewCoins(chaincfg.MakeCoinForGasDenom(100)),
 			),
 			banktypes.NewMsgSend(
 				testAddresses[2],
 				testAddresses[1],
-				sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(100)),
+				sdk.NewCoins(chaincfg.MakeCoinForGasDenom(100)),
 			),
 		},
 		sdk.NewCoins(), // no fee
@@ -122,7 +122,7 @@ func TestAuthenticatedMempoolDecorator_AnteHandle_Reject(t *testing.T) {
 			banktypes.NewMsgSend(
 				testAddresses[0],
 				testAddresses[1],
-				sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(100)),
+				sdk.NewCoins(chaincfg.MakeCoinForGasDenom(100)),
 			),
 		},
 		sdk.NewCoins(), // no fee

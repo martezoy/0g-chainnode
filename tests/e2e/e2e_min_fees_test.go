@@ -24,10 +24,10 @@ func (suite *IntegrationTestSuite) TestEthGasPriceReturnsMinFee() {
 	minGasPrices, err := getMinFeeFromAppToml(util.ZgChainHomePath())
 	suite.NoError(err)
 
-	// evm uses base denom, get base denom min fee
-	evmMinGas := minGasPrices.AmountOf(chaincfg.BaseDenom).TruncateInt().BigInt()
+	// evm uses evm denom, get evm denom min fee
+	evmMinGas := minGasPrices.AmountOf(chaincfg.EvmDenom).TruncateInt().BigInt()
 
-	// returns eth_gasPrice, units in auxiliary denom
+	// returns eth_gasPrice, units in gas denom
 	gasPrice, err := suite.ZgChain.EvmClient.SuggestGasPrice(context.Background())
 	suite.NoError(err)
 
@@ -38,13 +38,13 @@ func (suite *IntegrationTestSuite) TestEvmRespectsMinFee() {
 	suite.SkipIfKvtoolDisabled()
 
 	// setup sender & receiver
-	sender := suite.ZgChain.NewFundedAccount("evm-min-fee-test-sender", sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(1e3)))
+	sender := suite.ZgChain.NewFundedAccount("evm-min-fee-test-sender", sdk.NewCoins(chaincfg.MakeCoinForGasDenom(1e3)))
 	randoReceiver := util.SdkToEvmAddress(app.RandomAddress())
 
 	// get min gas price for evm (from app.toml)
 	minFees, err := getMinFeeFromAppToml(util.ZgChainHomePath())
 	suite.NoError(err)
-	minGasPrice := minFees.AmountOf(chaincfg.BaseDenom).TruncateInt()
+	minGasPrice := minFees.AmountOf(chaincfg.EvmDenom).TruncateInt()
 
 	// attempt tx with less than min gas price (min fee - 1)
 	tooLowGasPrice := minGasPrice.Sub(sdk.OneInt()).BigInt()

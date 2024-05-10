@@ -13,53 +13,53 @@ import (
 	"github.com/0glabs/0g-chain/x/evmutil/types"
 )
 
-// ConversionMultiplier is the conversion multiplier between base denom and auxiliary denom
-var ConversionMultiplier = sdkmath.NewInt(chaincfg.AuxiliaryDenomConversionMultiplier)
+// ConversionMultiplier is the conversion multiplier between evm denom and gas denom
+var ConversionMultiplier = sdkmath.NewInt(chaincfg.GasDenomConversionMultiplier)
 
 var _ evmtypes.BankKeeper = EvmBankKeeper{}
 
 // EvmBankKeeper is a BankKeeper wrapper for the x/evm module to allow the use
-// of the 18 decimal base denom coin on the evm.
-// x/evm consumes gas and send coins by minting and burning base denom coins in its module
+// of the 18 decimal evm denom coin on the evm.
+// x/evm consumes gas and send coins by minting and burning evm denom coins in its module
 // account and then sending the funds to the target account.
-// This keeper uses both the auxiliary denom coin and a separate base denom balance to manage the
+// This keeper uses both the gas denom coin and a separate evm denom balance to manage the
 // extra percision needed by the evm.
 type EvmBankKeeper struct {
-	baseDenomKeeper Keeper
-	bk              types.BankKeeper
-	ak              types.AccountKeeper
+	evmDenomKeeper Keeper
+	bk             types.BankKeeper
+	ak             types.AccountKeeper
 }
 
 func NewEvmBankKeeper(baseKeeper Keeper, bk types.BankKeeper, ak types.AccountKeeper) EvmBankKeeper {
 	return EvmBankKeeper{
-		baseDenomKeeper: baseKeeper,
-		bk:              bk,
-		ak:              ak,
+		evmDenomKeeper: baseKeeper,
+		bk:             bk,
+		ak:             ak,
 	}
 }
 
-// GetBalance returns the total **spendable** balance of base denom for a given account by address.
+// GetBalance returns the total **spendable** balance of evm denom for a given account by address.
 func (k EvmBankKeeper) GetBalance(ctx sdk.Context, addr sdk.AccAddress, denom string) sdk.Coin {
-	if denom != chaincfg.BaseDenom {
-		panic(fmt.Errorf("only evm denom %s is supported by EvmBankKeeper", chaincfg.BaseDenom))
+	if denom != chaincfg.EvmDenom {
+		panic(fmt.Errorf("only evm denom %s is supported by EvmBankKeeper", chaincfg.EvmDenom))
 	}
 
 	spendableCoins := k.bk.SpendableCoins(ctx, addr)
-	auxiliaryDenomFromBank := spendableCoins.AmountOf(chaincfg.AuxiliaryDenom)
-	baseDenomFromBank := spendableCoins.AmountOf(chaincfg.BaseDenom)
-	baseDenomFromEvmBank := k.baseDenomKeeper.GetBalance(ctx, addr)
+	gasDenomFromBank := spendableCoins.AmountOf(chaincfg.GasDenom)
+	evmDenomFromBank := spendableCoins.AmountOf(chaincfg.EvmDenom)
+	evmDenomFromEvmBank := k.evmDenomKeeper.GetBalance(ctx, addr)
 
 	var total sdkmath.Int
 
-	if auxiliaryDenomFromBank.IsPositive() {
-		total = auxiliaryDenomFromBank.Mul(ConversionMultiplier).Add(baseDenomFromBank).Add(baseDenomFromEvmBank)
+	if gasDenomFromBank.IsPositive() {
+		total = gasDenomFromBank.Mul(ConversionMultiplier).Add(evmDenomFromBank).Add(evmDenomFromEvmBank)
 	} else {
-		total = baseDenomFromBank.Add(baseDenomFromEvmBank)
+		total = evmDenomFromBank.Add(evmDenomFromEvmBank)
 	}
-	return sdk.NewCoin(chaincfg.BaseDenom, total)
+	return sdk.NewCoin(chaincfg.EvmDenom, total)
 }
 
-// SendCoins transfers base denom coins from a AccAddress to an AccAddress.
+// SendCoins transfers evm denom coins from a AccAddress to an AccAddress.
 func (k EvmBankKeeper) SendCoins(ctx sdk.Context, senderAddr sdk.AccAddress, recipientAddr sdk.AccAddress, amt sdk.Coins) error {
 	// SendCoins method is not used by the evm module, but is required by the
 	// evmtypes.BankKeeper interface. This must be updated if the evm module
@@ -67,148 +67,148 @@ func (k EvmBankKeeper) SendCoins(ctx sdk.Context, senderAddr sdk.AccAddress, rec
 	panic("not implemented")
 }
 
-// SendCoinsFromModuleToAccount transfers base denom coins from a ModuleAccount to an AccAddress.
+// SendCoinsFromModuleToAccount transfers evm denom coins from a ModuleAccount to an AccAddress.
 // It will panic if the module account does not exist. An error is returned if the recipient
 // address is black-listed or if sending the tokens fails.
 func (k EvmBankKeeper) SendCoinsFromModuleToAccount(ctx sdk.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error {
-	auxiliaryDenomCoin, baseDemonCnt, err := SplitBaseDenomCoins(amt)
+	gasDenomCoin, baseDemonCnt, err := SplitEvmDenomCoins(amt)
 	if err != nil {
 		return err
 	}
 
-	if auxiliaryDenomCoin.Amount.IsPositive() {
-		if err := k.bk.SendCoinsFromModuleToAccount(ctx, senderModule, recipientAddr, sdk.NewCoins(auxiliaryDenomCoin)); err != nil {
+	if gasDenomCoin.Amount.IsPositive() {
+		if err := k.bk.SendCoinsFromModuleToAccount(ctx, senderModule, recipientAddr, sdk.NewCoins(gasDenomCoin)); err != nil {
 			return err
 		}
 	}
 
 	senderAddr := k.GetModuleAddress(senderModule)
-	if err := k.ConvertOneAuxiliaryDenomToBaseDenomIfNeeded(ctx, senderAddr, baseDemonCnt); err != nil {
+	if err := k.ConvertOneGasDenomToEvmDenomIfNeeded(ctx, senderAddr, baseDemonCnt); err != nil {
 		return err
 	}
 
-	if err := k.baseDenomKeeper.SendBalance(ctx, senderAddr, recipientAddr, baseDemonCnt); err != nil {
+	if err := k.evmDenomKeeper.SendBalance(ctx, senderAddr, recipientAddr, baseDemonCnt); err != nil {
 		return err
 	}
 
-	return k.ConvertBaseDenomToAuxiliaryDenom(ctx, recipientAddr)
+	return k.ConvertEvmDenomToGasDenom(ctx, recipientAddr)
 }
 
-// SendCoinsFromAccountToModule transfers base denom coins from an AccAddress to a ModuleAccount.
+// SendCoinsFromAccountToModule transfers evm denom coins from an AccAddress to a ModuleAccount.
 // It will panic if the module account does not exist.
 func (k EvmBankKeeper) SendCoinsFromAccountToModule(ctx sdk.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error {
-	auxiliaryDenomCoin, baseDenomCnt, err := SplitBaseDenomCoins(amt)
+	gasDenomCoin, evmDenomCnt, err := SplitEvmDenomCoins(amt)
 	if err != nil {
 		return err
 	}
 
-	if auxiliaryDenomCoin.IsPositive() {
-		if err := k.bk.SendCoinsFromAccountToModule(ctx, senderAddr, recipientModule, sdk.NewCoins(auxiliaryDenomCoin)); err != nil {
+	if gasDenomCoin.IsPositive() {
+		if err := k.bk.SendCoinsFromAccountToModule(ctx, senderAddr, recipientModule, sdk.NewCoins(gasDenomCoin)); err != nil {
 			return err
 		}
 	}
 
-	if err := k.ConvertOneAuxiliaryDenomToBaseDenomIfNeeded(ctx, senderAddr, baseDenomCnt); err != nil {
+	if err := k.ConvertOneGasDenomToEvmDenomIfNeeded(ctx, senderAddr, evmDenomCnt); err != nil {
 		return err
 	}
 
 	recipientAddr := k.GetModuleAddress(recipientModule)
-	if err := k.baseDenomKeeper.SendBalance(ctx, senderAddr, recipientAddr, baseDenomCnt); err != nil {
+	if err := k.evmDenomKeeper.SendBalance(ctx, senderAddr, recipientAddr, evmDenomCnt); err != nil {
 		return err
 	}
 
-	return k.ConvertBaseDenomToAuxiliaryDenom(ctx, recipientAddr)
+	return k.ConvertEvmDenomToGasDenom(ctx, recipientAddr)
 }
 
-// MintCoins mints base denom coins by minting the equivalent auxiliary denom coins and any remaining base denom coins.
+// MintCoins mints evm denom coins by minting the equivalent gas denom coins and any remaining evm denom coins.
 // It will panic if the module account does not exist or is unauthorized.
 func (k EvmBankKeeper) MintCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error {
-	auxiliaryDenomCoin, baseDemonCnt, err := SplitBaseDenomCoins(amt)
+	gasDenomCoin, baseDemonCnt, err := SplitEvmDenomCoins(amt)
 	if err != nil {
 		return err
 	}
 
-	if auxiliaryDenomCoin.IsPositive() {
-		if err := k.bk.MintCoins(ctx, moduleName, sdk.NewCoins(auxiliaryDenomCoin)); err != nil {
+	if gasDenomCoin.IsPositive() {
+		if err := k.bk.MintCoins(ctx, moduleName, sdk.NewCoins(gasDenomCoin)); err != nil {
 			return err
 		}
 	}
 
 	recipientAddr := k.GetModuleAddress(moduleName)
-	if err := k.baseDenomKeeper.AddBalance(ctx, recipientAddr, baseDemonCnt); err != nil {
+	if err := k.evmDenomKeeper.AddBalance(ctx, recipientAddr, baseDemonCnt); err != nil {
 		return err
 	}
 
-	return k.ConvertBaseDenomToAuxiliaryDenom(ctx, recipientAddr)
+	return k.ConvertEvmDenomToGasDenom(ctx, recipientAddr)
 }
 
-// BurnCoins burns base denom coins by burning the equivalent auxiliary denom coins and any remaining base denom coins.
+// BurnCoins burns evm denom coins by burning the equivalent gas denom coins and any remaining evm denom coins.
 // It will panic if the module account does not exist or is unauthorized.
 func (k EvmBankKeeper) BurnCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error {
-	auxiliaryDenomCoin, baseDemonCnt, err := SplitBaseDenomCoins(amt)
+	gasDenomCoin, baseDemonCnt, err := SplitEvmDenomCoins(amt)
 	if err != nil {
 		return err
 	}
 
-	if auxiliaryDenomCoin.IsPositive() {
-		if err := k.bk.BurnCoins(ctx, moduleName, sdk.NewCoins(auxiliaryDenomCoin)); err != nil {
+	if gasDenomCoin.IsPositive() {
+		if err := k.bk.BurnCoins(ctx, moduleName, sdk.NewCoins(gasDenomCoin)); err != nil {
 			return err
 		}
 	}
 
 	moduleAddr := k.GetModuleAddress(moduleName)
-	if err := k.ConvertOneAuxiliaryDenomToBaseDenomIfNeeded(ctx, moduleAddr, baseDemonCnt); err != nil {
+	if err := k.ConvertOneGasDenomToEvmDenomIfNeeded(ctx, moduleAddr, baseDemonCnt); err != nil {
 		return err
 	}
 
-	return k.baseDenomKeeper.RemoveBalance(ctx, moduleAddr, baseDemonCnt)
+	return k.evmDenomKeeper.RemoveBalance(ctx, moduleAddr, baseDemonCnt)
 }
 
-// ConvertOneauxiliaryDenomToBaseDenomIfNeeded converts 1 auxiliary denom to base denom for an address if
-// its base denom balance is smaller than the baseDenomCnt amount.
-func (k EvmBankKeeper) ConvertOneAuxiliaryDenomToBaseDenomIfNeeded(ctx sdk.Context, addr sdk.AccAddress, baseDenomCnt sdkmath.Int) error {
-	baseDenomBal := k.baseDenomKeeper.GetBalance(ctx, addr)
-	if baseDenomBal.GTE(baseDenomCnt) {
+// ConvertOnegasDenomToEvmDenomIfNeeded converts 1 gas denom to evm denom for an address if
+// its evm denom balance is smaller than the evmDenomCnt amount.
+func (k EvmBankKeeper) ConvertOneGasDenomToEvmDenomIfNeeded(ctx sdk.Context, addr sdk.AccAddress, evmDenomCnt sdkmath.Int) error {
+	evmDenomBal := k.evmDenomKeeper.GetBalance(ctx, addr)
+	if evmDenomBal.GTE(evmDenomCnt) {
 		return nil
 	}
 
-	auxiliaryDenomToStore := sdk.NewCoins(sdk.NewCoin(chaincfg.AuxiliaryDenom, sdk.OneInt()))
-	if err := k.bk.SendCoinsFromAccountToModule(ctx, addr, types.ModuleName, auxiliaryDenomToStore); err != nil {
+	gasDenomToStore := sdk.NewCoins(sdk.NewCoin(chaincfg.GasDenom, sdk.OneInt()))
+	if err := k.bk.SendCoinsFromAccountToModule(ctx, addr, types.ModuleName, gasDenomToStore); err != nil {
 		return err
 	}
 
-	// add 1 auxiliary denom equivalent of base denom to addr
-	baseDenomToReceive := ConversionMultiplier
-	if err := k.baseDenomKeeper.AddBalance(ctx, addr, baseDenomToReceive); err != nil {
+	// add 1 gas denom equivalent of evm denom to addr
+	evmDenomToReceive := ConversionMultiplier
+	if err := k.evmDenomKeeper.AddBalance(ctx, addr, evmDenomToReceive); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// ConvertBaseDenomToauxiliaryDenom converts all available base denom to auxiliary denom for a given AccAddress.
-func (k EvmBankKeeper) ConvertBaseDenomToAuxiliaryDenom(ctx sdk.Context, addr sdk.AccAddress) error {
-	totalBaseDenom := k.baseDenomKeeper.GetBalance(ctx, addr)
-	auxiliaryDenomCoin, _, err := SplitBaseDenomCoins(sdk.NewCoins(sdk.NewCoin(chaincfg.BaseDenom, totalBaseDenom)))
+// ConvertEvmDenomTogasDenom converts all available evm denom to gas denom for a given AccAddress.
+func (k EvmBankKeeper) ConvertEvmDenomToGasDenom(ctx sdk.Context, addr sdk.AccAddress) error {
+	totalEvmDenom := k.evmDenomKeeper.GetBalance(ctx, addr)
+	gasDenomCoin, _, err := SplitEvmDenomCoins(sdk.NewCoins(sdk.NewCoin(chaincfg.EvmDenom, totalEvmDenom)))
 	if err != nil {
 		return err
 	}
 
-	// do nothing if account does not have enough base denom for a single auxiliary denom
-	auxiliaryDenomToReceive := auxiliaryDenomCoin.Amount
-	if !auxiliaryDenomToReceive.IsPositive() {
+	// do nothing if account does not have enough evm denom for a single gas denom
+	gasDenomToReceive := gasDenomCoin.Amount
+	if !gasDenomToReceive.IsPositive() {
 		return nil
 	}
 
-	// remove base denom used for converting to auxiliary denom
-	baseDenomToBurn := auxiliaryDenomToReceive.Mul(ConversionMultiplier)
-	finalBal := totalBaseDenom.Sub(baseDenomToBurn)
-	if err := k.baseDenomKeeper.SetBalance(ctx, addr, finalBal); err != nil {
+	// remove evm denom used for converting to gas denom
+	evmDenomToBurn := gasDenomToReceive.Mul(ConversionMultiplier)
+	finalBal := totalEvmDenom.Sub(evmDenomToBurn)
+	if err := k.evmDenomKeeper.SetBalance(ctx, addr, finalBal); err != nil {
 		return err
 	}
 
 	fromAddr := k.GetModuleAddress(types.ModuleName)
-	if err := k.bk.SendCoins(ctx, fromAddr, addr, sdk.NewCoins(auxiliaryDenomCoin)); err != nil {
+	if err := k.bk.SendCoins(ctx, fromAddr, addr, sdk.NewCoins(gasDenomCoin)); err != nil {
 		return err
 	}
 
@@ -223,18 +223,18 @@ func (k EvmBankKeeper) GetModuleAddress(moduleName string) sdk.AccAddress {
 	return addr
 }
 
-// SplitBaseDenomCoins splits base denom coins to the equivalent auxiliary denom coins and any remaining base denom balance.
-// An error will be returned if the coins are not valid or if the coins are not the base denom.
-func SplitBaseDenomCoins(coins sdk.Coins) (sdk.Coin, sdkmath.Int, error) {
+// SplitEvmDenomCoins splits evm denom coins to the equivalent gas denom coins and any remaining evm denom balance.
+// An error will be returned if the coins are not valid or if the coins are not the evm denom.
+func SplitEvmDenomCoins(coins sdk.Coins) (sdk.Coin, sdkmath.Int, error) {
 	baseDemonCnt := sdk.ZeroInt()
-	auxiliaryDenomAmt := sdk.NewCoin(chaincfg.AuxiliaryDenom, sdk.ZeroInt())
+	gasDenomAmt := sdk.NewCoin(chaincfg.GasDenom, sdk.ZeroInt())
 
 	if len(coins) == 0 {
-		return auxiliaryDenomAmt, baseDemonCnt, nil
+		return gasDenomAmt, baseDemonCnt, nil
 	}
 
 	if err := ValidateEvmCoins(coins); err != nil {
-		return auxiliaryDenomAmt, baseDemonCnt, err
+		return gasDenomAmt, baseDemonCnt, err
 	}
 
 	// note: we should always have len(coins) == 1 here since coins cannot have dup denoms after we validate.
@@ -243,15 +243,15 @@ func SplitBaseDenomCoins(coins sdk.Coins) (sdk.Coin, sdkmath.Int, error) {
 	if remainingBalance.IsPositive() {
 		baseDemonCnt = remainingBalance
 	}
-	auxiliaryDenomAmount := coin.Amount.Quo(ConversionMultiplier)
-	if auxiliaryDenomAmount.IsPositive() {
-		auxiliaryDenomAmt = sdk.NewCoin(chaincfg.AuxiliaryDenom, auxiliaryDenomAmount)
+	gasDenomAmount := coin.Amount.Quo(ConversionMultiplier)
+	if gasDenomAmount.IsPositive() {
+		gasDenomAmt = sdk.NewCoin(chaincfg.GasDenom, gasDenomAmount)
 	}
 
-	return auxiliaryDenomAmt, baseDemonCnt, nil
+	return gasDenomAmt, baseDemonCnt, nil
 }
 
-// ValidateEvmCoins validates the coins from evm is valid and is the base denom.
+// ValidateEvmCoins validates the coins from evm is valid and is the evm denom.
 func ValidateEvmCoins(coins sdk.Coins) error {
 	if len(coins) == 0 {
 		return nil
@@ -262,9 +262,9 @@ func ValidateEvmCoins(coins sdk.Coins) error {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidCoins, coins.String())
 	}
 
-	// validate that coin denom is base denom
-	if len(coins) != 1 || coins[0].Denom != chaincfg.BaseDenom {
-		errMsg := fmt.Sprintf("invalid evm coin denom, only %s is supported", chaincfg.BaseDenom)
+	// validate that coin denom is evm denom
+	if len(coins) != 1 || coins[0].Denom != chaincfg.EvmDenom {
+		errMsg := fmt.Sprintf("invalid evm coin denom, only %s is supported", chaincfg.EvmDenom)
 		return errorsmod.Wrap(sdkerrors.ErrInvalidCoins, errMsg)
 	}
 

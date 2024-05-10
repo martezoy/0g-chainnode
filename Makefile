@@ -78,7 +78,7 @@ print-machine-info:
 BUILD_DIR := build# build files
 BIN_DIR := $(BUILD_DIR)/bin# for binary dev dependencies
 BUILD_CACHE_DIR := $(BUILD_DIR)/.cache# caching for non-artifact outputs
-OUT_DIR := out# for artifact intermediates and outputs
+OUT_DIR := ./.build# for artifact intermediates and outputs
 
 ROOT_DIR := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))# absolute path to root
 export PATH := $(ROOT_DIR)/$(BIN_DIR):$(PATH)# add local bin first in path

@@ -82,7 +82,7 @@ var (
 		EvmRpcUrl: "http://localhost:8545",
 
 		ChainId:      "0gchainlocalnet_8888-1",
-		StakingDenom: chaincfg.AuxiliaryDenom,
+		StakingDenom: chaincfg.GasDenom,
 	}
 	kvtoolIbcChain = ChainDetails{
 		RpcUrl:    "http://localhost:26658",

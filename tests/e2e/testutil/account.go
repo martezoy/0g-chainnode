@@ -262,7 +262,7 @@ func (a *SigningAccount) BankSend(to sdk.AccAddress, amount sdk.Coins) util.ZgCh
 		util.ZgChainMsgRequest{
 			Msgs:      []sdk.Msg{banktypes.NewMsgSend(a.SdkAddress, to, amount)},
 			GasLimit:  2e5,                                                        // 200,000 gas
-			FeeAmount: sdk.NewCoins(sdk.NewCoin(a.gasDenom, sdkmath.NewInt(200))), // assume min gas price of .001 auxiliary denom
+			FeeAmount: sdk.NewCoins(sdk.NewCoin(a.gasDenom, sdkmath.NewInt(200))), // assume min gas price of .001 gas denom
 			Data:      fmt.Sprintf("sending %s to %s", amount, to),
 		},
 	)

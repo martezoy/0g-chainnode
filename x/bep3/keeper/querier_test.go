@@ -42,7 +42,7 @@ func (suite *QuerierTestSuite) SetupTest() {
 
 	// Set up auth GenesisState
 	_, addrs := app.GeneratePrivKeyAddressPairs(11)
-	coins := sdk.NewCoins(c("bnb", 10000000000), c(chaincfg.AuxiliaryDenom, 10000))
+	coins := sdk.NewCoins(c("bnb", 10000000000), c(chaincfg.GasDenom, 10000))
 	authGS := app.NewFundedGenStateWithSameCoins(tApp.AppCodec(), coins, addrs)
 
 	tApp.InitializeFromGenesisStates(

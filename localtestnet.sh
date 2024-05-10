@@ -24,7 +24,7 @@ DATA=~/.0gchain
 # remove any old state and config
 rm -rf $DATA
 
-BINARY=0gchaind
+BINARY=./.build/0gchaind
 
 # Create new data directory, overwriting any that alread existed
 chainID="zgchain_8888-1"

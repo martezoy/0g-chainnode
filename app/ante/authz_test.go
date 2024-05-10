@@ -59,7 +59,7 @@ func TestAuthzLimiterDecorator(t *testing.T) {
 				banktypes.NewMsgSend(
 					testAddresses[0],
 					testAddresses[1],
-					sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(100e6)),
+					sdk.NewCoins(chaincfg.MakeCoinForGasDenom(100e6)),
 				),
 			},
 			checkTx: false,
@@ -129,7 +129,7 @@ func TestAuthzLimiterDecorator(t *testing.T) {
 					[]sdk.Msg{banktypes.NewMsgSend(
 						testAddresses[0],
 						testAddresses[3],
-						sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(100e6)),
+						sdk.NewCoins(chaincfg.MakeCoinForGasDenom(100e6)),
 					)}),
 			},
 			checkTx: false,
@@ -162,7 +162,7 @@ func TestAuthzLimiterDecorator(t *testing.T) {
 						banktypes.NewMsgSend(
 							testAddresses[0],
 							testAddresses[3],
-							sdk.NewCoins(chaincfg.MakeCoinForAuxiliaryDenom(100e6)),
+							sdk.NewCoins(chaincfg.MakeCoinForGasDenom(100e6)),
 						),
 						&evmtypes.MsgEthereumTx{},
 					},

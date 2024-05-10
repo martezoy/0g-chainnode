@@ -51,7 +51,7 @@ func FullyBackedInvariant(bankK types.BankKeeper, k Keeper) sdk.Invariant {
 		})
 
 		bankAddr := authtypes.NewModuleAddress(types.ModuleName)
-		bankBalance := bankK.GetBalance(ctx, bankAddr, chaincfg.AuxiliaryDenom).Amount.Mul(ConversionMultiplier)
+		bankBalance := bankK.GetBalance(ctx, bankAddr, chaincfg.GasDenom).Amount.Mul(ConversionMultiplier)
 
 		broken = totalMinorBalances.GT(bankBalance)
 

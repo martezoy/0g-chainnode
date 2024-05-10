@@ -82,7 +82,7 @@ message Metadata {
   string description = 1;
   // denom_units represents the list of DenomUnit's for a given coin
   repeated DenomUnit denom_units = 2;
-  // base represents the base denom (should be the DenomUnit with exponent = 0).
+  // base represents the evm denom (should be the DenomUnit with exponent = 0).
   string base = 3;
   // display indicates the suggested denom that should be
   // displayed in clients.
