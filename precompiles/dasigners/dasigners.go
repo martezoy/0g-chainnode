@@ -6,6 +6,7 @@ import (
 
 	precopmiles_common "github.com/0glabs/0g-chain/precompiles/common"
 	dasignerskeeper "github.com/0glabs/0g-chain/x/dasigners/v1/keeper"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/vm"
@@ -13,8 +14,9 @@ import (
 )
 
 const (
-	PrecompileAddress        = "0x0000000000000000000000000000000000001000"
-	RequiredGasBasic  uint64 = 100
+	PrecompileAddress = "0x0000000000000000000000000000000000001000"
+
+	RequiredGasMax uint64 = 1000_000_000
 
 	DASignersFunctionEpochNumber       = "epochNumber"
 	DASignersFunctionGetSigner         = "getSigner"
@@ -24,6 +26,26 @@ const (
 	DASignersFunctionRegisterSigner    = "registerSigner"
 	DASignersFunctionGetAggPkG1        = "getAggPkG1"
 )
+
+var RequiredGasBasic = map[string]uint64{
+	"epochNumber":       1000,
+	"getSigner":         10000,
+	"getSigners":        1000000,
+	"updateSocket":      50000,
+	"registerNextEpoch": 100000,
+	"registerSigner":    100000,
+	"getAggPkG1":        1000000,
+}
+
+var KVGasConfig storetypes.GasConfig = storetypes.GasConfig{
+	HasCost:          0,
+	DeleteCost:       0,
+	ReadCostFlat:     0,
+	ReadCostPerByte:  0,
+	WriteCostFlat:    0,
+	WriteCostPerByte: 0,
+	IterNextCostFlat: 0,
+}
 
 var _ vm.PrecompiledContract = &DASignersPrecompile{}
 
@@ -50,7 +72,14 @@ func (d *DASignersPrecompile) Address() common.Address {
 
 // RequiredGas implements vm.PrecompiledContract.
 func (d *DASignersPrecompile) RequiredGas(input []byte) uint64 {
-	return RequiredGasBasic
+	method, err := d.abi.MethodById(input[:4])
+	if err != nil {
+		return RequiredGasMax
+	}
+	if gas, ok := RequiredGasBasic[method.Name]; ok {
+		return gas
+	}
+	return RequiredGasMax
 }
 
 // Run implements vm.PrecompiledContract.
@@ -73,6 +102,8 @@ func (d *DASignersPrecompile) Run(evm *vm.EVM, contract *vm.Contract, readonly b
 		return nil, fmt.Errorf(precopmiles_common.ErrGetStateDB)
 	}
 	ctx := stateDB.GetContext()
+	// reset gas config
+	ctx = ctx.WithKVGasConfig(KVGasConfig)
 	initialGas := ctx.GasMeter().GasConsumed()
 
 	var bz []byte

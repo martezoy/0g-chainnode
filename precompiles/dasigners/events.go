@@ -22,7 +22,8 @@ func (d *DASignersPrecompile) EmitNewSignerEvent(ctx sdk.Context, stateDB *state
 	if err != nil {
 		return err
 	}
-	b, err := event.Inputs.Pack(signer.Signer, signer.PkG1, signer.PkG2)
+	arguments := abi.Arguments{event.Inputs[1], event.Inputs[2]}
+	b, err := arguments.Pack(signer.PkG1, signer.PkG2)
 	if err != nil {
 		return err
 	}
@@ -44,7 +45,8 @@ func (d *DASignersPrecompile) EmitSocketUpdatedEvent(ctx sdk.Context, stateDB *s
 	if err != nil {
 		return err
 	}
-	b, err := event.Inputs.Pack(signer, socket)
+	arguments := abi.Arguments{event.Inputs[1]}
+	b, err := arguments.Pack(socket)
 	if err != nil {
 		return err
 	}

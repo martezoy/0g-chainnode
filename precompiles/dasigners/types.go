@@ -10,6 +10,23 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
+type BN254G1Point = struct {
+	X *big.Int "json:\"X\""
+	Y *big.Int "json:\"Y\""
+}
+
+type BN254G2Point = struct {
+	X [2]*big.Int "json:\"X\""
+	Y [2]*big.Int "json:\"Y\""
+}
+
+type IDASignersSignerDetail = struct {
+	Signer common.Address "json:\"signer\""
+	Socket string         "json:\"socket\""
+	PkG1   BN254G1Point   "json:\"pkG1\""
+	PkG2   BN254G2Point   "json:\"pkG2\""
+}
+
 func NewBN254G1Point(b []byte) BN254G1Point {
 	return BN254G1Point{
 		X: new(big.Int).SetBytes(b[:32]),
@@ -17,7 +34,7 @@ func NewBN254G1Point(b []byte) BN254G1Point {
 	}
 }
 
-func (p BN254G1Point) Serialize() []byte {
+func SerializeG1(p BN254G1Point) []byte {
 	b := make([]byte, 0)
 	b = append(b, common.LeftPadBytes(p.X.Bytes(), 32)...)
 	b = append(b, common.LeftPadBytes(p.Y.Bytes(), 32)...)
@@ -37,7 +54,7 @@ func NewBN254G2Point(b []byte) BN254G2Point {
 	}
 }
 
-func (p BN254G2Point) Serialize() []byte {
+func SerializeG2(p BN254G2Point) []byte {
 	b := make([]byte, 0)
 	b = append(b, common.LeftPadBytes(p.X[0].Bytes(), 32)...)
 	b = append(b, common.LeftPadBytes(p.X[1].Bytes(), 32)...)
@@ -52,7 +69,7 @@ func NewQuerySignerRequest(args []interface{}) (*dasignerstypes.QuerySignerReque
 	}
 
 	return &dasignerstypes.QuerySignerRequest{
-		Account: args[0].(string),
+		Account: ToLowerHexWithoutPrefix(args[0].(common.Address)),
 	}, nil
 }
 
@@ -100,10 +117,10 @@ func NewMsgRegisterSigner(args []interface{}) (*dasignerstypes.MsgRegisterSigner
 		Signer: &dasignerstypes.Signer{
 			Account:  ToLowerHexWithoutPrefix(signer.Signer),
 			Socket:   signer.Socket,
-			PubkeyG1: signer.PkG1.Serialize(),
-			PubkeyG2: signer.PkG2.Serialize(),
+			PubkeyG1: SerializeG1(signer.PkG1),
+			PubkeyG2: SerializeG2(signer.PkG2),
 		},
-		Signature: args[1].(BN254G1Point).Serialize(),
+		Signature: SerializeG1(args[1].(BN254G1Point)),
 	}, nil
 }
 
@@ -114,7 +131,7 @@ func NewMsgRegisterNextEpoch(args []interface{}, account string) (*dasignerstype
 
 	return &dasignerstypes.MsgRegisterNextEpoch{
 		Account:   account,
-		Signature: args[0].(BN254G1Point).Serialize(),
+		Signature: SerializeG1(args[0].(BN254G1Point)),
 	}, nil
 }
 
