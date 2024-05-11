@@ -382,13 +382,13 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_EpochNumber_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"0gchain", "dasigners", "v1", "epoch-number"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_EpochNumber_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"0g", "dasigners", "v1", "epoch-number"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_EpochSignerSet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"0gchain", "dasigners", "v1", "epoch-signer-set"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_EpochSignerSet_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"0g", "dasigners", "v1", "epoch-signer-set"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_AggregatePubkeyG1_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"0gchain", "dasigners", "v1", "aggregate-pubkey-g1"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_AggregatePubkeyG1_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"0g", "dasigners", "v1", "aggregate-pubkey-g1"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_Signer_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"0gchain", "dasigners", "v1", "signer"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_Signer_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"0g", "dasigners", "v1", "signer"}, "", runtime.AssumeColonVerbOpt(false)))
 )
 
 var (

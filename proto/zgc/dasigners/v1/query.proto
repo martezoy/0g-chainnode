@@ -14,16 +14,16 @@ option (gogoproto.goproto_getters_all) = false;
 // Query defines the gRPC querier service for the dasigners module
 service Query {
   rpc EpochNumber(QueryEpochNumberRequest) returns (QueryEpochNumberResponse) {
-    option (google.api.http).get = "/0gchain/dasigners/v1/epoch-number";
+    option (google.api.http).get = "/0g/dasigners/v1/epoch-number";
   }
   rpc EpochSignerSet(QueryEpochSignerSetRequest) returns (QueryEpochSignerSetResponse) {
-    option (google.api.http).get = "/0gchain/dasigners/v1/epoch-signer-set";
+    option (google.api.http).get = "/0g/dasigners/v1/epoch-signer-set";
   }
   rpc AggregatePubkeyG1(QueryAggregatePubkeyG1Request) returns (QueryAggregatePubkeyG1Response) {
-    option (google.api.http).get = "/0gchain/dasigners/v1/aggregate-pubkey-g1";
+    option (google.api.http).get = "/0g/dasigners/v1/aggregate-pubkey-g1";
   }
   rpc Signer(QuerySignerRequest) returns (QuerySignerResponse) {
-    option (google.api.http).get = "/0gchain/dasigners/v1/signer";
+    option (google.api.http).get = "/0g/dasigners/v1/signer";
   }
 }
 
@@ -56,4 +56,6 @@ message QueryAggregatePubkeyG1Request {
 
 message QueryAggregatePubkeyG1Response {
   bytes aggregate_pubkey_g1 = 1;
+  uint64 total = 2;
+  uint64 hit = 3;
 }

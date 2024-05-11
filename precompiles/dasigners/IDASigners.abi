@@ -111,6 +111,16 @@
         "internalType": "struct BN254.G1Point",
         "name": "aggPkG1",
         "type": "tuple"
+      },
+      {
+        "internalType": "uint256",
+        "name": "total",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "hit",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",

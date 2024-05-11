@@ -53,5 +53,5 @@ func (d *DASignersPrecompile) GetAggPkG1(ctx sdk.Context, _ *vm.EVM, method *abi
 	if err != nil {
 		return nil, err
 	}
-	return method.Outputs.Pack(NewBN254G1Point(response.AggregatePubkeyG1))
+	return method.Outputs.Pack(NewBN254G1Point(response.AggregatePubkeyG1), big.NewInt(int64(response.Total)), big.NewInt(int64(response.Hit)))
 }
