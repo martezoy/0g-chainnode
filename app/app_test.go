@@ -3,11 +3,7 @@ package app
 import (
 	"encoding/json"
 	"fmt"
-	"os"
-	"sort"
-	"testing"
-	"time"
-        "github.com/0glabs/0g-chain/chaincfg"
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/migrations/legacytx"
@@ -19,6 +15,10 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tmtypes "github.com/tendermint/tendermint/types"
 	db "github.com/tendermint/tm-db"
+	"os"
+	"sort"
+	"testing"
+	"time"
 )
 
 func TestNewApp(t *testing.T) {
