@@ -40,11 +40,11 @@ func (k Keeper) EpochNumber(
 
 func (k Keeper) EpochSignerSet(c context.Context, request *types.QueryEpochSignerSetRequest) (*types.QueryEpochSignerSetResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	epochSignerSet := make([]*types.Signer, 0)
 	signers, found := k.GetEpochSignerSet(ctx, request.EpochNumber)
 	if !found {
-		return &types.QueryEpochSignerSetResponse{Signers: epochSignerSet}, types.ErrEpochSignerSetNotFound
+		return nil, types.ErrEpochSignerSetNotFound
 	}
+	epochSignerSet := make([]*types.Signer, len(signers.Signers))
 	for _, account := range signers.Signers {
 		signer, found, err := k.GetSigner(ctx, account)
 		if err != nil {
@@ -68,6 +68,7 @@ func (k Keeper) AggregatePubkeyG1(c context.Context, request *types.QueryAggrega
 		return nil, types.ErrSignerLengthNotMatch
 	}
 	aggPubkeyG1 := new(bn254.G1Affine)
+	hit := 0
 	for i, account := range signers.Signers {
 		b := request.SignersBitmap[i/8] & (1 << (i % 8))
 		if b == 0 {
@@ -80,9 +81,12 @@ func (k Keeper) AggregatePubkeyG1(c context.Context, request *types.QueryAggrega
 		if !found {
 			return nil, types.ErrSignerNotFound
 		}
+		hit += 1
 		aggPubkeyG1.Add(aggPubkeyG1, bn254util.DeserializeG1(signer.PubkeyG1))
 	}
 	return &types.QueryAggregatePubkeyG1Response{
 		AggregatePubkeyG1: bn254util.SerializeG1(aggPubkeyG1),
+		Total:             uint64(len(signers.Signers)),
+		Hit:               uint64(hit),
 	}, nil
 }
