@@ -18,7 +18,7 @@ func DefaultGenesisState() *GenesisState {
 		QuorumSize:    1024,
 		TokensPerVote: "100",
 		MaxVotes:      100,
-		EpochBlocks:   10,
+		EpochBlocks:   1000,
 	}, 0, make([]*Signer, 0), make([]*EpochSignerSet, 0))
 }
 
