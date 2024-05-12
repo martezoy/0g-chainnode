@@ -1,6 +1,10 @@
+<!---
 <p align="center">
-  <img src="./kava-logo.svg" width="300">
+  <img src="./0g-logo.svg" width="300">
 </p>
+--->
+
+# 0G Chain
 
 <div align="center">
 
