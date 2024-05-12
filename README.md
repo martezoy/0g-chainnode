@@ -10,6 +10,7 @@
 
 Reference implementation of 0G Chain, a blockchain for cross-chain DeFi. Built using the [cosmos-sdk](https://github.com/cosmos/cosmos-sdk).
 
+<!---
 ## Mainnet
 
 The current recommended version of the software for mainnet is [v0.25.0](https://github.com/Kava-Labs/kava/releases/tag/v0.25.0) The master branch of this repository often contains considerable development work since the last mainnet release and is __not__ runnable on mainnet.
@@ -45,6 +46,7 @@ If you have technical questions or concerns, ask a developer or community member
 ## Security
 
 If you find a security issue, please report it to security [at] kava.io. Depending on the verification and severity, a bug bounty may be available.
+--->
 
 ## License
 
