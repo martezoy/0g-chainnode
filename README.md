@@ -4,7 +4,7 @@
 
 <div align="center">
 
-### [Telegram](https://t.me/kavalabs) | [Medium](https://medium.com/kava-labs) | [Discord](https://discord.gg/JJYnuCx)
+### [Telegram](https://t.me/web3_0glabs) | [Discord](https://discord.com/invite/0glabs)
 
 </div>
 
