@@ -8,7 +8,7 @@
 
 </div>
 
-Reference implementation of Kava, a blockchain for cross-chain DeFi. Built using the [cosmos-sdk](https://github.com/cosmos/cosmos-sdk).
+Reference implementation of 0G Chain, a blockchain for cross-chain DeFi. Built using the [cosmos-sdk](https://github.com/cosmos/cosmos-sdk).
 
 ## Mainnet
 
