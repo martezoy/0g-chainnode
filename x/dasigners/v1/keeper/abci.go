@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"bytes"
-	"math/big"
 	"sort"
 
 	"github.com/0glabs/0g-chain/x/dasigners/v1/types"
@@ -56,9 +55,6 @@ func (k Keeper) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 			continue
 		}
 		num := validator.Tokens.Quo(sdk.NewInt(1_000_000_000_000_000_000)).Quo(tokensPerVote).Abs().BigInt()
-		if num.Cmp(big.NewInt(int64(params.MaxVotes))) > 0 {
-			num = big.NewInt(int64(params.MaxVotes))
-		}
 		content := registration.content
 		ballotNum := num.Int64()
 		for j := 0; j < int(ballotNum); j += 1 {
@@ -78,11 +74,23 @@ func (k Keeper) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 	}
 	if len(ballots) >= int(params.EncodedSlices) {
 		for i := 0; i+int(params.EncodedSlices) < len(ballots); i += 1 {
+			if int(params.MaxQuorums) < len(quorums.Quorums) {
+				break
+			}
 			quorum := types.Quorum{
 				Signers: make([]string, params.EncodedSlices),
 			}
 			for j := 0; j < int(params.EncodedSlices); j += 1 {
 				quorum.Signers[j] = ballots[i+j].account
+			}
+			quorums.Quorums = append(quorums.Quorums, &quorum)
+		}
+		if len(ballots)%int(params.EncodedSlices) != 0 && int(params.MaxQuorums) < len(quorums.Quorums) {
+			quorum := types.Quorum{
+				Signers: make([]string, 0),
+			}
+			for j := len(ballots) - int(params.EncodedSlices); j < len(ballots); j += 1 {
+				quorum.Signers = append(quorum.Signers, ballots[j].account)
 			}
 			quorums.Quorums = append(quorums.Quorums, &quorum)
 		}
