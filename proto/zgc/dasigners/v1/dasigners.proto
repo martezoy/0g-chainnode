@@ -20,6 +20,10 @@ message Signer {
   bytes pubkey_g2 = 4;
 }
 
-message EpochSignerSet {
+message Quorum {
   repeated string signers = 1;
+}
+
+message Quorums {
+  repeated Quorum quorums = 1; 
 }

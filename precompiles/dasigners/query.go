@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/vm"
 )
 
@@ -16,6 +17,15 @@ func (d *DASignersPrecompile) EpochNumber(ctx sdk.Context, _ *vm.EVM, method *ab
 	return method.Outputs.Pack(big.NewInt(int64(epochNumber)))
 }
 
+func (d *DASignersPrecompile) QuorumCount(ctx sdk.Context, _ *vm.EVM, method *abi.Method, args []interface{}) ([]byte, error) {
+	req, err := NewQueryQuorumCountRequest(args)
+	response, err := d.dasignersKeeper.QuorumCount(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return method.Outputs.Pack(big.NewInt(int64(response.QuorumCount)))
+}
+
 func (d *DASignersPrecompile) GetSigner(ctx sdk.Context, _ *vm.EVM, method *abi.Method, args []interface{}) ([]byte, error) {
 	req, err := NewQuerySignerRequest(args)
 	if err != nil {
@@ -25,21 +35,25 @@ func (d *DASignersPrecompile) GetSigner(ctx sdk.Context, _ *vm.EVM, method *abi.
 	if err != nil {
 		return nil, err
 	}
-	return method.Outputs.Pack(NewIDASignersSignerDetail(response.Signer))
+	signers := make([]IDASignersSignerDetail, len(response.Signer))
+	for i, signer := range response.Signer {
+		signers[i] = NewIDASignersSignerDetail(signer)
+	}
+	return method.Outputs.Pack(signers)
 }
 
-func (d *DASignersPrecompile) GetSigners(ctx sdk.Context, _ *vm.EVM, method *abi.Method, args []interface{}) ([]byte, error) {
-	req, err := NewQueryEpochSignerSetRequest(args)
+func (d *DASignersPrecompile) GetQuorum(ctx sdk.Context, _ *vm.EVM, method *abi.Method, args []interface{}) ([]byte, error) {
+	req, err := NewQueryEpochQuorumRequest(args)
 	if err != nil {
 		return nil, err
 	}
-	response, err := d.dasignersKeeper.EpochSignerSet(sdk.WrapSDKContext(ctx), req)
+	response, err := d.dasignersKeeper.EpochQuorum(sdk.WrapSDKContext(ctx), req)
 	if err != nil {
 		return nil, err
 	}
-	signers := make([]IDASignersSignerDetail, 0)
-	for _, signer := range response.Signers {
-		signers = append(signers, NewIDASignersSignerDetail(signer))
+	signers := make([]common.Address, len(response.Quorum.Signers))
+	for i, signer := range response.Quorum.Signers {
+		signers[i] = common.HexToAddress(signer)
 	}
 	return method.Outputs.Pack(signers)
 }

@@ -10,10 +10,10 @@ import "zgc/dasigners/v1/dasigners.proto";
 option go_package = "github.com/0glabs/0g-chain/x/dasigners/v1/types";
 
 message Params {
-  uint64 quorum_size = 1;
-  string tokens_per_vote = 2;
-  uint64 max_votes = 3;
-  uint64 epoch_blocks = 4;
+  string tokens_per_vote = 1;
+  uint64 max_votes = 2;
+  uint64 epoch_blocks = 3;
+  uint64 encoded_slices = 4;
 }
 
 // GenesisState defines the dasigners module's genesis state.
@@ -24,6 +24,6 @@ message GenesisState {
   uint64 epoch_number = 2;
   // signers defines all signers information
   repeated Signer signers = 3;
-  // signers_by_epoch defines chosen signers by epoch
-  repeated EpochSignerSet signers_by_epoch = 4;
+  // quorums_by_epoch defines chosen quorums by epoch
+  repeated Quorums quorums_by_epoch = 4;
 }

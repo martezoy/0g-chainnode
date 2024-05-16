@@ -16,8 +16,11 @@ service Query {
   rpc EpochNumber(QueryEpochNumberRequest) returns (QueryEpochNumberResponse) {
     option (google.api.http).get = "/0g/dasigners/v1/epoch-number";
   }
-  rpc EpochSignerSet(QueryEpochSignerSetRequest) returns (QueryEpochSignerSetResponse) {
-    option (google.api.http).get = "/0g/dasigners/v1/epoch-signer-set";
+  rpc QuorumCount(QueryQuorumCountRequest) returns (QueryQuorumCountResponse) {
+    option (google.api.http).get = "/0g/dasigners/v1/quorum-count";
+  }
+  rpc EpochQuorum(QueryEpochQuorumRequest) returns (QueryEpochQuorumResponse) {
+    option (google.api.http).get = "/0g/dasigners/v1/epoch-quorum";
   }
   rpc AggregatePubkeyG1(QueryAggregatePubkeyG1Request) returns (QueryAggregatePubkeyG1Response) {
     option (google.api.http).get = "/0g/dasigners/v1/aggregate-pubkey-g1";
@@ -28,11 +31,11 @@ service Query {
 }
 
 message QuerySignerRequest {
-  string account = 1;
+  repeated string accounts = 1;
 }
 
 message QuerySignerResponse {
-  Signer signer = 1;
+  repeated Signer signer = 1;
 }
 
 message QueryEpochNumberRequest {}
@@ -41,17 +44,27 @@ message QueryEpochNumberResponse {
   uint64 epoch_number = 1;
 }
 
-message QueryEpochSignerSetRequest {
+message QueryQuorumCountRequest {
   uint64 epoch_number = 1;
 }
 
-message QueryEpochSignerSetResponse {
-  repeated Signer signers = 1;
+message QueryQuorumCountResponse {
+  uint64 quorum_count = 1;
+}
+
+message QueryEpochQuorumRequest {
+  uint64 epoch_number = 1;
+  uint64 quorum_id = 2;
+}
+
+message QueryEpochQuorumResponse {
+  Quorum quorum = 1;
 }
 
 message QueryAggregatePubkeyG1Request {
   uint64 epoch_number = 1;
-  bytes signersBitmap = 2;
+  uint64 quorum_id = 2;
+  bytes quorum_bitmap = 3;
 }
 
 message QueryAggregatePubkeyG1Response {
