@@ -72,17 +72,32 @@ func (k Keeper) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 	sort.Slice(ballots, func(i, j int) bool {
 		return bytes.Compare(ballots[i].content, ballots[j].content) < 0
 	})
-	chosen := make(map[string]struct{})
-	epochSignerSet := types.EpochSignerSet{
-		Signers: make([]string, 0),
+
+	quorums := types.Quorums{
+		Quorums: make([]*types.Quorum, 0),
 	}
-	for _, ballot := range ballots {
-		if _, ok := chosen[ballot.account]; !ok {
-			chosen[ballot.account] = struct{}{}
-			epochSignerSet.Signers = append(epochSignerSet.Signers, ballot.account)
+	if len(ballots) >= int(params.EncodedSlices) {
+		for i := 0; i+int(params.EncodedSlices) < len(ballots); i += 1 {
+			quorum := types.Quorum{
+				Signers: make([]string, params.EncodedSlices),
+			}
+			for j := 0; j < int(params.EncodedSlices); j += 1 {
+				quorum.Signers[j] = ballots[i+j].account
+			}
+			quorums.Quorums = append(quorums.Quorums, &quorum)
 		}
+	} else {
+		quorum := types.Quorum{
+			Signers: make([]string, params.EncodedSlices),
+		}
+		n := len(ballots)
+		for i := 0; i < int(params.EncodedSlices); i += 1 {
+			quorum.Signers[i] = ballots[i%n].account
+		}
+		quorums.Quorums = append(quorums.Quorums, &quorum)
 	}
+
 	// save to store
-	k.SetEpochSignerSet(ctx, expectedEpoch, epochSignerSet)
+	k.SetEpochQuorums(ctx, expectedEpoch, quorums)
 	k.SetEpochNumber(ctx, expectedEpoch)
 }

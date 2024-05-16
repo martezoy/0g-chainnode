@@ -13,17 +13,22 @@ var _ types.QueryServer = Keeper{}
 
 func (k Keeper) Signer(
 	c context.Context,
-	req *types.QuerySignerRequest,
+	request *types.QuerySignerRequest,
 ) (*types.QuerySignerResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	signer, found, err := k.GetSigner(ctx, req.Account)
-	if err != nil {
-		return nil, err
+	n := len(request.Accounts)
+	response := types.QuerySignerResponse{Signer: make([]*types.Signer, n)}
+	for i := 0; i < n; i += 1 {
+		signer, found, err := k.GetSigner(ctx, request.Accounts[i])
+		if err != nil {
+			return nil, err
+		}
+		if !found {
+			return nil, nil
+		}
+		response.Signer[i] = &signer
 	}
-	if !found {
-		return nil, nil
-	}
-	return &types.QuerySignerResponse{Signer: &signer}, nil
+	return &response, nil
 }
 
 func (k Keeper) EpochNumber(
@@ -38,43 +43,56 @@ func (k Keeper) EpochNumber(
 	return &types.QueryEpochNumberResponse{EpochNumber: epochNumber}, nil
 }
 
-func (k Keeper) EpochSignerSet(c context.Context, request *types.QueryEpochSignerSetRequest) (*types.QueryEpochSignerSetResponse, error) {
+func (k Keeper) QuorumCount(
+	c context.Context,
+	request *types.QueryQuorumCountRequest,
+) (*types.QueryQuorumCountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	signers, found := k.GetEpochSignerSet(ctx, request.EpochNumber)
+	quorumCount, err := k.GetQuorumCount(ctx, request.EpochNumber)
+	if err != nil {
+		return nil, err
+	}
+	return &types.QueryQuorumCountResponse{QuorumCount: quorumCount}, nil
+}
+
+func (k Keeper) EpochQuorum(c context.Context, request *types.QueryEpochQuorumRequest) (*types.QueryEpochQuorumResponse, error) {
+	ctx := sdk.UnwrapSDKContext(c)
+	quorums, found := k.GetEpochQuorums(ctx, request.EpochNumber)
 	if !found {
-		return nil, types.ErrEpochSignerSetNotFound
+		return nil, types.ErrQuorumNotFound
 	}
-	epochSignerSet := make([]*types.Signer, len(signers.Signers))
-	for _, account := range signers.Signers {
-		signer, found, err := k.GetSigner(ctx, account)
-		if err != nil {
-			return nil, err
-		}
-		if !found {
-			return nil, types.ErrSignerNotFound
-		}
-		epochSignerSet = append(epochSignerSet, &signer)
+	if len(quorums.Quorums) <= int(request.QuorumId) {
+		return nil, types.ErrQuorumIdOutOfBound
 	}
-	return &types.QueryEpochSignerSetResponse{Signers: epochSignerSet}, nil
+	return &types.QueryEpochQuorumResponse{Quorum: quorums.Quorums[request.QuorumId]}, nil
 }
 
 func (k Keeper) AggregatePubkeyG1(c context.Context, request *types.QueryAggregatePubkeyG1Request) (*types.QueryAggregatePubkeyG1Response, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	signers, found := k.GetEpochSignerSet(ctx, request.EpochNumber)
+	quorums, found := k.GetEpochQuorums(ctx, request.EpochNumber)
 	if !found {
-		return nil, types.ErrEpochSignerSetNotFound
+		return nil, types.ErrQuorumNotFound
 	}
-	if len(request.SignersBitmap) != (len(signers.Signers)+7)/8 {
-		return nil, types.ErrSignerLengthNotMatch
+	if len(quorums.Quorums) <= int(request.QuorumId) {
+		return nil, types.ErrQuorumIdOutOfBound
+	}
+	quorum := quorums.Quorums[request.QuorumId]
+	if (len(quorum.Signers)+7)/8 != len(request.QuorumBitmap) {
+		return nil, types.ErrQuorumBitmapLengthMismatch
 	}
 	aggPubkeyG1 := new(bn254.G1Affine)
 	hit := 0
-	for i, account := range signers.Signers {
-		b := request.SignersBitmap[i/8] & (1 << (i % 8))
+	added := make(map[string]struct{})
+	for i, signer := range quorum.Signers {
+		b := request.QuorumBitmap[i/8] & (1 << (i % 8))
 		if b == 0 {
 			continue
 		}
-		signer, found, err := k.GetSigner(ctx, account)
+		if _, ok := added[signer]; ok {
+			continue
+		}
+		added[signer] = struct{}{}
+		signer, found, err := k.GetSigner(ctx, signer)
 		if err != nil {
 			return nil, err
 		}
@@ -86,7 +104,7 @@ func (k Keeper) AggregatePubkeyG1(c context.Context, request *types.QueryAggrega
 	}
 	return &types.QueryAggregatePubkeyG1Response{
 		AggregatePubkeyG1: bn254util.SerializeG1(aggPubkeyG1),
-		Total:             uint64(len(signers.Signers)),
+		Total:             uint64(len(quorum.Signers)),
 		Hit:               uint64(hit),
 	}, nil
 }
