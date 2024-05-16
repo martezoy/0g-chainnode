@@ -73,7 +73,7 @@ func (k Keeper) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 		Quorums: make([]*types.Quorum, 0),
 	}
 	if len(ballots) >= int(params.EncodedSlices) {
-		for i := 0; i+int(params.EncodedSlices) < len(ballots); i += 1 {
+		for i := 0; i+int(params.EncodedSlices) <= len(ballots); i += int(params.EncodedSlices) {
 			if int(params.MaxQuorums) < len(quorums.Quorums) {
 				break
 			}
@@ -85,7 +85,7 @@ func (k Keeper) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 			}
 			quorums.Quorums = append(quorums.Quorums, &quorum)
 		}
-		if len(ballots)%int(params.EncodedSlices) != 0 && int(params.MaxQuorums) < len(quorums.Quorums) {
+		if len(ballots)%int(params.EncodedSlices) != 0 && int(params.MaxQuorums) > len(quorums.Quorums) {
 			quorum := types.Quorum{
 				Signers: make([]string, 0),
 			}
