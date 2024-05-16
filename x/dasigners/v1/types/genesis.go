@@ -16,7 +16,7 @@ func NewGenesisState(params Params, epoch uint64, signers []*Signer, quorumsByEp
 func DefaultGenesisState() *GenesisState {
 	return NewGenesisState(Params{
 		TokensPerVote: "100",
-		MaxVotes:      100,
+		MaxQuorums:    100,
 		EpochBlocks:   1000,
 		EncodedSlices: 3072,
 	}, 0, make([]*Signer, 0), []*Quorums{{
