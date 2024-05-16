@@ -19,7 +19,9 @@ func DefaultGenesisState() *GenesisState {
 		MaxVotes:      100,
 		EpochBlocks:   1000,
 		EncodedSlices: 3072,
-	}, 0, make([]*Signer, 0), make([]*Quorums, 0))
+	}, 0, make([]*Signer, 0), []*Quorums{{
+		Quorums: make([]*Quorum, 0),
+	}})
 }
 
 // Validate performs basic validation of genesis data.
@@ -31,7 +33,7 @@ func (gs GenesisState) Validate() error {
 		}
 		registered[signer.Account] = struct{}{}
 	}
-	if len(gs.QuorumsByEpoch) != int(gs.EpochNumber) {
+	if len(gs.QuorumsByEpoch) != int(gs.EpochNumber)+1 {
 		return fmt.Errorf("epoch history missing")
 	}
 	for _, quorums := range gs.QuorumsByEpoch {

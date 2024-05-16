@@ -9,5 +9,5 @@ var (
 	ErrInvalidSignature           = errorsmod.Register(ModuleName, 4, "invalid signature")
 	ErrQuorumNotFound             = errorsmod.Register(ModuleName, 5, "quorum for epoch not found")
 	ErrQuorumIdOutOfBound         = errorsmod.Register(ModuleName, 6, "quorum id out of bound")
-	ErrQuorumBitmapLengthMismatch = errorsmod.Register(ModuleName, 6, "quorum bitmap length mismatch")
+	ErrQuorumBitmapLengthMismatch = errorsmod.Register(ModuleName, 7, "quorum bitmap length mismatch")
 )

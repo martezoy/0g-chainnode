@@ -84,13 +84,15 @@ func (k Keeper) AggregatePubkeyG1(c context.Context, request *types.QueryAggrega
 	hit := 0
 	added := make(map[string]struct{})
 	for i, signer := range quorum.Signers {
+		if _, ok := added[signer]; ok {
+			hit += 1
+			continue
+		}
 		b := request.QuorumBitmap[i/8] & (1 << (i % 8))
 		if b == 0 {
 			continue
 		}
-		if _, ok := added[signer]; ok {
-			continue
-		}
+		hit += 1
 		added[signer] = struct{}{}
 		signer, found, err := k.GetSigner(ctx, signer)
 		if err != nil {
@@ -99,7 +101,6 @@ func (k Keeper) AggregatePubkeyG1(c context.Context, request *types.QueryAggrega
 		if !found {
 			return nil, types.ErrSignerNotFound
 		}
-		hit += 1
 		aggPubkeyG1.Add(aggPubkeyG1, bn254util.DeserializeG1(signer.PubkeyG1))
 	}
 	return &types.QueryAggregatePubkeyG1Response{
