@@ -29,13 +29,14 @@ const (
 )
 
 var RequiredGasBasic = map[string]uint64{
-	"epochNumber":       1000,
-	"getSigner":         10000,
-	"getSigners":        1000000,
-	"updateSocket":      50000,
-	"registerNextEpoch": 100000,
-	"registerSigner":    100000,
-	"getAggPkG1":        1000000,
+	DASignersFunctionEpochNumber:       1000,
+	DASignersFunctionQuorumCount:       1000,
+	DASignersFunctionGetSigner:         100000,
+	DASignersFunctionGetQuorum:         100000,
+	DASignersFunctionRegisterSigner:    100000,
+	DASignersFunctionUpdateSocket:      50000,
+	DASignersFunctionRegisterNextEpoch: 100000,
+	DASignersFunctionGetAggPkG1:        1000000,
 }
 
 var KVGasConfig storetypes.GasConfig = storetypes.GasConfig{

@@ -86,7 +86,7 @@ func (k Keeper) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 			}
 			quorums.Quorums = append(quorums.Quorums, &quorum)
 		}
-	} else {
+	} else if len(ballots) > 0 {
 		quorum := types.Quorum{
 			Signers: make([]string, params.EncodedSlices),
 		}
@@ -95,6 +95,10 @@ func (k Keeper) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 			quorum.Signers[i] = ballots[i%n].account
 		}
 		quorums.Quorums = append(quorums.Quorums, &quorum)
+	} else {
+		quorums.Quorums = append(quorums.Quorums, &types.Quorum{
+			Signers: make([]string, 0),
+		})
 	}
 
 	// save to store
