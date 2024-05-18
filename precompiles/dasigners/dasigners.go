@@ -26,6 +26,8 @@ const (
 	DASignersFunctionUpdateSocket      = "updateSocket"
 	DASignersFunctionRegisterNextEpoch = "registerNextEpoch"
 	DASignersFunctionGetAggPkG1        = "getAggPkG1"
+	DASignersFunctionIsSigner          = "isSigner"
+	DASignersFunctionRegisteredEpoch   = "registeredEpoch"
 )
 
 var RequiredGasBasic = map[string]uint64{
@@ -37,6 +39,8 @@ var RequiredGasBasic = map[string]uint64{
 	DASignersFunctionUpdateSocket:      50000,
 	DASignersFunctionRegisterNextEpoch: 100000,
 	DASignersFunctionGetAggPkG1:        1000000,
+	DASignersFunctionIsSigner:          10000,
+	DASignersFunctionRegisteredEpoch:   10000,
 }
 
 var KVGasConfig storetypes.GasConfig = storetypes.GasConfig{
@@ -121,6 +125,10 @@ func (d *DASignersPrecompile) Run(evm *vm.EVM, contract *vm.Contract, readonly b
 		bz, err = d.GetQuorum(ctx, evm, method, args)
 	case DASignersFunctionGetAggPkG1:
 		bz, err = d.GetAggPkG1(ctx, evm, method, args)
+	case DASignersFunctionIsSigner:
+		bz, err = d.IsSigner(ctx, evm, method, args)
+	case DASignersFunctionRegisteredEpoch:
+		bz, err = d.RegisteredEpoch(ctx, evm, method, args)
 	// txs
 	case DASignersFunctionRegisterSigner:
 		bz, err = d.RegisterSigner(ctx, evm, stateDB, method, args)
