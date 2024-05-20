@@ -29,6 +29,7 @@ var (
 	account      = flag.String("account", "", "account to run evmosd cli")
 	keyring      = flag.String("keyring", "", "keyring to run evmosd cli")
 	homePath     = flag.String("home", "", "home path of evmosd node")
+	gasPrice     = flag.String("gas-price", "", "gas price to run evmosd cli")
 )
 
 func newUpgrader() *websocket.Upgrader {
@@ -40,6 +41,7 @@ func newUpgrader() *websocket.Upgrader {
 		ctx = context.WithValue(ctx, types.NODE_CLI_EXEC_ACCOUNT, *account)
 		ctx = context.WithValue(ctx, types.NODE_CLI_EXEC_KEYRING, *keyring)
 		ctx = context.WithValue(ctx, types.NODE_HOME_PATH, *homePath)
+		ctx = context.WithValue(ctx, types.NODE_GAS_PRICE, *gasPrice)
 		go func() { service.OnMessage(ctx, c, messageType, data) }()
 	})
 

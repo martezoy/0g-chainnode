@@ -165,7 +165,6 @@ func runEvmosdCliReportDasResult(ctx context.Context, requestId uint64, result b
 		strconv.FormatUint(requestId, 10),
 		strconv.FormatBool(result),
 		"--from", account.(string),
-		"--gas-prices", "7678500neuron", // TODO:  use args to set gas prices
 	}
 
 	homePath := ctx.Value(types.NODE_HOME_PATH)
@@ -176,6 +175,11 @@ func runEvmosdCliReportDasResult(ctx context.Context, requestId uint64, result b
 	keyring := ctx.Value(types.NODE_CLI_EXEC_KEYRING)
 	if len(keyring.(string)) > 0 {
 		args = append(args, "--keyring-backend", keyring.(string))
+	}
+
+	gasPrice := ctx.Value(types.NODE_GAS_PRICE)
+	if len(gasPrice.(string)) > 0 {
+		args = append(args, "--gas-prices", gasPrice.(string))
 	}
 
 	cmdStr := relativePath.(string) + "0gchaind"
