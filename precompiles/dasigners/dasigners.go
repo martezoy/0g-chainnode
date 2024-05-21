@@ -19,22 +19,28 @@ const (
 	RequiredGasMax uint64 = 1000_000_000
 
 	DASignersFunctionEpochNumber       = "epochNumber"
+	DASignersFunctionQuorumCount       = "quorumCount"
 	DASignersFunctionGetSigner         = "getSigner"
-	DASignersFunctionGetSigners        = "getSigners"
+	DASignersFunctionGetQuorum         = "getQuorum"
+	DASignersFunctionRegisterSigner    = "registerSigner"
 	DASignersFunctionUpdateSocket      = "updateSocket"
 	DASignersFunctionRegisterNextEpoch = "registerNextEpoch"
-	DASignersFunctionRegisterSigner    = "registerSigner"
 	DASignersFunctionGetAggPkG1        = "getAggPkG1"
+	DASignersFunctionIsSigner          = "isSigner"
+	DASignersFunctionRegisteredEpoch   = "registeredEpoch"
 )
 
 var RequiredGasBasic = map[string]uint64{
-	"epochNumber":       1000,
-	"getSigner":         10000,
-	"getSigners":        1000000,
-	"updateSocket":      50000,
-	"registerNextEpoch": 100000,
-	"registerSigner":    100000,
-	"getAggPkG1":        1000000,
+	DASignersFunctionEpochNumber:       1000,
+	DASignersFunctionQuorumCount:       1000,
+	DASignersFunctionGetSigner:         100000,
+	DASignersFunctionGetQuorum:         100000,
+	DASignersFunctionRegisterSigner:    100000,
+	DASignersFunctionUpdateSocket:      50000,
+	DASignersFunctionRegisterNextEpoch: 100000,
+	DASignersFunctionGetAggPkG1:        1000000,
+	DASignersFunctionIsSigner:          10000,
+	DASignersFunctionRegisteredEpoch:   10000,
 }
 
 var KVGasConfig storetypes.GasConfig = storetypes.GasConfig{
@@ -111,12 +117,18 @@ func (d *DASignersPrecompile) Run(evm *vm.EVM, contract *vm.Contract, readonly b
 	// queries
 	case DASignersFunctionEpochNumber:
 		bz, err = d.EpochNumber(ctx, evm, method, args)
+	case DASignersFunctionQuorumCount:
+		bz, err = d.QuorumCount(ctx, evm, method, args)
 	case DASignersFunctionGetSigner:
 		bz, err = d.GetSigner(ctx, evm, method, args)
-	case DASignersFunctionGetSigners:
-		bz, err = d.GetSigners(ctx, evm, method, args)
+	case DASignersFunctionGetQuorum:
+		bz, err = d.GetQuorum(ctx, evm, method, args)
 	case DASignersFunctionGetAggPkG1:
 		bz, err = d.GetAggPkG1(ctx, evm, method, args)
+	case DASignersFunctionIsSigner:
+		bz, err = d.IsSigner(ctx, evm, method, args)
+	case DASignersFunctionRegisteredEpoch:
+		bz, err = d.RegisteredEpoch(ctx, evm, method, args)
 	// txs
 	case DASignersFunctionRegisterSigner:
 		bz, err = d.RegisterSigner(ctx, evm, stateDB, method, args)

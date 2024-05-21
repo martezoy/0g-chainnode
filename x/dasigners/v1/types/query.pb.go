@@ -33,7 +33,7 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type QuerySignerRequest struct {
-	Account string `protobuf:"bytes,1,opt,name=account,proto3" json:"account,omitempty"`
+	Accounts []string `protobuf:"bytes,1,rep,name=accounts,proto3" json:"accounts,omitempty"`
 }
 
 func (m *QuerySignerRequest) Reset()         { *m = QuerySignerRequest{} }
@@ -70,7 +70,7 @@ func (m *QuerySignerRequest) XXX_DiscardUnknown() {
 var xxx_messageInfo_QuerySignerRequest proto.InternalMessageInfo
 
 type QuerySignerResponse struct {
-	Signer *Signer `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
+	Signer []*Signer `protobuf:"bytes,1,rep,name=signer,proto3" json:"signer,omitempty"`
 }
 
 func (m *QuerySignerResponse) Reset()         { *m = QuerySignerResponse{} }
@@ -179,22 +179,22 @@ func (m *QueryEpochNumberResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryEpochNumberResponse proto.InternalMessageInfo
 
-type QueryEpochSignerSetRequest struct {
+type QueryQuorumCountRequest struct {
 	EpochNumber uint64 `protobuf:"varint,1,opt,name=epoch_number,json=epochNumber,proto3" json:"epoch_number,omitempty"`
 }
 
-func (m *QueryEpochSignerSetRequest) Reset()         { *m = QueryEpochSignerSetRequest{} }
-func (m *QueryEpochSignerSetRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryEpochSignerSetRequest) ProtoMessage()    {}
-func (*QueryEpochSignerSetRequest) Descriptor() ([]byte, []int) {
+func (m *QueryQuorumCountRequest) Reset()         { *m = QueryQuorumCountRequest{} }
+func (m *QueryQuorumCountRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryQuorumCountRequest) ProtoMessage()    {}
+func (*QueryQuorumCountRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_991a610b84b5964c, []int{4}
 }
-func (m *QueryEpochSignerSetRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryQuorumCountRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryEpochSignerSetRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryQuorumCountRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryEpochSignerSetRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryQuorumCountRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -204,34 +204,34 @@ func (m *QueryEpochSignerSetRequest) XXX_Marshal(b []byte, deterministic bool) (
 		return b[:n], nil
 	}
 }
-func (m *QueryEpochSignerSetRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryEpochSignerSetRequest.Merge(m, src)
+func (m *QueryQuorumCountRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryQuorumCountRequest.Merge(m, src)
 }
-func (m *QueryEpochSignerSetRequest) XXX_Size() int {
+func (m *QueryQuorumCountRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryEpochSignerSetRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryEpochSignerSetRequest.DiscardUnknown(m)
+func (m *QueryQuorumCountRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryQuorumCountRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryEpochSignerSetRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryQuorumCountRequest proto.InternalMessageInfo
 
-type QueryEpochSignerSetResponse struct {
-	Signers []*Signer `protobuf:"bytes,1,rep,name=signers,proto3" json:"signers,omitempty"`
+type QueryQuorumCountResponse struct {
+	QuorumCount uint64 `protobuf:"varint,1,opt,name=quorum_count,json=quorumCount,proto3" json:"quorum_count,omitempty"`
 }
 
-func (m *QueryEpochSignerSetResponse) Reset()         { *m = QueryEpochSignerSetResponse{} }
-func (m *QueryEpochSignerSetResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryEpochSignerSetResponse) ProtoMessage()    {}
-func (*QueryEpochSignerSetResponse) Descriptor() ([]byte, []int) {
+func (m *QueryQuorumCountResponse) Reset()         { *m = QueryQuorumCountResponse{} }
+func (m *QueryQuorumCountResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryQuorumCountResponse) ProtoMessage()    {}
+func (*QueryQuorumCountResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_991a610b84b5964c, []int{5}
 }
-func (m *QueryEpochSignerSetResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryQuorumCountResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryEpochSignerSetResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryQuorumCountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryEpochSignerSetResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryQuorumCountResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -241,28 +241,104 @@ func (m *QueryEpochSignerSetResponse) XXX_Marshal(b []byte, deterministic bool) 
 		return b[:n], nil
 	}
 }
-func (m *QueryEpochSignerSetResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryEpochSignerSetResponse.Merge(m, src)
+func (m *QueryQuorumCountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryQuorumCountResponse.Merge(m, src)
 }
-func (m *QueryEpochSignerSetResponse) XXX_Size() int {
+func (m *QueryQuorumCountResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryEpochSignerSetResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryEpochSignerSetResponse.DiscardUnknown(m)
+func (m *QueryQuorumCountResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryQuorumCountResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryEpochSignerSetResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryQuorumCountResponse proto.InternalMessageInfo
+
+type QueryEpochQuorumRequest struct {
+	EpochNumber uint64 `protobuf:"varint,1,opt,name=epoch_number,json=epochNumber,proto3" json:"epoch_number,omitempty"`
+	QuorumId    uint64 `protobuf:"varint,2,opt,name=quorum_id,json=quorumId,proto3" json:"quorum_id,omitempty"`
+}
+
+func (m *QueryEpochQuorumRequest) Reset()         { *m = QueryEpochQuorumRequest{} }
+func (m *QueryEpochQuorumRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryEpochQuorumRequest) ProtoMessage()    {}
+func (*QueryEpochQuorumRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_991a610b84b5964c, []int{6}
+}
+func (m *QueryEpochQuorumRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryEpochQuorumRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryEpochQuorumRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryEpochQuorumRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryEpochQuorumRequest.Merge(m, src)
+}
+func (m *QueryEpochQuorumRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryEpochQuorumRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryEpochQuorumRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryEpochQuorumRequest proto.InternalMessageInfo
+
+type QueryEpochQuorumResponse struct {
+	Quorum *Quorum `protobuf:"bytes,1,opt,name=quorum,proto3" json:"quorum,omitempty"`
+}
+
+func (m *QueryEpochQuorumResponse) Reset()         { *m = QueryEpochQuorumResponse{} }
+func (m *QueryEpochQuorumResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryEpochQuorumResponse) ProtoMessage()    {}
+func (*QueryEpochQuorumResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_991a610b84b5964c, []int{7}
+}
+func (m *QueryEpochQuorumResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryEpochQuorumResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryEpochQuorumResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryEpochQuorumResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryEpochQuorumResponse.Merge(m, src)
+}
+func (m *QueryEpochQuorumResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryEpochQuorumResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryEpochQuorumResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryEpochQuorumResponse proto.InternalMessageInfo
 
 type QueryAggregatePubkeyG1Request struct {
-	EpochNumber   uint64 `protobuf:"varint,1,opt,name=epoch_number,json=epochNumber,proto3" json:"epoch_number,omitempty"`
-	SignersBitmap []byte `protobuf:"bytes,2,opt,name=signersBitmap,proto3" json:"signersBitmap,omitempty"`
+	EpochNumber  uint64 `protobuf:"varint,1,opt,name=epoch_number,json=epochNumber,proto3" json:"epoch_number,omitempty"`
+	QuorumId     uint64 `protobuf:"varint,2,opt,name=quorum_id,json=quorumId,proto3" json:"quorum_id,omitempty"`
+	QuorumBitmap []byte `protobuf:"bytes,3,opt,name=quorum_bitmap,json=quorumBitmap,proto3" json:"quorum_bitmap,omitempty"`
 }
 
 func (m *QueryAggregatePubkeyG1Request) Reset()         { *m = QueryAggregatePubkeyG1Request{} }
 func (m *QueryAggregatePubkeyG1Request) String() string { return proto.CompactTextString(m) }
 func (*QueryAggregatePubkeyG1Request) ProtoMessage()    {}
 func (*QueryAggregatePubkeyG1Request) Descriptor() ([]byte, []int) {
-	return fileDescriptor_991a610b84b5964c, []int{6}
+	return fileDescriptor_991a610b84b5964c, []int{8}
 }
 func (m *QueryAggregatePubkeyG1Request) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -301,7 +377,7 @@ func (m *QueryAggregatePubkeyG1Response) Reset()         { *m = QueryAggregatePu
 func (m *QueryAggregatePubkeyG1Response) String() string { return proto.CompactTextString(m) }
 func (*QueryAggregatePubkeyG1Response) ProtoMessage()    {}
 func (*QueryAggregatePubkeyG1Response) Descriptor() ([]byte, []int) {
-	return fileDescriptor_991a610b84b5964c, []int{7}
+	return fileDescriptor_991a610b84b5964c, []int{9}
 }
 func (m *QueryAggregatePubkeyG1Response) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -335,8 +411,10 @@ func init() {
 	proto.RegisterType((*QuerySignerResponse)(nil), "zgc.dasigners.v1.QuerySignerResponse")
 	proto.RegisterType((*QueryEpochNumberRequest)(nil), "zgc.dasigners.v1.QueryEpochNumberRequest")
 	proto.RegisterType((*QueryEpochNumberResponse)(nil), "zgc.dasigners.v1.QueryEpochNumberResponse")
-	proto.RegisterType((*QueryEpochSignerSetRequest)(nil), "zgc.dasigners.v1.QueryEpochSignerSetRequest")
-	proto.RegisterType((*QueryEpochSignerSetResponse)(nil), "zgc.dasigners.v1.QueryEpochSignerSetResponse")
+	proto.RegisterType((*QueryQuorumCountRequest)(nil), "zgc.dasigners.v1.QueryQuorumCountRequest")
+	proto.RegisterType((*QueryQuorumCountResponse)(nil), "zgc.dasigners.v1.QueryQuorumCountResponse")
+	proto.RegisterType((*QueryEpochQuorumRequest)(nil), "zgc.dasigners.v1.QueryEpochQuorumRequest")
+	proto.RegisterType((*QueryEpochQuorumResponse)(nil), "zgc.dasigners.v1.QueryEpochQuorumResponse")
 	proto.RegisterType((*QueryAggregatePubkeyG1Request)(nil), "zgc.dasigners.v1.QueryAggregatePubkeyG1Request")
 	proto.RegisterType((*QueryAggregatePubkeyG1Response)(nil), "zgc.dasigners.v1.QueryAggregatePubkeyG1Response")
 }
@@ -344,45 +422,49 @@ func init() {
 func init() { proto.RegisterFile("zgc/dasigners/v1/query.proto", fileDescriptor_991a610b84b5964c) }
 
 var fileDescriptor_991a610b84b5964c = []byte{
-	// 600 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x54, 0x4f, 0x6f, 0xd3, 0x4e,
-	0x10, 0x8d, 0xfb, 0x57, 0xbf, 0x6d, 0x7e, 0xa8, 0xdd, 0x56, 0xaa, 0x63, 0x5a, 0x27, 0x35, 0x29,
-	0x6a, 0x51, 0xed, 0x4d, 0xc2, 0x19, 0x21, 0x2a, 0xa1, 0x9e, 0x40, 0xd4, 0xbd, 0x71, 0x89, 0xd6,
-	0x66, 0xd9, 0x58, 0xc4, 0x5e, 0x37, 0x5e, 0x47, 0x4d, 0x8f, 0x5c, 0xb9, 0x20, 0x71, 0xe1, 0x03,
-	0xf0, 0x61, 0x7a, 0xa3, 0x12, 0x17, 0x8e, 0x90, 0xf0, 0x41, 0x50, 0x76, 0x37, 0x09, 0x8e, 0x71,
-	0xc9, 0x6d, 0xf7, 0xcd, 0x9b, 0x79, 0x6f, 0x76, 0x46, 0x0b, 0xf6, 0xae, 0xa9, 0x8f, 0xde, 0xe0,
-	0x24, 0xa0, 0x11, 0xe9, 0x25, 0xa8, 0xdf, 0x44, 0x97, 0x29, 0xe9, 0x0d, 0x9c, 0xb8, 0xc7, 0x38,
-	0x83, 0x9b, 0xd7, 0xd4, 0x77, 0xa6, 0x51, 0xa7, 0xdf, 0x34, 0x2a, 0x3e, 0x4b, 0x42, 0x96, 0xb4,
-	0x45, 0x1c, 0xc9, 0x8b, 0x24, 0x1b, 0x3b, 0x94, 0x51, 0x26, 0xf1, 0xf1, 0x49, 0xa1, 0x7b, 0x94,
-	0x31, 0xda, 0x25, 0x08, 0xc7, 0x01, 0xc2, 0x51, 0xc4, 0x38, 0xe6, 0x01, 0x8b, 0x26, 0x39, 0x15,
-	0x15, 0x15, 0x37, 0x2f, 0x7d, 0x8b, 0x70, 0xa4, 0xb4, 0x8d, 0xea, 0x7c, 0x88, 0x07, 0x21, 0x49,
-	0x38, 0x0e, 0x63, 0x45, 0xa8, 0xe5, 0xac, 0xcf, 0x9c, 0x0a, 0x86, 0xe5, 0x00, 0x78, 0x3e, 0xee,
-	0xe6, 0x42, 0xa0, 0x2e, 0xb9, 0x4c, 0x49, 0xc2, 0xa1, 0x0e, 0xd6, 0xb1, 0xef, 0xb3, 0x34, 0xe2,
-	0xba, 0x56, 0xd3, 0x8e, 0xfe, 0x73, 0x27, 0x57, 0xeb, 0x0c, 0x6c, 0x67, 0xf8, 0x49, 0xcc, 0xa2,
-	0x84, 0xc0, 0x06, 0x58, 0x93, 0x75, 0x05, 0x7f, 0xa3, 0xa5, 0x3b, 0xf3, 0xcf, 0xe2, 0xa8, 0x0c,
-	0xc5, 0xb3, 0x2a, 0x60, 0x57, 0x14, 0x7a, 0x1e, 0x33, 0xbf, 0xf3, 0x32, 0x0d, 0xbd, 0xa9, 0xba,
-	0xf5, 0x04, 0xe8, 0xf9, 0x90, 0x12, 0x3a, 0x00, 0x65, 0x32, 0x86, 0xdb, 0x91, 0xc0, 0x85, 0xdc,
-	0x8a, 0xbb, 0x41, 0x66, 0x54, 0xeb, 0x29, 0x30, 0x66, 0xe9, 0x52, 0xf5, 0x82, 0xf0, 0x49, 0x6b,
-	0x0b, 0x14, 0x38, 0x07, 0xf7, 0xff, 0x5a, 0x40, 0x59, 0x68, 0x81, 0x75, 0xd5, 0x96, 0xae, 0xd5,
-	0x96, 0xef, 0x6c, 0x76, 0x42, 0xb4, 0x3a, 0x60, 0x5f, 0x94, 0x7c, 0x46, 0x69, 0x8f, 0x50, 0xcc,
-	0xc9, 0xab, 0xd4, 0x7b, 0x47, 0x06, 0x67, 0xcd, 0xc5, 0x6d, 0xc1, 0x3a, 0xf8, 0x5f, 0x95, 0x3b,
-	0x0d, 0x78, 0x88, 0x63, 0x7d, 0xa9, 0xa6, 0x1d, 0x95, 0xdd, 0x2c, 0x68, 0x5d, 0x01, 0xb3, 0x48,
-	0x49, 0xf9, 0x77, 0xc0, 0x36, 0x9e, 0x04, 0xdb, 0xb1, 0x88, 0xb6, 0x69, 0x53, 0x28, 0x96, 0xdd,
-	0x2d, 0x3c, 0x9f, 0x07, 0x77, 0xc0, 0x2a, 0x67, 0x1c, 0x77, 0x85, 0xde, 0x8a, 0x2b, 0x2f, 0x70,
-	0x13, 0x2c, 0x77, 0x02, 0xae, 0x2f, 0x0b, 0x6c, 0x7c, 0x6c, 0x7d, 0x5d, 0x01, 0xab, 0x42, 0x1a,
-	0x7e, 0xd0, 0xc0, 0xc6, 0x1f, 0xc3, 0x83, 0xc7, 0xf9, 0x07, 0x2a, 0x98, 0xbd, 0xf1, 0x68, 0x11,
-	0xaa, 0x6c, 0xc4, 0x3a, 0x7c, 0xff, 0xed, 0xd7, 0xa7, 0xa5, 0x2a, 0xdc, 0x47, 0x0d, 0x9a, 0xdd,
-	0x72, 0xf1, 0x6c, 0xb6, 0x7c, 0x4a, 0xf8, 0x59, 0x03, 0xf7, 0xb2, 0xa3, 0x84, 0x27, 0x77, 0xa9,
-	0xcc, 0xaf, 0x8c, 0x61, 0x2f, 0xc8, 0x56, 0xb6, 0x8e, 0x85, 0xad, 0x07, 0xf0, 0xa0, 0xc0, 0x96,
-	0x04, 0xec, 0x84, 0x70, 0xf8, 0x45, 0x03, 0x5b, 0xb9, 0x41, 0x41, 0x54, 0xa0, 0x57, 0xb4, 0x3c,
-	0x46, 0x63, 0xf1, 0x04, 0xe5, 0xf1, 0x44, 0x78, 0x7c, 0x08, 0xeb, 0x39, 0x8f, 0xd3, 0xf9, 0xdb,
-	0x72, 0x35, 0x6c, 0xda, 0x84, 0x7d, 0xb0, 0x26, 0xdb, 0x84, 0xf5, 0x02, 0xa5, 0xcc, 0xf7, 0x61,
-	0x1c, 0xfe, 0x83, 0xa5, 0x4c, 0x54, 0x85, 0x89, 0x0a, 0xdc, 0xcd, 0x99, 0x90, 0xc7, 0xd3, 0x17,
-	0x37, 0x3f, 0xcd, 0xd2, 0xcd, 0xd0, 0xd4, 0x6e, 0x87, 0xa6, 0xf6, 0x63, 0x68, 0x6a, 0x1f, 0x47,
-	0x66, 0xe9, 0x76, 0x64, 0x96, 0xbe, 0x8f, 0xcc, 0xd2, 0x6b, 0x44, 0x03, 0xde, 0x49, 0x3d, 0xc7,
-	0x67, 0x21, 0x6a, 0xd0, 0x2e, 0xf6, 0x12, 0xd4, 0xa0, 0xb6, 0xdf, 0xc1, 0x41, 0x84, 0xae, 0xb2,
-	0xf5, 0xf8, 0x20, 0x26, 0x89, 0xb7, 0x26, 0xbe, 0xbc, 0xc7, 0xbf, 0x03, 0x00, 0x00, 0xff, 0xff,
-	0x9b, 0xb2, 0x92, 0x94, 0xd1, 0x05, 0x00, 0x00,
+	// 658 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x55, 0x4f, 0x4f, 0xd4, 0x4e,
+	0x18, 0xde, 0xf2, 0x2f, 0x30, 0xf0, 0x4b, 0x60, 0x20, 0xa1, 0xdb, 0x1f, 0x94, 0xb5, 0x82, 0x41,
+	0xe3, 0x76, 0xba, 0x78, 0xd5, 0x83, 0x18, 0x43, 0x4c, 0xd4, 0x48, 0x3d, 0xe9, 0x65, 0x33, 0x2d,
+	0xe3, 0x6c, 0x23, 0xed, 0x74, 0xb7, 0x53, 0x02, 0x1c, 0x8d, 0x37, 0x2f, 0x26, 0x7e, 0x05, 0x3f,
+	0x0c, 0x47, 0x12, 0x2f, 0x1e, 0x15, 0xfc, 0x20, 0x66, 0x67, 0xa6, 0xdb, 0x2d, 0xdd, 0x2e, 0x7b,
+	0xf0, 0x36, 0xf3, 0xbe, 0xef, 0xf3, 0x3e, 0xcf, 0x3c, 0x3c, 0x74, 0xc1, 0xc6, 0x39, 0xf5, 0xd1,
+	0x11, 0x4e, 0x02, 0x1a, 0x91, 0x5e, 0x82, 0x4e, 0x5a, 0xa8, 0x9b, 0x92, 0xde, 0x99, 0x1d, 0xf7,
+	0x18, 0x67, 0x70, 0xf9, 0x9c, 0xfa, 0xf6, 0xa0, 0x6b, 0x9f, 0xb4, 0x8c, 0xba, 0xcf, 0x92, 0x90,
+	0x25, 0x6d, 0xd1, 0x47, 0xf2, 0x22, 0x87, 0x8d, 0x35, 0xca, 0x28, 0x93, 0xf5, 0xfe, 0x49, 0x55,
+	0x37, 0x28, 0x63, 0xf4, 0x98, 0x20, 0x1c, 0x07, 0x08, 0x47, 0x11, 0xe3, 0x98, 0x07, 0x2c, 0xca,
+	0x30, 0x75, 0xd5, 0x15, 0x37, 0x2f, 0xfd, 0x80, 0x70, 0xa4, 0xb8, 0x8d, 0xad, 0x9b, 0x2d, 0x1e,
+	0x84, 0x24, 0xe1, 0x38, 0x8c, 0xd5, 0x40, 0xa3, 0x24, 0x3d, 0x57, 0x2a, 0x26, 0x2c, 0x07, 0xc0,
+	0xc3, 0xfe, 0x6b, 0xde, 0x8a, 0xaa, 0x4b, 0xba, 0x29, 0x49, 0x38, 0x34, 0xc0, 0x3c, 0xf6, 0x7d,
+	0x96, 0x46, 0x3c, 0xd1, 0xb5, 0xc6, 0xf4, 0xee, 0x82, 0x3b, 0xb8, 0x5b, 0x07, 0x60, 0xb5, 0x80,
+	0x48, 0x62, 0x16, 0x25, 0x04, 0x3a, 0x60, 0x4e, 0x6e, 0x16, 0x80, 0xc5, 0x3d, 0xdd, 0xbe, 0x69,
+	0x8c, 0xad, 0x10, 0x6a, 0xce, 0xaa, 0x83, 0x75, 0xb1, 0xe8, 0x79, 0xcc, 0xfc, 0xce, 0xeb, 0x34,
+	0xf4, 0x06, 0xfc, 0xd6, 0x13, 0xa0, 0x97, 0x5b, 0x8a, 0xe8, 0x0e, 0x58, 0x22, 0xfd, 0x72, 0x3b,
+	0x12, 0x75, 0x5d, 0x6b, 0x68, 0xbb, 0x33, 0xee, 0x22, 0xc9, 0x47, 0xad, 0xc7, 0x6a, 0xf3, 0x61,
+	0xca, 0x7a, 0x69, 0xf8, 0xac, 0xaf, 0x3b, 0x7b, 0xd9, 0x04, 0xe8, 0x8c, 0xbc, 0x80, 0xce, 0xc9,
+	0xbb, 0xa2, 0xdc, 0x16, 0x6e, 0x64, 0xf0, 0x6e, 0x3e, 0x6a, 0xbd, 0x1b, 0x7e, 0x96, 0xdc, 0x31,
+	0x39, 0x39, 0xfc, 0x1f, 0x2c, 0x28, 0x82, 0xe0, 0x48, 0x9f, 0x12, 0xfd, 0x79, 0x59, 0x78, 0x71,
+	0x64, 0xbd, 0x1c, 0xb6, 0x25, 0x5b, 0x9d, 0xfb, 0x2f, 0xe7, 0xc4, 0xd6, 0x91, 0xfe, 0x2b, 0x84,
+	0x9a, 0xb3, 0x3e, 0x6b, 0x60, 0x53, 0xac, 0x7b, 0x4a, 0x69, 0x8f, 0x50, 0xcc, 0xc9, 0x9b, 0xd4,
+	0xfb, 0x48, 0xce, 0x0e, 0x5a, 0xff, 0x48, 0x2f, 0xbc, 0x0b, 0xfe, 0x53, 0x4d, 0x2f, 0xe0, 0x21,
+	0x8e, 0xf5, 0xe9, 0x86, 0xb6, 0xbb, 0xe4, 0x2a, 0x0b, 0xf7, 0x45, 0xcd, 0x3a, 0x05, 0x66, 0x95,
+	0x0a, 0xf5, 0x34, 0x1b, 0xac, 0xe2, 0xac, 0xd9, 0x8e, 0x45, 0xb7, 0x4d, 0x5b, 0x42, 0xcd, 0x92,
+	0xbb, 0x82, 0x6f, 0xe2, 0xe0, 0x1a, 0x98, 0xe5, 0x8c, 0xe3, 0x63, 0xa5, 0x47, 0x5e, 0xe0, 0x32,
+	0x98, 0xee, 0x04, 0x5c, 0x48, 0x98, 0x71, 0xfb, 0xc7, 0xbd, 0xcb, 0x59, 0x30, 0x2b, 0xa8, 0xe1,
+	0x17, 0x0d, 0x2c, 0x0e, 0x65, 0x0d, 0xde, 0x1f, 0x65, 0xde, 0xc8, 0xa8, 0x1a, 0x0f, 0x26, 0x19,
+	0x95, 0x0f, 0xb1, 0x76, 0x3e, 0xfd, 0xf8, 0xf3, 0x6d, 0x6a, 0x0b, 0x6e, 0x22, 0x87, 0x16, 0xff,
+	0x2d, 0x85, 0xa5, 0x4d, 0x69, 0xb3, 0x50, 0x33, 0x14, 0xbe, 0x4a, 0x35, 0xe5, 0x78, 0x57, 0xaa,
+	0x19, 0x91, 0xe5, 0x31, 0x6a, 0xe4, 0xdf, 0xa7, 0x29, 0x22, 0x9e, 0x7b, 0x23, 0x77, 0x8c, 0xf7,
+	0xa6, 0x90, 0xf7, 0xf1, 0xde, 0x14, 0xf3, 0x7b, 0xab, 0x37, 0x52, 0x13, 0xfc, 0xae, 0x81, 0x95,
+	0x52, 0x52, 0x20, 0xaa, 0x20, 0xaa, 0x4a, 0xb6, 0xe1, 0x4c, 0x0e, 0x50, 0xfa, 0x1e, 0x0a, 0x7d,
+	0xf7, 0xe0, 0x76, 0x49, 0xdf, 0x20, 0x80, 0x4d, 0x99, 0xcd, 0x26, 0x6d, 0xc1, 0x13, 0x30, 0x27,
+	0xbf, 0x76, 0x70, 0xbb, 0x82, 0xa9, 0xf0, 0xc1, 0x35, 0x76, 0x6e, 0x99, 0x52, 0x22, 0xb6, 0x84,
+	0x88, 0x3a, 0x5c, 0x2f, 0x89, 0x90, 0xc7, 0xfd, 0x57, 0x17, 0xbf, 0xcd, 0xda, 0xc5, 0x95, 0xa9,
+	0x5d, 0x5e, 0x99, 0xda, 0xaf, 0x2b, 0x53, 0xfb, 0x7a, 0x6d, 0xd6, 0x2e, 0xaf, 0xcd, 0xda, 0xcf,
+	0x6b, 0xb3, 0xf6, 0x1e, 0xd1, 0x80, 0x77, 0x52, 0xcf, 0xf6, 0x59, 0x88, 0x1c, 0x7a, 0x8c, 0xbd,
+	0x04, 0x39, 0xb4, 0xe9, 0x77, 0x70, 0x10, 0xa1, 0xd3, 0xe2, 0x3e, 0x7e, 0x16, 0x93, 0xc4, 0x9b,
+	0x13, 0x3f, 0x12, 0x8f, 0xfe, 0x06, 0x00, 0x00, 0xff, 0xff, 0x1f, 0x8c, 0xd5, 0xcf, 0x03, 0x07,
+	0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -398,7 +480,8 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
 	EpochNumber(ctx context.Context, in *QueryEpochNumberRequest, opts ...grpc.CallOption) (*QueryEpochNumberResponse, error)
-	EpochSignerSet(ctx context.Context, in *QueryEpochSignerSetRequest, opts ...grpc.CallOption) (*QueryEpochSignerSetResponse, error)
+	QuorumCount(ctx context.Context, in *QueryQuorumCountRequest, opts ...grpc.CallOption) (*QueryQuorumCountResponse, error)
+	EpochQuorum(ctx context.Context, in *QueryEpochQuorumRequest, opts ...grpc.CallOption) (*QueryEpochQuorumResponse, error)
 	AggregatePubkeyG1(ctx context.Context, in *QueryAggregatePubkeyG1Request, opts ...grpc.CallOption) (*QueryAggregatePubkeyG1Response, error)
 	Signer(ctx context.Context, in *QuerySignerRequest, opts ...grpc.CallOption) (*QuerySignerResponse, error)
 }
@@ -420,9 +503,18 @@ func (c *queryClient) EpochNumber(ctx context.Context, in *QueryEpochNumberReque
 	return out, nil
 }
 
-func (c *queryClient) EpochSignerSet(ctx context.Context, in *QueryEpochSignerSetRequest, opts ...grpc.CallOption) (*QueryEpochSignerSetResponse, error) {
-	out := new(QueryEpochSignerSetResponse)
-	err := c.cc.Invoke(ctx, "/zgc.dasigners.v1.Query/EpochSignerSet", in, out, opts...)
+func (c *queryClient) QuorumCount(ctx context.Context, in *QueryQuorumCountRequest, opts ...grpc.CallOption) (*QueryQuorumCountResponse, error) {
+	out := new(QueryQuorumCountResponse)
+	err := c.cc.Invoke(ctx, "/zgc.dasigners.v1.Query/QuorumCount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) EpochQuorum(ctx context.Context, in *QueryEpochQuorumRequest, opts ...grpc.CallOption) (*QueryEpochQuorumResponse, error) {
+	out := new(QueryEpochQuorumResponse)
+	err := c.cc.Invoke(ctx, "/zgc.dasigners.v1.Query/EpochQuorum", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -450,7 +542,8 @@ func (c *queryClient) Signer(ctx context.Context, in *QuerySignerRequest, opts .
 // QueryServer is the server API for Query service.
 type QueryServer interface {
 	EpochNumber(context.Context, *QueryEpochNumberRequest) (*QueryEpochNumberResponse, error)
-	EpochSignerSet(context.Context, *QueryEpochSignerSetRequest) (*QueryEpochSignerSetResponse, error)
+	QuorumCount(context.Context, *QueryQuorumCountRequest) (*QueryQuorumCountResponse, error)
+	EpochQuorum(context.Context, *QueryEpochQuorumRequest) (*QueryEpochQuorumResponse, error)
 	AggregatePubkeyG1(context.Context, *QueryAggregatePubkeyG1Request) (*QueryAggregatePubkeyG1Response, error)
 	Signer(context.Context, *QuerySignerRequest) (*QuerySignerResponse, error)
 }
@@ -462,8 +555,11 @@ type UnimplementedQueryServer struct {
 func (*UnimplementedQueryServer) EpochNumber(ctx context.Context, req *QueryEpochNumberRequest) (*QueryEpochNumberResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EpochNumber not implemented")
 }
-func (*UnimplementedQueryServer) EpochSignerSet(ctx context.Context, req *QueryEpochSignerSetRequest) (*QueryEpochSignerSetResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EpochSignerSet not implemented")
+func (*UnimplementedQueryServer) QuorumCount(ctx context.Context, req *QueryQuorumCountRequest) (*QueryQuorumCountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QuorumCount not implemented")
+}
+func (*UnimplementedQueryServer) EpochQuorum(ctx context.Context, req *QueryEpochQuorumRequest) (*QueryEpochQuorumResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EpochQuorum not implemented")
 }
 func (*UnimplementedQueryServer) AggregatePubkeyG1(ctx context.Context, req *QueryAggregatePubkeyG1Request) (*QueryAggregatePubkeyG1Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AggregatePubkeyG1 not implemented")
@@ -494,20 +590,38 @@ func _Query_EpochNumber_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_EpochSignerSet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryEpochSignerSetRequest)
+func _Query_QuorumCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryQuorumCountRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).EpochSignerSet(ctx, in)
+		return srv.(QueryServer).QuorumCount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/zgc.dasigners.v1.Query/EpochSignerSet",
+		FullMethod: "/zgc.dasigners.v1.Query/QuorumCount",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).EpochSignerSet(ctx, req.(*QueryEpochSignerSetRequest))
+		return srv.(QueryServer).QuorumCount(ctx, req.(*QueryQuorumCountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_EpochQuorum_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryEpochQuorumRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).EpochQuorum(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zgc.dasigners.v1.Query/EpochQuorum",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).EpochQuorum(ctx, req.(*QueryEpochQuorumRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -557,8 +671,12 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_EpochNumber_Handler,
 		},
 		{
-			MethodName: "EpochSignerSet",
-			Handler:    _Query_EpochSignerSet_Handler,
+			MethodName: "QuorumCount",
+			Handler:    _Query_QuorumCount_Handler,
+		},
+		{
+			MethodName: "EpochQuorum",
+			Handler:    _Query_EpochQuorum_Handler,
 		},
 		{
 			MethodName: "AggregatePubkeyG1",
@@ -593,12 +711,14 @@ func (m *QuerySignerRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Account) > 0 {
-		i -= len(m.Account)
-		copy(dAtA[i:], m.Account)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.Account)))
-		i--
-		dAtA[i] = 0xa
+	if len(m.Accounts) > 0 {
+		for iNdEx := len(m.Accounts) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Accounts[iNdEx])
+			copy(dAtA[i:], m.Accounts[iNdEx])
+			i = encodeVarintQuery(dAtA, i, uint64(len(m.Accounts[iNdEx])))
+			i--
+			dAtA[i] = 0xa
+		}
 	}
 	return len(dAtA) - i, nil
 }
@@ -623,17 +743,19 @@ func (m *QuerySignerResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.Signer != nil {
-		{
-			size, err := m.Signer.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
+	if len(m.Signer) > 0 {
+		for iNdEx := len(m.Signer) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Signer[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
 			}
-			i -= size
-			i = encodeVarintQuery(dAtA, i, uint64(size))
+			i--
+			dAtA[i] = 0xa
 		}
-		i--
-		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -689,7 +811,7 @@ func (m *QueryEpochNumberResponse) MarshalToSizedBuffer(dAtA []byte) (int, error
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryEpochSignerSetRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryQuorumCountRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -699,12 +821,12 @@ func (m *QueryEpochSignerSetRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryEpochSignerSetRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryQuorumCountRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryEpochSignerSetRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryQuorumCountRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -717,7 +839,7 @@ func (m *QueryEpochSignerSetRequest) MarshalToSizedBuffer(dAtA []byte) (int, err
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryEpochSignerSetResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryQuorumCountResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -727,29 +849,88 @@ func (m *QueryEpochSignerSetResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryEpochSignerSetResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryQuorumCountResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryEpochSignerSetResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryQuorumCountResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Signers) > 0 {
-		for iNdEx := len(m.Signers) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Signers[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintQuery(dAtA, i, uint64(size))
+	if m.QuorumCount != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.QuorumCount))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryEpochQuorumRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryEpochQuorumRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryEpochQuorumRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.QuorumId != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.QuorumId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.EpochNumber != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.EpochNumber))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryEpochQuorumResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryEpochQuorumResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryEpochQuorumResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Quorum != nil {
+		{
+			size, err := m.Quorum.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
 			}
-			i--
-			dAtA[i] = 0xa
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
 		}
+		i--
+		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -774,12 +955,17 @@ func (m *QueryAggregatePubkeyG1Request) MarshalToSizedBuffer(dAtA []byte) (int, 
 	_ = i
 	var l int
 	_ = l
-	if len(m.SignersBitmap) > 0 {
-		i -= len(m.SignersBitmap)
-		copy(dAtA[i:], m.SignersBitmap)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.SignersBitmap)))
+	if len(m.QuorumBitmap) > 0 {
+		i -= len(m.QuorumBitmap)
+		copy(dAtA[i:], m.QuorumBitmap)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.QuorumBitmap)))
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x1a
+	}
+	if m.QuorumId != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.QuorumId))
+		i--
+		dAtA[i] = 0x10
 	}
 	if m.EpochNumber != 0 {
 		i = encodeVarintQuery(dAtA, i, uint64(m.EpochNumber))
@@ -846,9 +1032,11 @@ func (m *QuerySignerRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.Account)
-	if l > 0 {
-		n += 1 + l + sovQuery(uint64(l))
+	if len(m.Accounts) > 0 {
+		for _, s := range m.Accounts {
+			l = len(s)
+			n += 1 + l + sovQuery(uint64(l))
+		}
 	}
 	return n
 }
@@ -859,9 +1047,11 @@ func (m *QuerySignerResponse) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.Signer != nil {
-		l = m.Signer.Size()
-		n += 1 + l + sovQuery(uint64(l))
+	if len(m.Signer) > 0 {
+		for _, e := range m.Signer {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
 	}
 	return n
 }
@@ -887,7 +1077,7 @@ func (m *QueryEpochNumberResponse) Size() (n int) {
 	return n
 }
 
-func (m *QueryEpochSignerSetRequest) Size() (n int) {
+func (m *QueryQuorumCountRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -899,17 +1089,42 @@ func (m *QueryEpochSignerSetRequest) Size() (n int) {
 	return n
 }
 
-func (m *QueryEpochSignerSetResponse) Size() (n int) {
+func (m *QueryQuorumCountResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if len(m.Signers) > 0 {
-		for _, e := range m.Signers {
-			l = e.Size()
-			n += 1 + l + sovQuery(uint64(l))
-		}
+	if m.QuorumCount != 0 {
+		n += 1 + sovQuery(uint64(m.QuorumCount))
+	}
+	return n
+}
+
+func (m *QueryEpochQuorumRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.EpochNumber != 0 {
+		n += 1 + sovQuery(uint64(m.EpochNumber))
+	}
+	if m.QuorumId != 0 {
+		n += 1 + sovQuery(uint64(m.QuorumId))
+	}
+	return n
+}
+
+func (m *QueryEpochQuorumResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Quorum != nil {
+		l = m.Quorum.Size()
+		n += 1 + l + sovQuery(uint64(l))
 	}
 	return n
 }
@@ -923,7 +1138,10 @@ func (m *QueryAggregatePubkeyG1Request) Size() (n int) {
 	if m.EpochNumber != 0 {
 		n += 1 + sovQuery(uint64(m.EpochNumber))
 	}
-	l = len(m.SignersBitmap)
+	if m.QuorumId != 0 {
+		n += 1 + sovQuery(uint64(m.QuorumId))
+	}
+	l = len(m.QuorumBitmap)
 	if l > 0 {
 		n += 1 + l + sovQuery(uint64(l))
 	}
@@ -986,7 +1204,7 @@ func (m *QuerySignerRequest) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Account", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Accounts", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1014,7 +1232,7 @@ func (m *QuerySignerRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Account = string(dAtA[iNdEx:postIndex])
+			m.Accounts = append(m.Accounts, string(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1095,10 +1313,8 @@ func (m *QuerySignerResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.Signer == nil {
-				m.Signer = &Signer{}
-			}
-			if err := m.Signer.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			m.Signer = append(m.Signer, &Signer{})
+			if err := m.Signer[len(m.Signer)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -1242,7 +1458,7 @@ func (m *QueryEpochNumberResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryEpochSignerSetRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryQuorumCountRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1265,10 +1481,10 @@ func (m *QueryEpochSignerSetRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryEpochSignerSetRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryQuorumCountRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryEpochSignerSetRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryQuorumCountRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1311,7 +1527,7 @@ func (m *QueryEpochSignerSetRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryEpochSignerSetResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryQuorumCountResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1334,15 +1550,172 @@ func (m *QueryEpochSignerSetResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryEpochSignerSetResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryQuorumCountResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryEpochSignerSetResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryQuorumCountResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field QuorumCount", wireType)
+			}
+			m.QuorumCount = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.QuorumCount |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryEpochQuorumRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryEpochQuorumRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryEpochQuorumRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EpochNumber", wireType)
+			}
+			m.EpochNumber = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.EpochNumber |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field QuorumId", wireType)
+			}
+			m.QuorumId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.QuorumId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryEpochQuorumResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryEpochQuorumResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryEpochQuorumResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Signers", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Quorum", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -1369,8 +1742,10 @@ func (m *QueryEpochSignerSetResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Signers = append(m.Signers, &Signer{})
-			if err := m.Signers[len(m.Signers)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if m.Quorum == nil {
+				m.Quorum = &Quorum{}
+			}
+			if err := m.Quorum.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -1444,8 +1819,27 @@ func (m *QueryAggregatePubkeyG1Request) Unmarshal(dAtA []byte) error {
 				}
 			}
 		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field QuorumId", wireType)
+			}
+			m.QuorumId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.QuorumId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SignersBitmap", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field QuorumBitmap", wireType)
 			}
 			var byteLen int
 			for shift := uint(0); ; shift += 7 {
@@ -1472,9 +1866,9 @@ func (m *QueryAggregatePubkeyG1Request) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.SignersBitmap = append(m.SignersBitmap[:0], dAtA[iNdEx:postIndex]...)
-			if m.SignersBitmap == nil {
-				m.SignersBitmap = []byte{}
+			m.QuorumBitmap = append(m.QuorumBitmap[:0], dAtA[iNdEx:postIndex]...)
+			if m.QuorumBitmap == nil {
+				m.QuorumBitmap = []byte{}
 			}
 			iNdEx = postIndex
 		default:

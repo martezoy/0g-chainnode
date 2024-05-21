@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"bytes"
-	"math/big"
 	"sort"
 
 	"github.com/0glabs/0g-chain/x/dasigners/v1/types"
@@ -56,9 +55,6 @@ func (k Keeper) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 			continue
 		}
 		num := validator.Tokens.Quo(sdk.NewInt(1_000_000_000_000_000_000)).Quo(tokensPerVote).Abs().BigInt()
-		if num.Cmp(big.NewInt(int64(params.MaxVotes))) > 0 {
-			num = big.NewInt(int64(params.MaxVotes))
-		}
 		content := registration.content
 		ballotNum := num.Int64()
 		for j := 0; j < int(ballotNum); j += 1 {
@@ -72,17 +68,48 @@ func (k Keeper) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 	sort.Slice(ballots, func(i, j int) bool {
 		return bytes.Compare(ballots[i].content, ballots[j].content) < 0
 	})
-	chosen := make(map[string]struct{})
-	epochSignerSet := types.EpochSignerSet{
-		Signers: make([]string, 0),
+
+	quorums := types.Quorums{
+		Quorums: make([]*types.Quorum, 0),
 	}
-	for _, ballot := range ballots {
-		if _, ok := chosen[ballot.account]; !ok {
-			chosen[ballot.account] = struct{}{}
-			epochSignerSet.Signers = append(epochSignerSet.Signers, ballot.account)
+	if len(ballots) >= int(params.EncodedSlices) {
+		for i := 0; i+int(params.EncodedSlices) <= len(ballots); i += int(params.EncodedSlices) {
+			if int(params.MaxQuorums) < len(quorums.Quorums) {
+				break
+			}
+			quorum := types.Quorum{
+				Signers: make([]string, params.EncodedSlices),
+			}
+			for j := 0; j < int(params.EncodedSlices); j += 1 {
+				quorum.Signers[j] = ballots[i+j].account
+			}
+			quorums.Quorums = append(quorums.Quorums, &quorum)
 		}
+		if len(ballots)%int(params.EncodedSlices) != 0 && int(params.MaxQuorums) > len(quorums.Quorums) {
+			quorum := types.Quorum{
+				Signers: make([]string, 0),
+			}
+			for j := len(ballots) - int(params.EncodedSlices); j < len(ballots); j += 1 {
+				quorum.Signers = append(quorum.Signers, ballots[j].account)
+			}
+			quorums.Quorums = append(quorums.Quorums, &quorum)
+		}
+	} else if len(ballots) > 0 {
+		quorum := types.Quorum{
+			Signers: make([]string, params.EncodedSlices),
+		}
+		n := len(ballots)
+		for i := 0; i < int(params.EncodedSlices); i += 1 {
+			quorum.Signers[i] = ballots[i%n].account
+		}
+		quorums.Quorums = append(quorums.Quorums, &quorum)
+	} else {
+		quorums.Quorums = append(quorums.Quorums, &types.Quorum{
+			Signers: make([]string, 0),
+		})
 	}
+
 	// save to store
-	k.SetEpochSignerSet(ctx, expectedEpoch, epochSignerSet)
+	k.SetEpochQuorums(ctx, expectedEpoch, quorums)
 	k.SetEpochNumber(ctx, expectedEpoch)
 }

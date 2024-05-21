@@ -19,9 +19,10 @@ const (
 
 var (
 	// prefix
-	SignerKeyPrefix         = []byte{0x00}
-	EpochSignerSetKeyPrefix = []byte{0x01}
-	RegistrationKeyPrefix   = []byte{0x02}
+	SignerKeyPrefix       = []byte{0x00}
+	EpochQuorumsKeyPrefix = []byte{0x01}
+	RegistrationKeyPrefix = []byte{0x02}
+	QuorumCountKeyPrefix  = []byte{0x03}
 
 	// keys
 	ParamsKey      = []byte{0x05}
@@ -32,7 +33,11 @@ func GetSignerKeyFromAccount(account string) ([]byte, error) {
 	return hex.DecodeString(account)
 }
 
-func GetEpochSignerSetKeyFromEpoch(epoch uint64) []byte {
+func GetEpochQuorumsKeyFromEpoch(epoch uint64) []byte {
+	return sdk.Uint64ToBigEndian(epoch)
+}
+
+func GetQuorumCountKey(epoch uint64) []byte {
 	return sdk.Uint64ToBigEndian(epoch)
 }
 

@@ -20,8 +20,8 @@ func InitGenesis(ctx sdk.Context, keeper keeper.Keeper, gs types.GenesisState) {
 			panic(fmt.Sprintf("failed to write genesis state into store: %s", err))
 		}
 	}
-	for epoch, signers := range gs.SignersByEpoch {
-		keeper.SetEpochSignerSet(ctx, uint64(epoch), *signers)
+	for epoch, quorums := range gs.QuorumsByEpoch {
+		keeper.SetEpochQuorums(ctx, uint64(epoch), *quorums)
 	}
 	keeper.SetParams(ctx, gs.Params)
 }
@@ -38,13 +38,13 @@ func ExportGenesis(ctx sdk.Context, keeper keeper.Keeper) *types.GenesisState {
 		signers = append(signers, &signer)
 		return false
 	})
-	epochSignerSets := make([]*types.EpochSignerSet, 0)
+	epochQuorums := make([]*types.Quorums, 0)
 	for i := 0; i < int(epochNumber); i += 1 {
-		epochSignerSet, found := keeper.GetEpochSignerSet(ctx, uint64(i))
+		quorums, found := keeper.GetEpochQuorums(ctx, uint64(i))
 		if !found {
-			panic("historical epoch signer set not found")
+			panic("historical quorums not found")
 		}
-		epochSignerSets = append(epochSignerSets, &epochSignerSet)
+		epochQuorums = append(epochQuorums, &quorums)
 	}
-	return types.NewGenesisState(params, epochNumber, signers, epochSignerSets)
+	return types.NewGenesisState(params, epochNumber, signers, epochQuorums)
 }
