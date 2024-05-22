@@ -34,6 +34,7 @@ import (
 	"github.com/tendermint/tendermint/version"
 
 	"github.com/0glabs/0g-chain/app"
+	"github.com/0glabs/0g-chain/chaincfg"
 	evmutilkeeper "github.com/0glabs/0g-chain/x/evmutil/keeper"
 	evmutiltestutil "github.com/0glabs/0g-chain/x/evmutil/testutil"
 	evmutiltypes "github.com/0glabs/0g-chain/x/evmutil/types"
@@ -155,7 +156,7 @@ func (suite *EIP712TestSuite) SetupTest() {
 	// Genesis states
 	evmGs := evmtypes.NewGenesisState(
 		evmtypes.NewParams(
-			"neuron",                      // evmDenom
+			chaincfg.EvmDenom,             // evmDenom
 			false,                         // allowedUnprotectedTxs
 			true,                          // enableCreate
 			true,                          // enableCall
@@ -221,10 +222,10 @@ func (suite *EIP712TestSuite) SetupTest() {
 		pricefeedtypes.ModuleName: cdc.MustMarshalJSON(&pricefeedGenState),
 	}
 
-	// funds our test accounts with some ua0gi
+	// funds our test accounts with some gas denom
 	coinsGenState := app.NewFundedGenStateWithSameCoins(
 		tApp.AppCodec(),
-		sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 1e9)),
+		sdk.NewCoins(chaincfg.MakeCoinForGasDenom(1e9)),
 		[]sdk.AccAddress{suite.testAddr, suite.testAddr2},
 	)
 
@@ -306,17 +307,17 @@ func (suite *EIP712TestSuite) SetupTest() {
 	params := evmKeeper.GetParams(suite.ctx)
 	params.EIP712AllowedMsgs = []evmtypes.EIP712AllowedMsg{
 		{
-			MsgTypeUrl:       "/0g-chain.evmutil.v1beta1.MsgConvertERC20ToCoin",
+			MsgTypeUrl:       "/zgc.evmutil.v1beta1.MsgConvertERC20ToCoin",
 			MsgValueTypeName: "MsgValueEVMConvertERC20ToCoin",
 			ValueTypes: []evmtypes.EIP712MsgAttrType{
 				{Name: "initiator", Type: "string"},
 				{Name: "receiver", Type: "string"},
-				{Name: "0gchain_erc20_address", Type: "string"},
+				{Name: "zgchain_erc20_address", Type: "string"},
 				{Name: "amount", Type: "string"},
 			},
 		},
 		{
-			MsgTypeUrl:       "/0g-chain.evmutil.v1beta1.MsgConvertCoinToERC20",
+			MsgTypeUrl:       "/zgc.evmutil.v1beta1.MsgConvertCoinToERC20",
 			MsgValueTypeName: "MsgValueEVMConvertCoinToERC20",
 			ValueTypes: []evmtypes.EIP712MsgAttrType{
 				{Name: "initiator", Type: "string"},
@@ -369,7 +370,7 @@ func (suite *EIP712TestSuite) deployUSDCERC20(app app.TestApp, ctx sdk.Context) 
 	suite.tApp.FundModuleAccount(
 		suite.ctx,
 		evmutiltypes.ModuleName,
-		sdk.NewCoins(sdk.NewCoin("ua0gi", sdkmath.NewInt(0))),
+		sdk.NewCoins(chaincfg.MakeCoinForGasDenom(0)),
 	)
 
 	contractAddr, err := suite.evmutilKeeper.DeployTestMintableERC20Contract(suite.ctx, "USDC", "USDC", uint8(18))
@@ -469,7 +470,7 @@ func (suite *EIP712TestSuite) TestEIP712Tx() {
 			errMsg:         "insufficient funds",
 			updateTx: func(txBuilder client.TxBuilder, msgs []sdk.Msg) client.TxBuilder {
 				bk := suite.tApp.GetBankKeeper()
-				gasCoins := bk.GetBalance(suite.ctx, suite.testAddr, "ua0gi")
+				gasCoins := bk.GetBalance(suite.ctx, suite.testAddr, chaincfg.GasDenom)
 				suite.tApp.GetBankKeeper().SendCoins(suite.ctx, suite.testAddr, suite.testAddr2, sdk.NewCoins(gasCoins))
 				return txBuilder
 			},
@@ -481,7 +482,7 @@ func (suite *EIP712TestSuite) TestEIP712Tx() {
 			failCheckTx:    true,
 			errMsg:         "invalid chain-id",
 			updateTx: func(txBuilder client.TxBuilder, msgs []sdk.Msg) client.TxBuilder {
-				gasAmt := sdk.NewCoins(sdk.NewCoin("ua0gi", sdkmath.NewInt(20)))
+				gasAmt := sdk.NewCoins(chaincfg.MakeCoinForGasDenom(20))
 				return suite.createTestEIP712CosmosTxBuilder(
 					suite.testAddr, suite.testPrivKey, "kavatest_12-1", uint64(helpers.DefaultGenTxGas*10), gasAmt, msgs,
 				)
@@ -494,7 +495,7 @@ func (suite *EIP712TestSuite) TestEIP712Tx() {
 			failCheckTx:    true,
 			errMsg:         "invalid pubkey",
 			updateTx: func(txBuilder client.TxBuilder, msgs []sdk.Msg) client.TxBuilder {
-				gasAmt := sdk.NewCoins(sdk.NewCoin("ua0gi", sdkmath.NewInt(20)))
+				gasAmt := sdk.NewCoins(chaincfg.MakeCoinForGasDenom(20))
 				return suite.createTestEIP712CosmosTxBuilder(
 					suite.testAddr2, suite.testPrivKey2, ChainID, uint64(helpers.DefaultGenTxGas*10), gasAmt, msgs,
 				)
@@ -522,7 +523,7 @@ func (suite *EIP712TestSuite) TestEIP712Tx() {
 				msgs = tc.updateMsgs(msgs)
 			}
 
-			gasAmt := sdk.NewCoins(sdk.NewCoin("ua0gi", sdkmath.NewInt(20)))
+			gasAmt := sdk.NewCoins(chaincfg.MakeCoinForGasDenom(20))
 			txBuilder := suite.createTestEIP712CosmosTxBuilder(
 				suite.testAddr, suite.testPrivKey, ChainID, uint64(helpers.DefaultGenTxGas*10), gasAmt, msgs,
 			)
@@ -596,7 +597,7 @@ func (suite *EIP712TestSuite) TestEIP712Tx_DepositAndWithdraw() {
 	}
 
 	// deliver deposit msg
-	gasAmt := sdk.NewCoins(sdk.NewCoin("ua0gi", sdkmath.NewInt(20)))
+	gasAmt := sdk.NewCoins(chaincfg.MakeCoinForGasDenom(20))
 	txBuilder := suite.createTestEIP712CosmosTxBuilder(
 		suite.testAddr, suite.testPrivKey, ChainID, uint64(helpers.DefaultGenTxGas*10), gasAmt, depositMsgs,
 	)

@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 
-	"github.com/0glabs/0g-chain/x/das/v1/types"
+	"github.com/0glabs/0g-chain/x/dasigners/v1/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/cobra"
 )

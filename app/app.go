@@ -109,9 +109,6 @@ import (
 	council "github.com/0glabs/0g-chain/x/council/v1"
 	councilkeeper "github.com/0glabs/0g-chain/x/council/v1/keeper"
 	counciltypes "github.com/0glabs/0g-chain/x/council/v1/types"
-	das "github.com/0glabs/0g-chain/x/das/v1"
-	daskeeper "github.com/0glabs/0g-chain/x/das/v1/keeper"
-	dastypes "github.com/0glabs/0g-chain/x/das/v1/types"
 	dasigners "github.com/0glabs/0g-chain/x/dasigners/v1"
 	dasignerskeeper "github.com/0glabs/0g-chain/x/dasigners/v1/keeper"
 	dasignerstypes "github.com/0glabs/0g-chain/x/dasigners/v1/types"
@@ -169,7 +166,6 @@ var (
 		evmutil.AppModuleBasic{},
 		mint.AppModuleBasic{},
 		council.AppModuleBasic{},
-		das.AppModuleBasic{},
 		dasigners.AppModuleBasic{},
 	)
 
@@ -248,7 +244,6 @@ type App struct {
 	evidenceKeeper   evidencekeeper.Keeper
 	transferKeeper   ibctransferkeeper.Keeper
 	CouncilKeeper    councilkeeper.Keeper
-	DasKeeper        daskeeper.Keeper
 	issuanceKeeper   issuancekeeper.Keeper
 	bep3Keeper       bep3keeper.Keeper
 	pricefeedKeeper  pricefeedkeeper.Keeper
@@ -303,7 +298,6 @@ func NewApp(
 		committeetypes.StoreKey, evmutiltypes.StoreKey,
 		minttypes.StoreKey,
 		counciltypes.StoreKey,
-		dastypes.StoreKey,
 		dasignerstypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey, feemarkettypes.TransientKey)
@@ -576,7 +570,6 @@ func NewApp(
 	app.CouncilKeeper = councilkeeper.NewKeeper(
 		keys[counciltypes.StoreKey], appCodec, app.stakingKeeper,
 	)
-	app.DasKeeper = daskeeper.NewKeeper(keys[dastypes.StoreKey], appCodec, app.stakingKeeper)
 
 	// create the module manager (Note: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.)
@@ -608,7 +601,6 @@ func NewApp(
 		// nil InflationCalculationFn, use SDK's default inflation function
 		mint.NewAppModule(appCodec, app.mintKeeper, app.accountKeeper, nil),
 		council.NewAppModule(app.CouncilKeeper, app.stakingKeeper),
-		das.NewAppModule(app.DasKeeper),
 		dasigners.NewAppModule(app.dasignersKeeper, app.stakingKeeper),
 	)
 
@@ -653,7 +645,6 @@ func NewApp(
 		evmutiltypes.ModuleName,
 
 		counciltypes.ModuleName,
-		dastypes.ModuleName,
 		dasignerstypes.ModuleName,
 	)
 
@@ -687,7 +678,6 @@ func NewApp(
 		evmutiltypes.ModuleName,
 		minttypes.ModuleName,
 		counciltypes.ModuleName,
-		dastypes.ModuleName,
 		dasignerstypes.ModuleName,
 	)
 
@@ -720,7 +710,6 @@ func NewApp(
 		upgradetypes.ModuleName,
 		validatorvestingtypes.ModuleName,
 		counciltypes.ModuleName,
-		dastypes.ModuleName,
 		dasignerstypes.ModuleName,
 	)
 
