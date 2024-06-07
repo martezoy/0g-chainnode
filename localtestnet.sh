@@ -24,7 +24,9 @@ DATA=~/.0gchain
 # remove any old state and config
 rm -rf $DATA
 
-BINARY=./.build/0gchaind
+OS_FAMILY=$(uname -s)
+NATIVE_GO_OS=$(echo $OS_FAMILY | tr '[:upper:]' '[:lower:]')
+BINARY=./out/$NATIVE_GO_OS/0gchaind
 
 # Create new data directory, overwriting any that alread existed
 chainID="zgchain_8888-1"
