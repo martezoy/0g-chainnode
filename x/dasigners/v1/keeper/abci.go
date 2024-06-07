@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"bytes"
+	"math/big"
 	"sort"
 
 	"github.com/0glabs/0g-chain/x/dasigners/v1/types"
@@ -45,16 +46,16 @@ func (k Keeper) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 	}
 	for _, registration := range registrations {
 		// get validator
-		valAddr, err := sdk.ValAddressFromHex(registration.account)
+		accAddr, err := sdk.AccAddressFromHexUnsafe(registration.account)
 		if err != nil {
 			k.Logger(ctx).Error("[BeginBlock] invalid account")
 			continue
 		}
-		validator, found := k.stakingKeeper.GetValidator(ctx, valAddr)
-		if !found {
-			continue
+		bonded := k.GetDelegatorBonded(ctx, accAddr)
+		num := bonded.Quo(sdk.NewInt(1_000_000_000_000_000_000)).Quo(tokensPerVote).Abs().BigInt()
+		if num.Cmp(big.NewInt(int64(params.MaxVotesPerSigner))) > 0 {
+			num = big.NewInt(int64(params.MaxVotesPerSigner))
 		}
-		num := validator.Tokens.Quo(sdk.NewInt(1_000_000_000_000_000_000)).Quo(tokensPerVote).Abs().BigInt()
 		content := registration.content
 		ballotNum := num.Int64()
 		for j := 0; j < int(ballotNum); j += 1 {
