@@ -15,10 +15,11 @@ func NewGenesisState(params Params, epoch uint64, signers []*Signer, quorumsByEp
 // DefaultGenesisState returns the default genesis state for the module.
 func DefaultGenesisState() *GenesisState {
 	return NewGenesisState(Params{
-		TokensPerVote: "100",
-		MaxQuorums:    100,
-		EpochBlocks:   1000,
-		EncodedSlices: 3072,
+		TokensPerVote:     "100",
+		MaxVotesPerSigner: 100,
+		MaxQuorums:        100,
+		EpochBlocks:       1000,
+		EncodedSlices:     3072,
 	}, 0, make([]*Signer, 0), []*Quorums{{
 		Quorums: make([]*Quorum, 0),
 	}})
