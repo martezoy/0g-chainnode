@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"encoding/hex"
-	"fmt"
 	"math/big"
 
 	"cosmossdk.io/math"
@@ -233,7 +232,6 @@ func (k Keeper) CheckDelegations(ctx sdk.Context, account string) error {
 	bonded := k.GetDelegatorBonded(ctx, accAddr)
 	params := k.GetParams(ctx)
 	tokensPerVote := sdk.NewIntFromUint64(params.TokensPerVote)
-	fmt.Printf("account: %v, bonded: %v, conversion rate: %v, ticket: %v\n", account, bonded, BondedConversionRate, bonded.Quo(BondedConversionRate).Quo(tokensPerVote))
 	if bonded.Quo(BondedConversionRate).Quo(tokensPerVote).Abs().BigInt().Cmp(big.NewInt(0)) <= 0 {
 		return types.ErrInsufficientBonded
 	}
