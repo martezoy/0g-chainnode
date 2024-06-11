@@ -13,8 +13,11 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/tendermint/tendermint/libs/log"
 
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/dasigners/v1/types"
 )
+
+var BondedConversionRate = math.NewIntFromBigInt(big.NewInt(0).Exp(big.NewInt(10), big.NewInt(chaincfg.GasDenomUnit), nil))
 
 type Keeper struct {
 	storeKey      storetypes.StoreKey
@@ -228,13 +231,10 @@ func (k Keeper) CheckDelegations(ctx sdk.Context, account string) error {
 		return err
 	}
 	bonded := k.GetDelegatorBonded(ctx, accAddr)
-	fmt.Printf("delegation: %v\n", bonded)
 	params := k.GetParams(ctx)
-	tokensPerVote, ok := sdk.NewIntFromString(params.TokensPerVote)
-	if !ok {
-		panic("failed to load params tokens_per_vote")
-	}
-	if bonded.Quo(sdk.NewInt(1_000_000_000_000_000_000)).Quo(tokensPerVote).Abs().BigInt().Cmp(big.NewInt(0)) <= 0 {
+	tokensPerVote := sdk.NewIntFromUint64(params.TokensPerVote)
+	fmt.Printf("account: %v, bonded: %v, conversion rate: %v, ticket: %v\n", account, bonded, BondedConversionRate, bonded.Quo(BondedConversionRate).Quo(tokensPerVote))
+	if bonded.Quo(BondedConversionRate).Quo(tokensPerVote).Abs().BigInt().Cmp(big.NewInt(0)) <= 0 {
 		return types.ErrInsufficientBonded
 	}
 	return nil
