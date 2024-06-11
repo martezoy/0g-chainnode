@@ -40,10 +40,7 @@ func (k Keeper) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 		return false
 	})
 	ballots := []Ballot{}
-	tokensPerVote, ok := sdk.NewIntFromString(params.TokensPerVote)
-	if !ok {
-		panic("failed to load params tokens_per_vote")
-	}
+	tokensPerVote := sdk.NewIntFromUint64(params.TokensPerVote)
 	for _, registration := range registrations {
 		// get validator
 		accAddr, err := sdk.AccAddressFromHexUnsafe(registration.account)
@@ -52,7 +49,7 @@ func (k Keeper) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
 			continue
 		}
 		bonded := k.GetDelegatorBonded(ctx, accAddr)
-		num := bonded.Quo(sdk.NewInt(1_000_000_000_000_000_000)).Quo(tokensPerVote).Abs().BigInt()
+		num := bonded.Quo(BondedConversionRate).Quo(tokensPerVote).Abs().BigInt()
 		if num.Cmp(big.NewInt(int64(params.MaxVotesPerSigner))) > 0 {
 			num = big.NewInt(int64(params.MaxVotesPerSigner))
 		}
