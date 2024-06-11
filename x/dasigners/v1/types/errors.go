@@ -10,4 +10,5 @@ var (
 	ErrQuorumNotFound             = errorsmod.Register(ModuleName, 5, "quorum for epoch not found")
 	ErrQuorumIdOutOfBound         = errorsmod.Register(ModuleName, 6, "quorum id out of bound")
 	ErrQuorumBitmapLengthMismatch = errorsmod.Register(ModuleName, 7, "quorum bitmap length mismatch")
+	ErrInsufficientBonded         = errorsmod.Register(ModuleName, 8, "insufficient bonded amount")
 )
