@@ -88,6 +88,18 @@ func (d *DASignersPrecompile) GetQuorum(ctx sdk.Context, _ *vm.EVM, method *abi.
 	return method.Outputs.Pack(signers)
 }
 
+func (d *DASignersPrecompile) GetQuorumRow(ctx sdk.Context, _ *vm.EVM, method *abi.Method, args []interface{}) ([]byte, error) {
+	req, err := NewQueryEpochQuorumRowRequest(args)
+	if err != nil {
+		return nil, err
+	}
+	response, err := d.dasignersKeeper.EpochQuorumRow(sdk.WrapSDKContext(ctx), req)
+	if err != nil {
+		return nil, err
+	}
+	return method.Outputs.Pack(common.HexToAddress(response.Signer))
+}
+
 func (d *DASignersPrecompile) GetAggPkG1(ctx sdk.Context, _ *vm.EVM, method *abi.Method, args []interface{}) ([]byte, error) {
 	req, err := NewQueryAggregatePubkeyG1Request(args)
 	if err != nil {

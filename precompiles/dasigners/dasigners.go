@@ -22,6 +22,7 @@ const (
 	DASignersFunctionQuorumCount       = "quorumCount"
 	DASignersFunctionGetSigner         = "getSigner"
 	DASignersFunctionGetQuorum         = "getQuorum"
+	DASignersFunctionGetQuorumRow      = "getQuorumRow"
 	DASignersFunctionRegisterSigner    = "registerSigner"
 	DASignersFunctionUpdateSocket      = "updateSocket"
 	DASignersFunctionRegisterNextEpoch = "registerNextEpoch"
@@ -35,6 +36,7 @@ var RequiredGasBasic = map[string]uint64{
 	DASignersFunctionQuorumCount:       1000,
 	DASignersFunctionGetSigner:         100000,
 	DASignersFunctionGetQuorum:         100000,
+	DASignersFunctionGetQuorumRow:      10000,
 	DASignersFunctionRegisterSigner:    100000,
 	DASignersFunctionUpdateSocket:      50000,
 	DASignersFunctionRegisterNextEpoch: 100000,
@@ -123,6 +125,8 @@ func (d *DASignersPrecompile) Run(evm *vm.EVM, contract *vm.Contract, readonly b
 		bz, err = d.GetSigner(ctx, evm, method, args)
 	case DASignersFunctionGetQuorum:
 		bz, err = d.GetQuorum(ctx, evm, method, args)
+	case DASignersFunctionGetQuorumRow:
+		bz, err = d.GetQuorumRow(ctx, evm, method, args)
 	case DASignersFunctionGetAggPkG1:
 		bz, err = d.GetAggPkG1(ctx, evm, method, args)
 	case DASignersFunctionIsSigner:
