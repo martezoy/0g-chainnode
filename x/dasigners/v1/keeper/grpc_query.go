@@ -67,6 +67,22 @@ func (k Keeper) EpochQuorum(c context.Context, request *types.QueryEpochQuorumRe
 	return &types.QueryEpochQuorumResponse{Quorum: quorums.Quorums[request.QuorumId]}, nil
 }
 
+func (k Keeper) EpochQuorumRow(c context.Context, request *types.QueryEpochQuorumRowRequest) (*types.QueryEpochQuorumRowResponse, error) {
+	ctx := sdk.UnwrapSDKContext(c)
+	quorums, found := k.GetEpochQuorums(ctx, request.EpochNumber)
+	if !found {
+		return nil, types.ErrQuorumNotFound
+	}
+	if len(quorums.Quorums) <= int(request.QuorumId) {
+		return nil, types.ErrQuorumIdOutOfBound
+	}
+	signers := quorums.Quorums[request.QuorumId].Signers
+	if len(signers) <= int(request.RowIndex) {
+		return nil, types.ErrRowIndexOutOfBound
+	}
+	return &types.QueryEpochQuorumRowResponse{Signer: signers[request.RowIndex]}, nil
+}
+
 func (k Keeper) AggregatePubkeyG1(c context.Context, request *types.QueryAggregatePubkeyG1Request) (*types.QueryAggregatePubkeyG1Response, error) {
 	ctx := sdk.UnwrapSDKContext(c)
 	quorums, found := k.GetEpochQuorums(ctx, request.EpochNumber)
