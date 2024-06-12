@@ -98,6 +98,18 @@ func NewQueryEpochQuorumRequest(args []interface{}) (*dasignerstypes.QueryEpochQ
 	}, nil
 }
 
+func NewQueryEpochQuorumRowRequest(args []interface{}) (*dasignerstypes.QueryEpochQuorumRowRequest, error) {
+	if len(args) != 3 {
+		return nil, fmt.Errorf(precopmiles_common.ErrInvalidNumberOfArgs, 3, len(args))
+	}
+
+	return &dasignerstypes.QueryEpochQuorumRowRequest{
+		EpochNumber: args[0].(*big.Int).Uint64(),
+		QuorumId:    args[1].(*big.Int).Uint64(),
+		RowIndex:    args[2].(uint32),
+	}, nil
+}
+
 func NewQueryAggregatePubkeyG1Request(args []interface{}) (*dasignerstypes.QueryAggregatePubkeyG1Request, error) {
 	if len(args) != 3 {
 		return nil, fmt.Errorf(precopmiles_common.ErrInvalidNumberOfArgs, 3, len(args))
