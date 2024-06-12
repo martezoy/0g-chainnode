@@ -31,8 +31,8 @@ import (
 
 func customKeyringOptions() keyring.Option {
 	return func(options *keyring.Options) {
-		options.SupportedAlgos = append(options.SupportedAlgos, vrf.VrfAlgo, hd.EthSecp256k1)
-		options.SupportedAlgosLedger = append(options.SupportedAlgosLedger, vrf.VrfAlgo, hd.EthSecp256k1)
+		options.SupportedAlgos = append(hd.SupportedAlgorithms, vrf.VrfAlgo)
+		options.SupportedAlgosLedger = append(hd.SupportedAlgorithmsLedger, vrf.VrfAlgo)
 	}
 }
 
