@@ -33,8 +33,10 @@ func GetSignerKeyFromAccount(account string) ([]byte, error) {
 	return hex.DecodeString(account)
 }
 
-func GetEpochQuorumsKeyFromEpoch(epoch uint64) []byte {
-	return sdk.Uint64ToBigEndian(epoch)
+func GetEpochQuorumKey(epoch uint64, quorumId uint64) []byte {
+	b := sdk.Uint64ToBigEndian(epoch)
+	b = append(b, sdk.Uint64ToBigEndian(quorumId)...)
+	return b
 }
 
 func GetQuorumCountKey(epoch uint64) []byte {

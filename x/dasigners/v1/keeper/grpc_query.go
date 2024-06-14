@@ -57,26 +57,20 @@ func (k Keeper) QuorumCount(
 
 func (k Keeper) EpochQuorum(c context.Context, request *types.QueryEpochQuorumRequest) (*types.QueryEpochQuorumResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	quorums, found := k.GetEpochQuorums(ctx, request.EpochNumber)
-	if !found {
-		return nil, types.ErrQuorumNotFound
+	quorum, err := k.GetEpochQuorum(ctx, request.EpochNumber, request.QuorumId)
+	if err != nil {
+		return nil, err
 	}
-	if len(quorums.Quorums) <= int(request.QuorumId) {
-		return nil, types.ErrQuorumIdOutOfBound
-	}
-	return &types.QueryEpochQuorumResponse{Quorum: quorums.Quorums[request.QuorumId]}, nil
+	return &types.QueryEpochQuorumResponse{Quorum: &quorum}, nil
 }
 
 func (k Keeper) EpochQuorumRow(c context.Context, request *types.QueryEpochQuorumRowRequest) (*types.QueryEpochQuorumRowResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	quorums, found := k.GetEpochQuorums(ctx, request.EpochNumber)
-	if !found {
-		return nil, types.ErrQuorumNotFound
+	quorum, err := k.GetEpochQuorum(ctx, request.EpochNumber, request.QuorumId)
+	if err != nil {
+		return nil, err
 	}
-	if len(quorums.Quorums) <= int(request.QuorumId) {
-		return nil, types.ErrQuorumIdOutOfBound
-	}
-	signers := quorums.Quorums[request.QuorumId].Signers
+	signers := quorum.Signers
 	if len(signers) <= int(request.RowIndex) {
 		return nil, types.ErrRowIndexOutOfBound
 	}
@@ -85,14 +79,10 @@ func (k Keeper) EpochQuorumRow(c context.Context, request *types.QueryEpochQuoru
 
 func (k Keeper) AggregatePubkeyG1(c context.Context, request *types.QueryAggregatePubkeyG1Request) (*types.QueryAggregatePubkeyG1Response, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	quorums, found := k.GetEpochQuorums(ctx, request.EpochNumber)
-	if !found {
-		return nil, types.ErrQuorumNotFound
+	quorum, err := k.GetEpochQuorum(ctx, request.EpochNumber, request.QuorumId)
+	if err != nil {
+		return nil, err
 	}
-	if len(quorums.Quorums) <= int(request.QuorumId) {
-		return nil, types.ErrQuorumIdOutOfBound
-	}
-	quorum := quorums.Quorums[request.QuorumId]
 	if (len(quorum.Signers)+7)/8 != len(request.QuorumBitmap) {
 		return nil, types.ErrQuorumBitmapLengthMismatch
 	}

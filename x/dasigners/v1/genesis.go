@@ -40,11 +40,19 @@ func ExportGenesis(ctx sdk.Context, keeper keeper.Keeper) *types.GenesisState {
 	})
 	epochQuorums := make([]*types.Quorums, 0)
 	for i := 0; i < int(epochNumber); i += 1 {
-		quorums, found := keeper.GetEpochQuorums(ctx, uint64(i))
-		if !found {
+		quorumCnt, err := keeper.GetQuorumCount(ctx, uint64(i))
+		if err != nil {
 			panic("historical quorums not found")
 		}
-		epochQuorums = append(epochQuorums, &quorums)
+		quorums := make([]*types.Quorum, quorumCnt)
+		for quorumId := uint64(0); quorumId < quorumCnt; quorumId += 1 {
+			quorum, err := keeper.GetEpochQuorum(ctx, uint64(i), quorumId)
+			if err != nil {
+				panic("failed to load historical quorum")
+			}
+			quorums[quorumId] = &quorum
+		}
+		epochQuorums = append(epochQuorums, &types.Quorums{Quorums: quorums})
 	}
 	return types.NewGenesisState(params, epochNumber, signers, epochQuorums)
 }
