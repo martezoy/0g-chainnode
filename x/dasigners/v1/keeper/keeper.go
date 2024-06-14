@@ -142,21 +142,30 @@ func (k Keeper) IterateSigners(ctx sdk.Context, fn func(index int64, signer type
 	}
 }
 
-func (k Keeper) GetEpochQuorums(ctx sdk.Context, epoch uint64) (types.Quorums, bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.EpochQuorumsKeyPrefix)
-	bz := store.Get(types.GetEpochQuorumsKeyFromEpoch(epoch))
-	if bz == nil {
-		return types.Quorums{}, false
+func (k Keeper) GetEpochQuorum(ctx sdk.Context, epoch uint64, quorumId uint64) (types.Quorum, error) {
+	quorumCount, err := k.GetQuorumCount(ctx, epoch)
+	if err != nil {
+		return types.Quorum{}, err
 	}
-	var quorums types.Quorums
-	k.cdc.MustUnmarshal(bz, &quorums)
-	return quorums, true
+	if quorumCount <= quorumId {
+		return types.Quorum{}, types.ErrQuorumIdOutOfBound
+	}
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.EpochQuorumsKeyPrefix)
+	bz := store.Get(types.GetEpochQuorumKey(epoch, quorumId))
+	if bz == nil {
+		return types.Quorum{}, types.ErrQuorumNotFound
+	}
+	var quorum types.Quorum
+	k.cdc.MustUnmarshal(bz, &quorum)
+	return quorum, nil
 }
 
 func (k Keeper) SetEpochQuorums(ctx sdk.Context, epoch uint64, quorums types.Quorums) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.EpochQuorumsKeyPrefix)
-	bz := k.cdc.MustMarshal(&quorums)
-	store.Set(types.GetEpochQuorumsKeyFromEpoch(epoch), bz)
+	for quorumId, quorum := range quorums.Quorums {
+		bz := k.cdc.MustMarshal(quorum)
+		store.Set(types.GetEpochQuorumKey(epoch, uint64(quorumId)), bz)
+	}
 	k.SetQuorumCount(ctx, epoch, uint64(len(quorums.Quorums)))
 }
 
