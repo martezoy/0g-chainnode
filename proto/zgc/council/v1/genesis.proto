@@ -28,7 +28,7 @@ message Council {
   uint64 voting_start_height = 2;
   uint64 start_height = 3;
   uint64 end_height = 4;
-  repeated Vote votes = 5 [(gogoproto.nullable) = false];  
+  repeated Vote votes = 5 [(gogoproto.nullable) = false];
   repeated bytes members = 6 [
     (cosmos_proto.scalar) = "cosmos.AddressBytes",
     (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"

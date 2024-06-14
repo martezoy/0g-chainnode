@@ -13,7 +13,7 @@ type KvtoolRunnerConfig struct {
 	ImageTag   string
 	IncludeIBC bool
 
-	EnableAutomatedUpgrade  bool
+	EnableAutomatedUpgrade     bool
 	ZgChainUpgradeName         string
 	ZgChainUpgradeHeight       int64
 	ZgChainUpgradeBaseImageTag string

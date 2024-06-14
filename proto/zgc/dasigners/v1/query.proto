@@ -1,0 +1,87 @@
+syntax = "proto3";
+package zgc.dasigners.v1;
+
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "zgc/dasigners/v1/dasigners.proto";
+
+option go_package = "github.com/0glabs/0g-chain/x/dasigners/v1/types";
+option (gogoproto.goproto_getters_all) = false;
+
+// Query defines the gRPC querier service for the dasigners module
+service Query {
+  rpc EpochNumber(QueryEpochNumberRequest) returns (QueryEpochNumberResponse) {
+    option (google.api.http).get = "/0g/dasigners/v1/epoch-number";
+  }
+  rpc QuorumCount(QueryQuorumCountRequest) returns (QueryQuorumCountResponse) {
+    option (google.api.http).get = "/0g/dasigners/v1/quorum-count";
+  }
+  rpc EpochQuorum(QueryEpochQuorumRequest) returns (QueryEpochQuorumResponse) {
+    option (google.api.http).get = "/0g/dasigners/v1/epoch-quorum";
+  }
+  rpc EpochQuorumRow(QueryEpochQuorumRowRequest) returns (QueryEpochQuorumRowResponse) {
+    option (google.api.http).get = "/0g/dasigners/v1/epoch-quorum-row";
+  }
+  rpc AggregatePubkeyG1(QueryAggregatePubkeyG1Request) returns (QueryAggregatePubkeyG1Response) {
+    option (google.api.http).get = "/0g/dasigners/v1/aggregate-pubkey-g1";
+  }
+  rpc Signer(QuerySignerRequest) returns (QuerySignerResponse) {
+    option (google.api.http).get = "/0g/dasigners/v1/signer";
+  }
+}
+
+message QuerySignerRequest {
+  repeated string accounts = 1;
+}
+
+message QuerySignerResponse {
+  repeated Signer signer = 1;
+}
+
+message QueryEpochNumberRequest {}
+
+message QueryEpochNumberResponse {
+  uint64 epoch_number = 1;
+}
+
+message QueryQuorumCountRequest {
+  uint64 epoch_number = 1;
+}
+
+message QueryQuorumCountResponse {
+  uint64 quorum_count = 1;
+}
+
+message QueryEpochQuorumRequest {
+  uint64 epoch_number = 1;
+  uint64 quorum_id = 2;
+}
+
+message QueryEpochQuorumResponse {
+  Quorum quorum = 1;
+}
+
+message QueryEpochQuorumRowRequest {
+  uint64 epoch_number = 1;
+  uint64 quorum_id = 2;
+  uint32 row_index = 3;
+}
+
+message QueryEpochQuorumRowResponse {
+  string signer = 1;
+}
+
+message QueryAggregatePubkeyG1Request {
+  uint64 epoch_number = 1;
+  uint64 quorum_id = 2;
+  bytes quorum_bitmap = 3;
+}
+
+message QueryAggregatePubkeyG1Response {
+  bytes aggregate_pubkey_g1 = 1;
+  uint64 total = 2;
+  uint64 hit = 3;
+}

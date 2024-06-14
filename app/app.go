@@ -84,7 +84,6 @@ import (
 	"github.com/evmos/ethermint/x/evm"
 	evmkeeper "github.com/evmos/ethermint/x/evm/keeper"
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
-	"github.com/evmos/ethermint/x/evm/vm/geth"
 	"github.com/evmos/ethermint/x/feemarket"
 	feemarketkeeper "github.com/evmos/ethermint/x/feemarket/keeper"
 	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
@@ -98,6 +97,8 @@ import (
 	"github.com/0glabs/0g-chain/app/ante"
 	chainparams "github.com/0glabs/0g-chain/app/params"
 	"github.com/0glabs/0g-chain/chaincfg"
+	dasignersprecompile "github.com/0glabs/0g-chain/precompiles/dasigners"
+
 	"github.com/0glabs/0g-chain/x/bep3"
 	bep3keeper "github.com/0glabs/0g-chain/x/bep3/keeper"
 	bep3types "github.com/0glabs/0g-chain/x/bep3/types"
@@ -108,9 +109,9 @@ import (
 	council "github.com/0glabs/0g-chain/x/council/v1"
 	councilkeeper "github.com/0glabs/0g-chain/x/council/v1/keeper"
 	counciltypes "github.com/0glabs/0g-chain/x/council/v1/types"
-	das "github.com/0glabs/0g-chain/x/das/v1"
-	daskeeper "github.com/0glabs/0g-chain/x/das/v1/keeper"
-	dastypes "github.com/0glabs/0g-chain/x/das/v1/types"
+	dasigners "github.com/0glabs/0g-chain/x/dasigners/v1"
+	dasignerskeeper "github.com/0glabs/0g-chain/x/dasigners/v1/keeper"
+	dasignerstypes "github.com/0glabs/0g-chain/x/dasigners/v1/types"
 	evmutil "github.com/0glabs/0g-chain/x/evmutil"
 	evmutilkeeper "github.com/0glabs/0g-chain/x/evmutil/keeper"
 	evmutiltypes "github.com/0glabs/0g-chain/x/evmutil/types"
@@ -123,6 +124,8 @@ import (
 	validatorvesting "github.com/0glabs/0g-chain/x/validator-vesting"
 	validatorvestingrest "github.com/0glabs/0g-chain/x/validator-vesting/client/rest"
 	validatorvestingtypes "github.com/0glabs/0g-chain/x/validator-vesting/types"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/vm"
 )
 
 var (
@@ -163,7 +166,7 @@ var (
 		evmutil.AppModuleBasic{},
 		mint.AppModuleBasic{},
 		council.AppModuleBasic{},
-		das.AppModuleBasic{},
+		dasigners.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -241,12 +244,12 @@ type App struct {
 	evidenceKeeper   evidencekeeper.Keeper
 	transferKeeper   ibctransferkeeper.Keeper
 	CouncilKeeper    councilkeeper.Keeper
-	DasKeeper        daskeeper.Keeper
 	issuanceKeeper   issuancekeeper.Keeper
 	bep3Keeper       bep3keeper.Keeper
 	pricefeedKeeper  pricefeedkeeper.Keeper
 	committeeKeeper  committeekeeper.Keeper
 	mintKeeper       mintkeeper.Keeper
+	dasignersKeeper  dasignerskeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
@@ -295,7 +298,7 @@ func NewApp(
 		committeetypes.StoreKey, evmutiltypes.StoreKey,
 		minttypes.StoreKey,
 		counciltypes.StoreKey,
-		dastypes.StoreKey,
+		dasignerstypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey, feemarkettypes.TransientKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -437,14 +440,23 @@ func NewApp(
 	)
 
 	evmBankKeeper := evmutilkeeper.NewEvmBankKeeper(app.evmutilKeeper, app.bankKeeper, app.accountKeeper)
+	// dasigners keeper
+	app.dasignersKeeper = dasignerskeeper.NewKeeper(keys[dasignerstypes.StoreKey], appCodec, app.stakingKeeper)
+	// precopmiles
+	precompiles := make(map[common.Address]vm.PrecompiledContract)
+	daSignersPrecompile, err := dasignersprecompile.NewDASignersPrecompile(app.dasignersKeeper)
+	if err != nil {
+		panic("initialize precompile failed")
+	}
+	precompiles[daSignersPrecompile.Address()] = daSignersPrecompile
+	// evm keeper
 	app.evmKeeper = evmkeeper.NewKeeper(
 		appCodec, keys[evmtypes.StoreKey], tkeys[evmtypes.TransientKey],
 		govAuthorityAddr,
 		app.accountKeeper, evmBankKeeper, app.stakingKeeper, app.feeMarketKeeper,
-		nil, // precompiled contracts
-		geth.NewEVM,
 		options.EVMTrace,
 		evmSubspace,
+		precompiles,
 	)
 
 	app.evmutilKeeper.SetEvmKeeper(app.evmKeeper)
@@ -558,7 +570,6 @@ func NewApp(
 	app.CouncilKeeper = councilkeeper.NewKeeper(
 		keys[counciltypes.StoreKey], appCodec, app.stakingKeeper,
 	)
-	app.DasKeeper = daskeeper.NewKeeper(keys[dastypes.StoreKey], appCodec, app.stakingKeeper)
 
 	// create the module manager (Note: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.)
@@ -590,7 +601,7 @@ func NewApp(
 		// nil InflationCalculationFn, use SDK's default inflation function
 		mint.NewAppModule(appCodec, app.mintKeeper, app.accountKeeper, chaincfg.CustomInflationCalculateFn),
 		council.NewAppModule(app.CouncilKeeper, app.stakingKeeper),
-		das.NewAppModule(app.DasKeeper),
+		dasigners.NewAppModule(app.dasignersKeeper, app.stakingKeeper),
 	)
 
 	// Warning: Some begin blockers must run before others. Ensure the dependencies are understood before modifying this list.
@@ -634,7 +645,7 @@ func NewApp(
 		evmutiltypes.ModuleName,
 
 		counciltypes.ModuleName,
-		dastypes.ModuleName,
+		dasignerstypes.ModuleName,
 	)
 
 	// Warning: Some end blockers must run before others. Ensure the dependencies are understood before modifying this list.
@@ -667,7 +678,7 @@ func NewApp(
 		evmutiltypes.ModuleName,
 		minttypes.ModuleName,
 		counciltypes.ModuleName,
-		dastypes.ModuleName,
+		dasignerstypes.ModuleName,
 	)
 
 	// Warning: Some init genesis methods must run before others. Ensure the dependencies are understood before modifying this list
@@ -699,7 +710,7 @@ func NewApp(
 		upgradetypes.ModuleName,
 		validatorvestingtypes.ModuleName,
 		counciltypes.ModuleName,
-		dastypes.ModuleName,
+		dasignerstypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.crisisKeeper)

@@ -44,7 +44,7 @@ message MsgConvertERC20ToCoin {
   // 0gChain bech32 address that will receive the converted sdk.Coin.
   string receiver = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   // EVM 0x hex address of the ERC20 contract.
-  string zgChain_erc20_address = 3 [(gogoproto.customname) = "ZgChainERC20Address"];
+  string zgchain_erc20_address = 3 [(gogoproto.customname) = "ZgChainERC20Address"];
   // ERC20 token amount to convert.
   string amount = 4 [
     (cosmos_proto.scalar) = "cosmos.Int",

@@ -1,0 +1,30 @@
+syntax = "proto3";
+package zgc.dasigners.v1;
+
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "zgc/dasigners/v1/dasigners.proto";
+
+option go_package = "github.com/0glabs/0g-chain/x/dasigners/v1/types";
+
+message Params {
+  uint64 tokens_per_vote = 1;
+  uint64 max_votes_per_signer = 2;
+  uint64 max_quorums = 3;
+  uint64 epoch_blocks = 4;
+  uint64 encoded_slices = 5;
+}
+
+// GenesisState defines the dasigners module's genesis state.
+message GenesisState {
+  // params defines all the parameters of related to deposit.
+  Params params = 1 [(gogoproto.nullable) = false];
+  // params epoch_number the epoch number
+  uint64 epoch_number = 2;
+  // signers defines all signers information
+  repeated Signer signers = 3;
+  // quorums_by_epoch defines chosen quorums by epoch
+  repeated Quorums quorums_by_epoch = 4;
+}

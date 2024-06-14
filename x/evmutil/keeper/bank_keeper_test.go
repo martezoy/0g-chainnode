@@ -6,6 +6,7 @@ import (
 	"time"
 
 	sdkmath "cosmossdk.io/math"
+	"github.com/0glabs/0g-chain/chaincfg"
 	"github.com/0glabs/0g-chain/x/evmutil/keeper"
 	"github.com/0glabs/0g-chain/x/evmutil/testutil"
 	"github.com/0glabs/0g-chain/x/evmutil/types"
@@ -26,8 +27,8 @@ func (suite *evmBankKeeperTestSuite) SetupTest() {
 }
 
 func (suite *evmBankKeeperTestSuite) TestGetBalance_ReturnsSpendable() {
-	startingCoins := sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 10))
-	startingNeuron := sdkmath.NewInt(100)
+	startingCoins := sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 10))
+	startingEvmDenom := sdkmath.NewInt(100)
 
 	now := tmtime.Now()
 	endTime := now.Add(24 * time.Hour)
@@ -37,24 +38,26 @@ func (suite *evmBankKeeperTestSuite) TestGetBalance_ReturnsSpendable() {
 
 	err := suite.App.FundAccount(suite.Ctx, suite.Addrs[0], startingCoins)
 	suite.Require().NoError(err)
-	err = suite.Keeper.SetBalance(suite.Ctx, suite.Addrs[0], startingNeuron)
+	err = suite.Keeper.SetBalance(suite.Ctx, suite.Addrs[0], startingEvmDenom)
 	suite.Require().NoError(err)
 
-	coin := suite.EvmBankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], "neuron")
-	suite.Require().Equal(startingNeuron, coin.Amount)
+	coin := suite.EvmBankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.EvmDenom)
+	suite.Require().Equal(startingEvmDenom, coin.Amount)
 
 	ctx := suite.Ctx.WithBlockTime(now.Add(12 * time.Hour))
-	coin = suite.EvmBankKeeper.GetBalance(ctx, suite.Addrs[0], "neuron")
+	coin = suite.EvmBankKeeper.GetBalance(ctx, suite.Addrs[0], chaincfg.EvmDenom)
 	suite.Require().Equal(sdkmath.NewIntFromUint64(5_000_000_000_100), coin.Amount)
 }
+
 func (suite *evmBankKeeperTestSuite) TestGetBalance_NotEvmDenom() {
 	suite.Require().Panics(func() {
-		suite.EvmBankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], "ua0gi")
+		suite.EvmBankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.GasDenom)
 	})
 	suite.Require().Panics(func() {
 		suite.EvmBankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], "busd")
 	})
 }
+
 func (suite *evmBankKeeperTestSuite) TestGetBalance() {
 	tests := []struct {
 		name           string
@@ -62,41 +65,41 @@ func (suite *evmBankKeeperTestSuite) TestGetBalance() {
 		expAmount      sdkmath.Int
 	}{
 		{
-			"ua0gi with neuron",
+			"gas denom with evm denom",
 			sdk.NewCoins(
-				sdk.NewInt64Coin("neuron", 100),
-				sdk.NewInt64Coin("ua0gi", 10),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 100),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 10),
 			),
-			sdk.NewIntFromBigInt(makeBigIntByString("10000000000100")),
+			sdkmath.NewInt(10_000_000_000_100),
 		},
 		{
-			"just neuron",
+			"just evm denom",
 			sdk.NewCoins(
-				sdk.NewInt64Coin("neuron", 100),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 100),
 				sdk.NewInt64Coin("busd", 100),
 			),
 			sdkmath.NewInt(100),
 		},
 		{
-			"just ua0gi",
+			"just gas denom",
 			sdk.NewCoins(
-				sdk.NewInt64Coin("ua0gi", 10),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 10),
 				sdk.NewInt64Coin("busd", 100),
 			),
-			sdk.NewIntFromBigInt(makeBigIntByString("10000000000000")),
+			sdkmath.NewInt(10_000_000_000_000),
 		},
 		{
-			"no ua0gi or neuron",
+			"no gas denom or evm denom",
 			sdk.NewCoins(),
 			sdk.ZeroInt(),
 		},
 		{
-			"with avaka that is more than 1 ua0gi",
+			"with avaka that is more than 1 gas denom",
 			sdk.NewCoins(
-				sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("20000000000220"))),
-				sdk.NewInt64Coin("ua0gi", 11),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 20_000_000_000_220),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 11),
 			),
-			sdk.NewIntFromBigInt(makeBigIntByString("31000000000220")),
+			sdkmath.NewInt(31_000_000_000_220),
 		},
 	}
 
@@ -105,15 +108,16 @@ func (suite *evmBankKeeperTestSuite) TestGetBalance() {
 			suite.SetupTest()
 
 			suite.FundAccountWithZgChain(suite.Addrs[0], tt.startingAmount)
-			coin := suite.EvmBankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], "neuron")
+			coin := suite.EvmBankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.EvmDenom)
 			suite.Require().Equal(tt.expAmount, coin.Amount)
 		})
 	}
 }
+
 func (suite *evmBankKeeperTestSuite) TestSendCoinsFromModuleToAccount() {
 	startingModuleCoins := sdk.NewCoins(
-		sdk.NewInt64Coin("neuron", 200),
-		sdk.NewInt64Coin("ua0gi", 100),
+		sdk.NewInt64Coin(chaincfg.EvmDenom, 200),
+		sdk.NewInt64Coin(chaincfg.GasDenom, 100),
 	)
 	tests := []struct {
 		name           string
@@ -123,102 +127,102 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromModuleToAccount() {
 		hasErr         bool
 	}{
 		{
-			"send more than 1 ua0gi",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("12000000000010")))),
+			"send more than 1 gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 12_000_000_000_010)),
 			sdk.Coins{},
 			sdk.NewCoins(
-				sdk.NewInt64Coin("neuron", 10),
-				sdk.NewInt64Coin("ua0gi", 12),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 10),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 12),
 			),
 			false,
 		},
 		{
-			"send less than 1 ua0gi",
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 122)),
+			"send less than 1 gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 122)),
 			sdk.Coins{},
 			sdk.NewCoins(
-				sdk.NewInt64Coin("neuron", 122),
-				sdk.NewInt64Coin("ua0gi", 0),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 122),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 0),
 			),
 			false,
 		},
 		{
-			"send an exact amount of ua0gi",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("98000000000000")))),
+			"send an exact amount of gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 98_000_000_000_000)),
 			sdk.Coins{},
 			sdk.NewCoins(
-				sdk.NewInt64Coin("neuron", 0),
-				sdk.NewInt64Coin("ua0gi", 98),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 0o0),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 98),
 			),
 			false,
 		},
 		{
-			"send no neuron",
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 0)),
+			"send no evm denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 0)),
 			sdk.Coins{},
 			sdk.NewCoins(
-				sdk.NewInt64Coin("neuron", 0),
-				sdk.NewInt64Coin("ua0gi", 0),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 0),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 0),
 			),
 			false,
 		},
 		{
 			"errors if sending other coins",
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 500), sdk.NewInt64Coin("busd", 1000)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 500), sdk.NewInt64Coin("busd", 1000)),
 			sdk.Coins{},
 			sdk.Coins{},
 			true,
 		},
 		{
-			"errors if not enough total neuron to cover",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("100000000001000")))),
+			"errors if not enough total evm denom to cover",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100_000_000_001_000)),
 			sdk.Coins{},
 			sdk.Coins{},
 			true,
 		},
 		{
-			"errors if not enough ua0gi to cover",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("200000000000000")))),
+			"errors if not enough gas denom to cover",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 200_000_000_000_000)),
 			sdk.Coins{},
 			sdk.Coins{},
 			true,
 		},
 		{
-			"converts receiver's neuron to ua0gi if there's enough neuron after the transfer",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("99000000000200")))),
+			"converts receiver's evm denom to gas denom if there's enough evm denom after the transfer",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 99_000_000_000_200)),
 			sdk.NewCoins(
-				sdk.NewInt64Coin("neuron", 999_999_999_900),
-				sdk.NewInt64Coin("ua0gi", 1),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 999_999_999_900),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 1),
 			),
 			sdk.NewCoins(
-				sdk.NewInt64Coin("neuron", 100),
-				sdk.NewInt64Coin("ua0gi", 101),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 100),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 101),
 			),
 			false,
 		},
 		{
-			"converts all of receiver's neuron to ua0gi even if somehow receiver has more than 1a0gi of neuron",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("12000000000100")))),
+			"converts all of receiver's evm denom to gas denom even if somehow receiver has more than 1 gas denom of evm denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 12_000_000_000_100)),
 			sdk.NewCoins(
-				sdk.NewInt64Coin("neuron", 5_999_999_999_990),
-				sdk.NewInt64Coin("ua0gi", 1),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 5_999_999_999_990),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 1),
 			),
 			sdk.NewCoins(
-				sdk.NewInt64Coin("neuron", 90),
-				sdk.NewInt64Coin("ua0gi", 19),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 90),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 19),
 			),
 			false,
 		},
 		{
-			"swap 1 ua0gi for neuron if module account doesn't have enough neuron",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("99000000001000")))),
+			"swap 1 gas denom for evm denom if module account doesn't have enough evm denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 99_000_000_001_000)),
 			sdk.NewCoins(
-				sdk.NewInt64Coin("neuron", 200),
-				sdk.NewInt64Coin("ua0gi", 1),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 200),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 1),
 			),
 			sdk.NewCoins(
-				sdk.NewInt64Coin("neuron", 1200),
-				sdk.NewInt64Coin("ua0gi", 100),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 1200),
+				sdk.NewInt64Coin(chaincfg.GasDenom, 100),
 			),
 			false,
 		},
@@ -231,8 +235,8 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromModuleToAccount() {
 			suite.FundAccountWithZgChain(suite.Addrs[0], tt.startingAccBal)
 			suite.FundModuleAccountWithZgChain(evmtypes.ModuleName, startingModuleCoins)
 
-			// fund our module with some ua0gi to account for converting extra neuron back to ua0gi
-			suite.FundModuleAccountWithZgChain(types.ModuleName, sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 10)))
+			// fund our module with some gas denom to account for converting extra evm denom back to gas denom
+			suite.FundModuleAccountWithZgChain(types.ModuleName, sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 10)))
 
 			err := suite.EvmBankKeeper.SendCoinsFromModuleToAccount(suite.Ctx, evmtypes.ModuleName, suite.Addrs[0], tt.sendCoins)
 			if tt.hasErr {
@@ -242,23 +246,24 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromModuleToAccount() {
 				suite.Require().NoError(err)
 			}
 
-			// check ua0gi
-			a0giSender := suite.BankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], "ua0gi")
-			suite.Require().Equal(tt.expAccBal.AmountOf("ua0gi").Int64(), a0giSender.Amount.Int64())
+			// check gas denom
+			GasDenomSender := suite.BankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.GasDenom)
+			suite.Require().Equal(tt.expAccBal.AmountOf(chaincfg.GasDenom).Int64(), GasDenomSender.Amount.Int64())
 
-			// check neuron
-			actualNeuron := suite.Keeper.GetBalance(suite.Ctx, suite.Addrs[0])
-			suite.Require().Equal(tt.expAccBal.AmountOf("neuron").Int64(), actualNeuron.Int64())
+			// check evm denom
+			actualEvmDenom := suite.Keeper.GetBalance(suite.Ctx, suite.Addrs[0])
+			suite.Require().Equal(tt.expAccBal.AmountOf(chaincfg.EvmDenom).Int64(), actualEvmDenom.Int64())
 		})
 	}
 }
+
 func (suite *evmBankKeeperTestSuite) TestSendCoinsFromAccountToModule() {
 	startingAccCoins := sdk.NewCoins(
-		sdk.NewInt64Coin("neuron", 200),
-		sdk.NewInt64Coin("ua0gi", 100),
+		sdk.NewInt64Coin(chaincfg.EvmDenom, 200),
+		sdk.NewInt64Coin(chaincfg.GasDenom, 100),
 	)
 	startingModuleCoins := sdk.NewCoins(
-		sdk.NewInt64Coin("neuron", 100_000_000_000),
+		sdk.NewInt64Coin(chaincfg.EvmDenom, 100_000_000_000),
 	)
 	tests := []struct {
 		name           string
@@ -268,36 +273,36 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromAccountToModule() {
 		hasErr         bool
 	}{
 		{
-			"send more than 1 ua0gi",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("12000000000010")))),
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 190), sdk.NewInt64Coin("ua0gi", 88)),
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 100_000_000_010), sdk.NewInt64Coin("ua0gi", 12)),
+			"send more than 1 gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 12_000_000_000_010)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 190), sdk.NewInt64Coin(chaincfg.GasDenom, 88)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100_000_000_010), sdk.NewInt64Coin(chaincfg.GasDenom, 12)),
 			false,
 		},
 		{
-			"send less than 1 ua0gi",
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 122)),
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 78), sdk.NewInt64Coin("ua0gi", 100)),
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 100_000_000_122), sdk.NewInt64Coin("ua0gi", 0)),
+			"send less than 1 gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 122)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 78), sdk.NewInt64Coin(chaincfg.GasDenom, 100)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100_000_000_122), sdk.NewInt64Coin(chaincfg.GasDenom, 0)),
 			false,
 		},
 		{
-			"send an exact amount of ua0gi",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("98000000000000")))),
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 200), sdk.NewInt64Coin("ua0gi", 2)),
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 100_000_000_000), sdk.NewInt64Coin("ua0gi", 98)),
+			"send an exact amount of gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 98_000_000_000_000)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 200), sdk.NewInt64Coin(chaincfg.GasDenom, 2)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100_000_000_000), sdk.NewInt64Coin(chaincfg.GasDenom, 98)),
 			false,
 		},
 		{
-			"send no neuron",
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 0)),
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 200), sdk.NewInt64Coin("ua0gi", 100)),
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 100_000_000_000), sdk.NewInt64Coin("ua0gi", 0)),
+			"send no evm denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 0)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 200), sdk.NewInt64Coin(chaincfg.GasDenom, 100)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100_000_000_000), sdk.NewInt64Coin(chaincfg.GasDenom, 0)),
 			false,
 		},
 		{
 			"errors if sending other coins",
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 500), sdk.NewInt64Coin("busd", 1000)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 500), sdk.NewInt64Coin("busd", 1000)),
 			sdk.Coins{},
 			sdk.Coins{},
 			true,
@@ -305,39 +310,39 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromAccountToModule() {
 		{
 			"errors if have dup coins",
 			sdk.Coins{
-				sdk.NewInt64Coin("neuron", 12_000_000_000_000),
-				sdk.NewInt64Coin("neuron", 2_000_000_000_000),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 12_000_000_000_000),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 2_000_000_000_000),
 			},
 			sdk.Coins{},
 			sdk.Coins{},
 			true,
 		},
 		{
-			"errors if not enough total neuron to cover",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("100000000001000")))),
+			"errors if not enough total evm denom to cover",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100_000_000_001_000)),
 			sdk.Coins{},
 			sdk.Coins{},
 			true,
 		},
 		{
-			"errors if not enough ua0gi to cover",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("200000000000000")))),
+			"errors if not enough gas denom to cover",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 200_000_000_000_000)),
 			sdk.Coins{},
 			sdk.Coins{},
 			true,
 		},
 		{
-			"converts 1 ua0gi to neuron if not enough neuron to cover",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("99001000000000")))),
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 999_000_000_200), sdk.NewInt64Coin("ua0gi", 0)),
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 101_000_000_000), sdk.NewInt64Coin("ua0gi", 99)),
+			"converts 1 gas denom to evm denom if not enough evm denom to cover",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 99_001_000_000_000)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 999_000_000_200), sdk.NewInt64Coin(chaincfg.GasDenom, 0)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 101_000_000_000), sdk.NewInt64Coin(chaincfg.GasDenom, 99)),
 			false,
 		},
 		{
-			"converts receiver's neuron to ua0gi if there's enough neuron after the transfer",
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 5_900_000_000_200)),
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 100_000_000_000), sdk.NewInt64Coin("ua0gi", 94)),
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 200), sdk.NewInt64Coin("ua0gi", 6)),
+			"converts receiver's evm denom to gas denom if there's enough evm denom after the transfer",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 5_900_000_000_200)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100_000_000_000), sdk.NewInt64Coin(chaincfg.GasDenom, 94)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 200), sdk.NewInt64Coin(chaincfg.GasDenom, 6)),
 			false,
 		},
 	}
@@ -357,66 +362,67 @@ func (suite *evmBankKeeperTestSuite) TestSendCoinsFromAccountToModule() {
 			}
 
 			// check sender balance
-			a0giSender := suite.BankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], "ua0gi")
-			suite.Require().Equal(tt.expSenderCoins.AmountOf("ua0gi").Int64(), a0giSender.Amount.Int64())
-			actualNeuron := suite.Keeper.GetBalance(suite.Ctx, suite.Addrs[0])
-			suite.Require().Equal(tt.expSenderCoins.AmountOf("neuron").Int64(), actualNeuron.Int64())
+			GasDenomSender := suite.BankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.GasDenom)
+			suite.Require().Equal(tt.expSenderCoins.AmountOf(chaincfg.GasDenom).Int64(), GasDenomSender.Amount.Int64())
+			actualEvmDenom := suite.Keeper.GetBalance(suite.Ctx, suite.Addrs[0])
+			suite.Require().Equal(tt.expSenderCoins.AmountOf(chaincfg.EvmDenom).Int64(), actualEvmDenom.Int64())
 
 			// check module balance
 			moduleAddr := suite.AccountKeeper.GetModuleAddress(evmtypes.ModuleName)
-			a0giSender = suite.BankKeeper.GetBalance(suite.Ctx, moduleAddr, "ua0gi")
-			suite.Require().Equal(tt.expModuleCoins.AmountOf("ua0gi").Int64(), a0giSender.Amount.Int64())
-			actualNeuron = suite.Keeper.GetBalance(suite.Ctx, moduleAddr)
-			suite.Require().Equal(tt.expModuleCoins.AmountOf("neuron").Int64(), actualNeuron.Int64())
+			GasDenomSender = suite.BankKeeper.GetBalance(suite.Ctx, moduleAddr, chaincfg.GasDenom)
+			suite.Require().Equal(tt.expModuleCoins.AmountOf(chaincfg.GasDenom).Int64(), GasDenomSender.Amount.Int64())
+			actualEvmDenom = suite.Keeper.GetBalance(suite.Ctx, moduleAddr)
+			suite.Require().Equal(tt.expModuleCoins.AmountOf(chaincfg.EvmDenom).Int64(), actualEvmDenom.Int64())
 		})
 	}
 }
+
 func (suite *evmBankKeeperTestSuite) TestBurnCoins() {
-	startingA0gi := sdkmath.NewInt(100)
+	startingGasDenom := sdkmath.NewInt(100)
 	tests := []struct {
-		name        string
-		burnCoins   sdk.Coins
-		expA0gi     sdkmath.Int
-		expNeuron   sdkmath.Int
-		hasErr      bool
-		neuronStart sdkmath.Int
+		name          string
+		burnCoins     sdk.Coins
+		expGasDenom   sdkmath.Int
+		expEvmDenom   sdkmath.Int
+		hasErr        bool
+		evmDenomStart sdkmath.Int
 	}{
 		{
-			"burn more than 1 ua0gi",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("12021000000002")))),
+			"burn more than 1 gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 12_021_000_000_002)),
 			sdkmath.NewInt(88),
 			sdkmath.NewInt(100_000_000_000),
 			false,
-			sdk.NewIntFromBigInt(makeBigIntByString("121000000002")),
+			sdkmath.NewInt(121_000_000_002),
 		},
 		{
-			"burn less than 1 ua0gi",
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 122)),
+			"burn less than 1 gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 122)),
 			sdkmath.NewInt(100),
 			sdkmath.NewInt(878),
 			false,
 			sdkmath.NewInt(1000),
 		},
 		{
-			"burn an exact amount of ua0gi",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("98000000000000")))),
+			"burn an exact amount of gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 98_000_000_000_000)),
 			sdkmath.NewInt(2),
 			sdkmath.NewInt(10),
 			false,
 			sdkmath.NewInt(10),
 		},
 		{
-			"burn no neuron",
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 0)),
-			startingA0gi,
+			"burn no evm denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 0)),
+			startingGasDenom,
 			sdk.ZeroInt(),
 			false,
 			sdk.ZeroInt(),
 		},
 		{
 			"errors if burning other coins",
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 500), sdk.NewInt64Coin("busd", 1000)),
-			startingA0gi,
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 500), sdk.NewInt64Coin("busd", 1000)),
+			startingGasDenom,
 			sdkmath.NewInt(100),
 			true,
 			sdkmath.NewInt(100),
@@ -424,41 +430,41 @@ func (suite *evmBankKeeperTestSuite) TestBurnCoins() {
 		{
 			"errors if have dup coins",
 			sdk.Coins{
-				sdk.NewInt64Coin("neuron", 12_000_000_000_000),
-				sdk.NewInt64Coin("neuron", 2_000_000_000_000),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 12_000_000_000_000),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 2_000_000_000_000),
 			},
-			startingA0gi,
+			startingGasDenom,
 			sdk.ZeroInt(),
 			true,
 			sdk.ZeroInt(),
 		},
 		{
 			"errors if burn amount is negative",
-			sdk.Coins{sdk.Coin{Denom: "neuron", Amount: sdkmath.NewInt(-100)}},
-			startingA0gi,
+			sdk.Coins{sdk.Coin{Denom: chaincfg.EvmDenom, Amount: sdkmath.NewInt(-100)}},
+			startingGasDenom,
 			sdkmath.NewInt(50),
 			true,
 			sdkmath.NewInt(50),
 		},
 		{
-			"errors if not enough neuron to cover burn",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("100999000000000")))),
+			"errors if not enough evm denom to cover burn",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100_999_000_000_000)),
 			sdkmath.NewInt(0),
 			sdkmath.NewInt(99_000_000_000),
 			true,
 			sdkmath.NewInt(99_000_000_000),
 		},
 		{
-			"errors if not enough ua0gi to cover burn",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("200000000000000")))),
+			"errors if not enough gas denom to cover burn",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 200_000_000_000_000)),
 			sdkmath.NewInt(100),
 			sdk.ZeroInt(),
 			true,
 			sdk.ZeroInt(),
 		},
 		{
-			"converts 1 ua0gi to neuron if not enough neuron to cover",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("12021000000002")))),
+			"converts 1 gas denom to evm denom if not enough evm denom to cover",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 12_021_000_000_002)),
 			sdkmath.NewInt(87),
 			sdkmath.NewInt(980_000_000_000),
 			false,
@@ -470,8 +476,8 @@ func (suite *evmBankKeeperTestSuite) TestBurnCoins() {
 		suite.Run(tt.name, func() {
 			suite.SetupTest()
 			startingCoins := sdk.NewCoins(
-				sdk.NewCoin("ua0gi", startingA0gi),
-				sdk.NewCoin("neuron", tt.neuronStart),
+				sdk.NewCoin(chaincfg.GasDenom, startingGasDenom),
+				sdk.NewCoin(chaincfg.EvmDenom, tt.evmDenomStart),
 			)
 			suite.FundModuleAccountWithZgChain(evmtypes.ModuleName, startingCoins)
 
@@ -483,52 +489,53 @@ func (suite *evmBankKeeperTestSuite) TestBurnCoins() {
 				suite.Require().NoError(err)
 			}
 
-			// check ua0gi
-			a0giActual := suite.BankKeeper.GetBalance(suite.Ctx, suite.EvmModuleAddr, "ua0gi")
-			suite.Require().Equal(tt.expA0gi, a0giActual.Amount)
+			// check gas denom
+			GasDenomActual := suite.BankKeeper.GetBalance(suite.Ctx, suite.EvmModuleAddr, chaincfg.GasDenom)
+			suite.Require().Equal(tt.expGasDenom, GasDenomActual.Amount)
 
-			// check neuron
-			neuronActual := suite.Keeper.GetBalance(suite.Ctx, suite.EvmModuleAddr)
-			suite.Require().Equal(tt.expNeuron, neuronActual)
+			// check evm denom
+			evmDenomActual := suite.Keeper.GetBalance(suite.Ctx, suite.EvmModuleAddr)
+			suite.Require().Equal(tt.expEvmDenom, evmDenomActual)
 		})
 	}
 }
+
 func (suite *evmBankKeeperTestSuite) TestMintCoins() {
 	tests := []struct {
-		name        string
-		mintCoins   sdk.Coins
-		ua0gi       sdkmath.Int
-		neuron      sdkmath.Int
-		hasErr      bool
-		neuronStart sdkmath.Int
+		name          string
+		mintCoins     sdk.Coins
+		GasDenomCnt   sdkmath.Int
+		evmDenomCnt   sdkmath.Int
+		hasErr        bool
+		evmDenomStart sdkmath.Int
 	}{
 		{
-			"mint more than 1 ua0gi",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("12021000000002")))),
+			"mint more than 1 gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 12_021_000_000_002)),
 			sdkmath.NewInt(12),
 			sdkmath.NewInt(21_000_000_002),
 			false,
 			sdk.ZeroInt(),
 		},
 		{
-			"mint less than 1 ua0gi",
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 901_000_000_001)),
+			"mint less than 1 gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 901_000_000_001)),
 			sdk.ZeroInt(),
 			sdkmath.NewInt(901_000_000_001),
 			false,
 			sdk.ZeroInt(),
 		},
 		{
-			"mint an exact amount of ua0gi",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("123000000000000000")))),
+			"mint an exact amount of gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 123_000_000_000_000_000)),
 			sdkmath.NewInt(123_000),
 			sdk.ZeroInt(),
 			false,
 			sdk.ZeroInt(),
 		},
 		{
-			"mint no neuron",
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 0)),
+			"mint no evm denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 0)),
 			sdk.ZeroInt(),
 			sdk.ZeroInt(),
 			false,
@@ -536,7 +543,7 @@ func (suite *evmBankKeeperTestSuite) TestMintCoins() {
 		},
 		{
 			"errors if minting other coins",
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 500), sdk.NewInt64Coin("busd", 1000)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 500), sdk.NewInt64Coin("busd", 1000)),
 			sdk.ZeroInt(),
 			sdkmath.NewInt(100),
 			true,
@@ -545,8 +552,8 @@ func (suite *evmBankKeeperTestSuite) TestMintCoins() {
 		{
 			"errors if have dup coins",
 			sdk.Coins{
-				sdk.NewInt64Coin("neuron", 12_000_000_000_000),
-				sdk.NewInt64Coin("neuron", 2_000_000_000_000),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 12_000_000_000_000),
+				sdk.NewInt64Coin(chaincfg.EvmDenom, 2_000_000_000_000),
 			},
 			sdk.ZeroInt(),
 			sdk.ZeroInt(),
@@ -555,35 +562,35 @@ func (suite *evmBankKeeperTestSuite) TestMintCoins() {
 		},
 		{
 			"errors if mint amount is negative",
-			sdk.Coins{sdk.Coin{Denom: "neuron", Amount: sdkmath.NewInt(-100)}},
+			sdk.Coins{sdk.Coin{Denom: chaincfg.EvmDenom, Amount: sdkmath.NewInt(-100)}},
 			sdk.ZeroInt(),
 			sdkmath.NewInt(50),
 			true,
 			sdkmath.NewInt(50),
 		},
 		{
-			"adds to existing neuron balance",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("12021000000002")))),
+			"adds to existing evm denom balance",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 12_021_000_000_002)),
 			sdkmath.NewInt(12),
 			sdkmath.NewInt(21_000_000_102),
 			false,
 			sdkmath.NewInt(100),
 		},
 		{
-			"convert neuron balance to ua0gi if it exceeds 1 ua0gi",
-			sdk.NewCoins(sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("10999000000000")))),
+			"convert evm denom balance to gas denom if it exceeds 1 gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 10_999_000_000_000)),
 			sdkmath.NewInt(12),
 			sdkmath.NewInt(1_200_000_001),
 			false,
-			sdkmath.NewIntFromBigInt(makeBigIntByString("1002200000001")),
+			sdkmath.NewInt(1_002_200_000_001),
 		},
 	}
 
 	for _, tt := range tests {
 		suite.Run(tt.name, func() {
 			suite.SetupTest()
-			suite.FundModuleAccountWithZgChain(types.ModuleName, sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 10)))
-			suite.FundModuleAccountWithZgChain(evmtypes.ModuleName, sdk.NewCoins(sdk.NewCoin("neuron", tt.neuronStart)))
+			suite.FundModuleAccountWithZgChain(types.ModuleName, sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 10)))
+			suite.FundModuleAccountWithZgChain(evmtypes.ModuleName, sdk.NewCoins(sdk.NewCoin(chaincfg.EvmDenom, tt.evmDenomStart)))
 
 			err := suite.EvmBankKeeper.MintCoins(suite.Ctx, evmtypes.ModuleName, tt.mintCoins)
 			if tt.hasErr {
@@ -593,13 +600,13 @@ func (suite *evmBankKeeperTestSuite) TestMintCoins() {
 				suite.Require().NoError(err)
 			}
 
-			// check ua0gi
-			a0giActual := suite.BankKeeper.GetBalance(suite.Ctx, suite.EvmModuleAddr, "ua0gi")
-			suite.Require().Equal(tt.ua0gi, a0giActual.Amount)
+			// check gas denom
+			GasDenomActual := suite.BankKeeper.GetBalance(suite.Ctx, suite.EvmModuleAddr, chaincfg.GasDenom)
+			suite.Require().Equal(tt.GasDenomCnt, GasDenomActual.Amount)
 
-			// check neuron
-			neuronActual := suite.Keeper.GetBalance(suite.Ctx, suite.EvmModuleAddr)
-			suite.Require().Equal(tt.neuron, neuronActual)
+			// check evm denom
+			evmDenomActual := suite.Keeper.GetBalance(suite.Ctx, suite.EvmModuleAddr)
+			suite.Require().Equal(tt.evmDenomCnt, evmDenomActual)
 		})
 	}
 }
@@ -612,22 +619,22 @@ func (suite *evmBankKeeperTestSuite) TestValidateEvmCoins() {
 	}{
 		{
 			"valid coins",
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 500)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 500)),
 			false,
 		},
 		{
 			"dup coins",
-			sdk.Coins{sdk.NewInt64Coin("neuron", 500), sdk.NewInt64Coin("neuron", 500)},
+			sdk.Coins{sdk.NewInt64Coin(chaincfg.EvmDenom, 500), sdk.NewInt64Coin(chaincfg.EvmDenom, 500)},
 			true,
 		},
 		{
 			"not evm coins",
-			sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 500)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 500)),
 			true,
 		},
 		{
 			"negative coins",
-			sdk.Coins{sdk.Coin{Denom: "neuron", Amount: sdkmath.NewInt(-500)}},
+			sdk.Coins{sdk.Coin{Denom: chaincfg.EvmDenom, Amount: sdkmath.NewInt(-500)}},
 			true,
 		},
 	}
@@ -643,8 +650,8 @@ func (suite *evmBankKeeperTestSuite) TestValidateEvmCoins() {
 	}
 }
 
-func (suite *evmBankKeeperTestSuite) TestConvertOneA0giToNeuronIfNeeded() {
-	neuronNeeded := sdkmath.NewInt(200)
+func (suite *evmBankKeeperTestSuite) TestConvertOneGasDenomToEvmDenomIfNeeded() {
+	evmDenomNeeded := sdkmath.NewInt(200)
 	tests := []struct {
 		name          string
 		startingCoins sdk.Coins
@@ -652,21 +659,21 @@ func (suite *evmBankKeeperTestSuite) TestConvertOneA0giToNeuronIfNeeded() {
 		success       bool
 	}{
 		{
-			"not enough ua0gi for conversion",
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 100)),
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 100)),
+			"not enough gas denom for conversion",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100)),
 			false,
 		},
 		{
-			"converts 1 ua0gi to neuron",
-			sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 10), sdk.NewInt64Coin("neuron", 100)),
-			sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 9), sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("1000000000100")))),
+			"converts 1 gas denom to evm denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 10), sdk.NewInt64Coin(chaincfg.EvmDenom, 100)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 9), sdk.NewInt64Coin(chaincfg.EvmDenom, 1_000_000_000_100)),
 			true,
 		},
 		{
 			"conversion not needed",
-			sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 10), sdk.NewInt64Coin("neuron", 200)),
-			sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 10), sdk.NewInt64Coin("neuron", 200)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 10), sdk.NewInt64Coin(chaincfg.EvmDenom, 200)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 10), sdk.NewInt64Coin(chaincfg.EvmDenom, 200)),
 			true,
 		},
 	}
@@ -675,11 +682,11 @@ func (suite *evmBankKeeperTestSuite) TestConvertOneA0giToNeuronIfNeeded() {
 			suite.SetupTest()
 
 			suite.FundAccountWithZgChain(suite.Addrs[0], tt.startingCoins)
-			err := suite.EvmBankKeeper.ConvertOneUa0giToNeuronIfNeeded(suite.Ctx, suite.Addrs[0], neuronNeeded)
-			moduleZgChain := suite.BankKeeper.GetBalance(suite.Ctx, suite.AccountKeeper.GetModuleAddress(types.ModuleName), "ua0gi")
+			err := suite.EvmBankKeeper.ConvertOneGasDenomToEvmDenomIfNeeded(suite.Ctx, suite.Addrs[0], evmDenomNeeded)
+			moduleZgChain := suite.BankKeeper.GetBalance(suite.Ctx, suite.AccountKeeper.GetModuleAddress(types.ModuleName), chaincfg.GasDenom)
 			if tt.success {
 				suite.Require().NoError(err)
-				if tt.startingCoins.AmountOf("neuron").LT(neuronNeeded) {
+				if tt.startingCoins.AmountOf(chaincfg.EvmDenom).LT(evmDenomNeeded) {
 					suite.Require().Equal(sdk.OneInt(), moduleZgChain.Amount)
 				}
 			} else {
@@ -687,52 +694,54 @@ func (suite *evmBankKeeperTestSuite) TestConvertOneA0giToNeuronIfNeeded() {
 				suite.Require().Equal(sdk.ZeroInt(), moduleZgChain.Amount)
 			}
 
-			neuron := suite.Keeper.GetBalance(suite.Ctx, suite.Addrs[0])
-			suite.Require().Equal(tt.expectedCoins.AmountOf("neuron"), neuron)
-			ua0gi := suite.BankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], "ua0gi")
-			suite.Require().Equal(tt.expectedCoins.AmountOf("ua0gi"), ua0gi.Amount)
+			evmDenomCnt := suite.Keeper.GetBalance(suite.Ctx, suite.Addrs[0])
+			suite.Require().Equal(tt.expectedCoins.AmountOf(chaincfg.EvmDenom), evmDenomCnt)
+			GasDenomCoin := suite.BankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.GasDenom)
+			suite.Require().Equal(tt.expectedCoins.AmountOf(chaincfg.GasDenom), GasDenomCoin.Amount)
 		})
 	}
 }
-func (suite *evmBankKeeperTestSuite) TestConvertNeuronToA0gi() {
+
+func (suite *evmBankKeeperTestSuite) TestConvertEvmDenomToGasDenom() {
 	tests := []struct {
 		name          string
 		startingCoins sdk.Coins
 		expectedCoins sdk.Coins
 	}{
 		{
-			"not enough ua0gi",
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 100)),
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 100), sdk.NewInt64Coin("ua0gi", 0)),
+			"not enough gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 100), sdk.NewInt64Coin(chaincfg.GasDenom, 0)),
 		},
 		{
-			"converts neuron for 1 ua0gi",
-			sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 10), sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("1000000000003")))),
-			sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 11), sdk.NewInt64Coin("neuron", 3)),
+			"converts evm denom for 1 gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 10), sdk.NewInt64Coin(chaincfg.EvmDenom, 1_000_000_000_003)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 11), sdk.NewInt64Coin(chaincfg.EvmDenom, 3)),
 		},
 		{
-			"converts more than 1 ua0gi of neuron",
-			sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 10), sdk.NewCoin("neuron", sdk.NewIntFromBigInt(makeBigIntByString("8000000000123")))),
-			sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 18), sdk.NewInt64Coin("neuron", 123)),
+			"converts more than 1 gas denom of evm denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 10), sdk.NewInt64Coin(chaincfg.EvmDenom, 8_000_000_000_123)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 18), sdk.NewInt64Coin(chaincfg.EvmDenom, 123)),
 		},
 	}
 	for _, tt := range tests {
 		suite.Run(tt.name, func() {
 			suite.SetupTest()
 
-			err := suite.App.FundModuleAccount(suite.Ctx, types.ModuleName, sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 10)))
+			err := suite.App.FundModuleAccount(suite.Ctx, types.ModuleName, sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 10)))
 			suite.Require().NoError(err)
 			suite.FundAccountWithZgChain(suite.Addrs[0], tt.startingCoins)
-			err = suite.EvmBankKeeper.ConvertNeuronToUa0gi(suite.Ctx, suite.Addrs[0])
+			err = suite.EvmBankKeeper.ConvertEvmDenomToGasDenom(suite.Ctx, suite.Addrs[0])
 			suite.Require().NoError(err)
-			neuron := suite.Keeper.GetBalance(suite.Ctx, suite.Addrs[0])
-			suite.Require().Equal(tt.expectedCoins.AmountOf("neuron"), neuron)
-			ua0gi := suite.BankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], "ua0gi")
-			suite.Require().Equal(tt.expectedCoins.AmountOf("ua0gi"), ua0gi.Amount)
+			evmDenomCnt := suite.Keeper.GetBalance(suite.Ctx, suite.Addrs[0])
+			suite.Require().Equal(tt.expectedCoins.AmountOf(chaincfg.EvmDenom), evmDenomCnt)
+			GasDenomCoin := suite.BankKeeper.GetBalance(suite.Ctx, suite.Addrs[0], chaincfg.GasDenom)
+			suite.Require().Equal(tt.expectedCoins.AmountOf(chaincfg.GasDenom), GasDenomCoin.Amount)
 		})
 	}
 }
-func (suite *evmBankKeeperTestSuite) TestSplitNeuronCoins() {
+
+func (suite *evmBankKeeperTestSuite) TestSplitEvmDenomCoins() {
 	tests := []struct {
 		name          string
 		coins         sdk.Coins
@@ -741,7 +750,7 @@ func (suite *evmBankKeeperTestSuite) TestSplitNeuronCoins() {
 	}{
 		{
 			"invalid coins",
-			sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 500)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 500)),
 			nil,
 			true,
 		},
@@ -752,33 +761,33 @@ func (suite *evmBankKeeperTestSuite) TestSplitNeuronCoins() {
 			false,
 		},
 		{
-			"ua0gi & neuron coins",
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 8_000_000_000_123)),
-			sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 8), sdk.NewInt64Coin("neuron", 123)),
+			"gas denom & evm denom coins",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 8_000_000_000_123)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 8), sdk.NewInt64Coin(chaincfg.EvmDenom, 123)),
 			false,
 		},
 		{
-			"only neuron",
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 10_123)),
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 10_123)),
+			"only evm denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 10_123)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 10_123)),
 			false,
 		},
 		{
-			"only ua0gi",
-			sdk.NewCoins(sdk.NewInt64Coin("neuron", 5_000_000_000_000)),
-			sdk.NewCoins(sdk.NewInt64Coin("ua0gi", 5)),
+			"only gas denom",
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.EvmDenom, 5_000_000_000_000)),
+			sdk.NewCoins(sdk.NewInt64Coin(chaincfg.GasDenom, 5)),
 			false,
 		},
 	}
 	for _, tt := range tests {
 		suite.Run(tt.name, func() {
-			ua0gi, neuron, err := keeper.SplitNeuronCoins(tt.coins)
+			GasDenomCoin, evmDenomCnt, err := keeper.SplitEvmDenomCoins(tt.coins)
 			if tt.shouldErr {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
-				suite.Require().Equal(tt.expectedCoins.AmountOf("ua0gi"), ua0gi.Amount)
-				suite.Require().Equal(tt.expectedCoins.AmountOf("neuron"), neuron)
+				suite.Require().Equal(tt.expectedCoins.AmountOf(chaincfg.GasDenom), GasDenomCoin.Amount)
+				suite.Require().Equal(tt.expectedCoins.AmountOf(chaincfg.EvmDenom), evmDenomCnt)
 			}
 		})
 	}
