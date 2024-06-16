@@ -367,11 +367,14 @@ func NewApp(
 		bankSubspace,
 		app.loadBlockedMaccAddrs(),
 	)
+	app.vestingKeeper = vestingkeeper.NewVestingKeeper(app.accountKeeper, app.bankKeeper, keys[vestingtypes.StoreKey])
+
 	app.stakingKeeper = stakingkeeper.NewKeeper(
 		appCodec,
 		keys[stakingtypes.StoreKey],
 		app.accountKeeper,
 		app.bankKeeper,
+		app.vestingKeeper,
 		stakingSubspace,
 	)
 	app.authzKeeper = authzkeeper.NewKeeper(
@@ -573,8 +576,6 @@ func NewApp(
 	app.CouncilKeeper = councilkeeper.NewKeeper(
 		keys[counciltypes.StoreKey], appCodec, app.stakingKeeper,
 	)
-
-	app.vestingKeeper = vestingkeeper.NewVestingKeeper(app.accountKeeper, app.bankKeeper, keys[vestingtypes.StoreKey])
 
 	// create the module manager (Note: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.)
