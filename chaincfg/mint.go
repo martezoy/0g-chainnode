@@ -1,21 +1,11 @@
 package chaincfg
 
 import (
-	"github.com/tendermint/tendermint/libs/log"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 )
 
-func CustomInflationCalculateFn(ctx sdk.Context, minter minttypes.Minter, params minttypes.Params, bondedRatio sdk.Dec) sdk.Dec {
-	logger := ctx.Logger()
-	if logger == nil {
-		panic("logger is nil")
-	}
-	return customInflationCalculateFn(logger, minter, params, bondedRatio)
-}
-
-func customInflationCalculateFn(logger log.Logger, minter minttypes.Minter, params minttypes.Params, bondedRatio sdk.Dec) sdk.Dec {
+func NextInflationRate(ctx sdk.Context, minter minttypes.Minter, params minttypes.Params, bondedRatio sdk.Dec, circulatingRatio sdk.Dec) sdk.Dec {
 	// The target annual inflation rate is recalculated for each previsions cycle. The
 	// inflation is also subject to a rate change (positive or negative) depending on
 	// the distance from the desired ratio (67%). The maximum rate change possible is
@@ -37,9 +27,10 @@ func customInflationCalculateFn(logger log.Logger, minter minttypes.Minter, para
 		inflation = params.InflationMin
 	}
 
-	logger.Info(
+	ctx.Logger().Debug(
 		"calculated new annual inflation",
 		"bondedRatio", bondedRatio,
+		"circulatingRatio", circulatingRatio,
 		"inflation", inflation,
 		"params", params,
 		"minter", minter,
