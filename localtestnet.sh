@@ -16,7 +16,7 @@ userMnemonic="news tornado sponsor drastic dolphin awful plastic select true liz
 # 0x7Bbf300890857b8c241b219C6a489431669b3aFA
 # kava10wlnqzyss4accfqmyxwx5jy5x9nfkwh6qm7n4t
 
-relayerMnemonic="never reject sniff east arctic funny twin feed upper series stay shoot vivid adapt defense economy pledge fetch invite approve ceiling admit gloom exit"
+vestingMnemonic="never reject sniff east arctic funny twin feed upper series stay shoot vivid adapt defense economy pledge fetch invite approve ceiling admit gloom exit"
 # 0xa2F728F997f62F47D4262a70947F6c36885dF9fa
 # kava15tmj37vh7ch504px9fcfglmvx6y9m70646ev8t
 
@@ -64,11 +64,11 @@ $BINARY add-genesis-account $evmFaucetKeyName 1000000000000000000000ua0gi
 
 userKeyName="user"
 printf "$userMnemonic\n" | $BINARY keys add $userKeyName --eth --recover
-$BINARY add-genesis-account $userKeyName 1000000000000000000000ua0gi,1000000000usdx
+$BINARY add-genesis-account $userKeyName 1000000000000000000000ua0gi
 
-relayerKeyName="relayer"
-printf "$relayerMnemonic\n" | $BINARY keys add $relayerKeyName --eth --recover
-$BINARY add-genesis-account $relayerKeyName 1000000000000000000000ua0gi
+vestingKeyName="vesting"
+printf "$vestingMnemonic\n" | $BINARY keys add $vestingKeyName --eth --recover
+$BINARY add-genesis-account $vestingKeyName 1000000000000000000000ua0gi --vesting-amount 1000000000000000000000ua0gi --vesting-start-time 1717200000 --vesting-end-time 1719791999
 
 storageContractAcc="0g1vsjpjgw8p5f4x0nwp8ernl9lkszewcqqss7r5d"
 $BINARY add-genesis-account $storageContractAcc 1000000000000000000000ua0gi
