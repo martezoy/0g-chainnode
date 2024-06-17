@@ -23,6 +23,7 @@ import (
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	vestingkeeper "github.com/cosmos/cosmos-sdk/x/auth/vesting/keeper"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
@@ -248,6 +249,7 @@ type App struct {
 	bep3Keeper       bep3keeper.Keeper
 	pricefeedKeeper  pricefeedkeeper.Keeper
 	committeeKeeper  committeekeeper.Keeper
+	vestingKeeper    vestingkeeper.VestingKeeper
 	mintKeeper       mintkeeper.Keeper
 	dasignersKeeper  dasignerskeeper.Keeper
 
@@ -299,6 +301,7 @@ func NewApp(
 		minttypes.StoreKey,
 		counciltypes.StoreKey,
 		dasignerstypes.StoreKey,
+		vestingtypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey, feemarkettypes.TransientKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -364,11 +367,14 @@ func NewApp(
 		bankSubspace,
 		app.loadBlockedMaccAddrs(),
 	)
+	app.vestingKeeper = vestingkeeper.NewVestingKeeper(app.accountKeeper, app.bankKeeper, keys[vestingtypes.StoreKey])
+
 	app.stakingKeeper = stakingkeeper.NewKeeper(
 		appCodec,
 		keys[stakingtypes.StoreKey],
 		app.accountKeeper,
 		app.bankKeeper,
+		app.vestingKeeper,
 		stakingSubspace,
 	)
 	app.authzKeeper = authzkeeper.NewKeeper(
@@ -590,7 +596,7 @@ func NewApp(
 		upgrade.NewAppModule(app.upgradeKeeper),
 		evidence.NewAppModule(app.evidenceKeeper),
 		transferModule,
-		vesting.NewAppModule(app.accountKeeper, app.bankKeeper),
+		vesting.NewAppModule(app.accountKeeper, app.vestingKeeper),
 		authzmodule.NewAppModule(appCodec, app.authzKeeper, app.accountKeeper, app.bankKeeper, app.interfaceRegistry),
 		issuance.NewAppModule(app.issuanceKeeper, app.accountKeeper, app.bankKeeper),
 		bep3.NewAppModule(app.bep3Keeper, app.accountKeeper, app.bankKeeper),
@@ -599,7 +605,7 @@ func NewApp(
 		committee.NewAppModule(app.committeeKeeper, app.accountKeeper),
 		evmutil.NewAppModule(app.evmutilKeeper, app.bankKeeper, app.accountKeeper),
 		// nil InflationCalculationFn, use SDK's default inflation function
-		mint.NewAppModule(appCodec, app.mintKeeper, app.accountKeeper, chaincfg.CustomInflationCalculateFn),
+		mint.NewAppModule(appCodec, app.mintKeeper, app.accountKeeper, chaincfg.NextInflationRate),
 		council.NewAppModule(app.CouncilKeeper, app.stakingKeeper),
 		dasigners.NewAppModule(app.dasignersKeeper, app.stakingKeeper),
 	)
