@@ -33,9 +33,10 @@ set -e
 IFS=","; declare -a IPS=($1); unset IFS
 
 NUM_NODES=${#IPS[@]}
-VLIDATOR_BALANCE=15000000000000000000ua0gi
-FAUCET_BALANCE=40000000000000000000ua0gi
-STAKING=10000000000000000000ua0gi
+VALIDATOR_BALANCE=25000000000000ua0gi
+FAUCET_BALANCE=500000000000000ua0gi
+STAKING=5000000000000ua0gi
+VESTING_BALANCE=400000000000000ua0gi
 
 # Init configs
 for ((i=0; i<$NUM_NODES; i++)) do
@@ -146,12 +147,13 @@ fi
 for ((i=0; i<$NUM_NODES; i++)) do
     for ((j=0; j<$NUM_NODES; j++)) do
         if [[ "$OS_NAME" = "GNU/Linux" ]]; then
-            yes $PASSWORD | 0gchaind add-genesis-account "0gchain_validator_$j" $VLIDATOR_BALANCE --home "$ROOT_DIR/node$i"
+            yes $PASSWORD | 0gchaind add-genesis-account "0gchain_validator_$j" $VALIDATOR_BALANCE --home "$ROOT_DIR/node$i"
         else
-            0gchaind add-genesis-account "0gchain_validator_$j" $VLIDATOR_BALANCE --home "$ROOT_DIR/node$i"
+            0gchaind add-genesis-account "0gchain_validator_$j" $VALIDATOR_BALANCE --home "$ROOT_DIR/node$i"
         fi
     done
-    0gchaind add-genesis-account 0g17n8707c20e8gge2tk2gestetjcs4536p4fhqcs $FAUCET_BALANCE --home "$ROOT_DIR/node$i"
+    0gchaind add-genesis-account 0g1zyvrkyr8pmczkguxztxpp3qcd0uhkt0tfxjupt $FAUCET_BALANCE --home "$ROOT_DIR/node$i"
+    0gchaind add-genesis-account 0g1jwuhghh6qrln4tthhqrdt3qrmjn9zm05xns46u $VESTING_BALANCE --home "$ROOT_DIR/node$i"
 done
 
 # Prepare genesis txs

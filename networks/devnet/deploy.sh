@@ -22,6 +22,7 @@ shift
 PEM_FLAG=""
 KEYRING_PASSWORD=""
 NETWORK="devnet"
+TAG_OR_BRANCH="testnet/v0.2.x"
 INIT_GENESIS_ENV=""
 
 while [[ $# -gt 0 ]]; do
@@ -56,11 +57,11 @@ NUM_NODES=${#IPS[@]}
 
 # Install dependent libraries and binary
 for ((i=0; i<$NUM_NODES; i++)) do
-    ssh $PEM_FLAG ubuntu@${IPS[$i]} "rm -rf 0g-chain; git clone https://github.com/0glabs/0g-chain.git; cd 0g-chain; git checkout patch_testnet_1; ./networks/devnet/install.sh"
+    ssh $PEM_FLAG ubuntu@${IPS[$i]} "rm -rf 0g-chain; git clone https://github.com/0glabs/0g-chain.git; cd 0g-chain; git checkout $TAG_OR_BRANCH; ./networks/$NETWORK/install.sh"
 done
 
 # Create genesis config on node0
-ssh $PEM_FLAG ubuntu@${IPS[0]} "cd 0g-chain/networks/devnet; $INIT_GENESIS_ENV ./init-genesis.sh $IP_LIST $KEYRING_PASSWORD; tar czf ~/$NETWORK.tar.gz $NETWORK; rm -rf $NETWORK"
+ssh $PEM_FLAG ubuntu@${IPS[0]} "cd 0g-chain/networks/$NETWORK; $INIT_GENESIS_ENV ./init-genesis.sh $IP_LIST $KEYRING_PASSWORD; tar czf ~/$NETWORK.tar.gz $NETWORK; rm -rf $NETWORK"
 scp $PEM_FLAG ubuntu@${IPS[0]}:$NETWORK.tar.gz .
 ssh $PEM_FLAG ubuntu@${IPS[0]} "rm $NETWORK.tar.gz"
 
@@ -71,7 +72,7 @@ cd $NETWORK
 for ((i=0; i<$NUM_NODES; i++)) do
     tar czf node$i.tar.gz node$i
     scp $PEM_FLAG node$i.tar.gz ubuntu@${IPS[$i]}:~
-    ssh $PEM_FLAG ubuntu@${IPS[$i]} "rm -rf 0gchaind-prod; tar xzf node$i.tar.gz; rm node$i.tar.gz; mv node$i 0gchaind-prod"
+    ssh $PEM_FLAG ubuntu@${IPS[$i]} "rm -rf 0gchaind-$NETWORK; tar xzf node$i.tar.gz; rm node$i.tar.gz; mv node$i 0gchaind-$NETWORK"
     rm node$i.tar.gz
 done
 
