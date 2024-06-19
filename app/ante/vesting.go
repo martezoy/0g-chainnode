@@ -4,7 +4,6 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	vesting "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 )
 
 var _ sdk.AnteDecorator = VestingAccountDecorator{}
@@ -17,9 +16,9 @@ type VestingAccountDecorator struct {
 func NewVestingAccountDecorator() VestingAccountDecorator {
 	return VestingAccountDecorator{
 		disabledMsgTypeUrls: []string{
-			sdk.MsgTypeURL(&vesting.MsgCreateVestingAccount{}),
-			sdk.MsgTypeURL(&vesting.MsgCreatePermanentLockedAccount{}),
-			sdk.MsgTypeURL(&vesting.MsgCreatePeriodicVestingAccount{}),
+			// sdk.MsgTypeURL(&vesting.MsgCreateVestingAccount{}),
+			// sdk.MsgTypeURL(&vesting.MsgCreatePermanentLockedAccount{}),
+			// sdk.MsgTypeURL(&vesting.MsgCreatePeriodicVestingAccount{}),
 		},
 	}
 }
