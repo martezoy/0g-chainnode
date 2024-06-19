@@ -7,6 +7,7 @@ function help() {
     echo "  -k    Keyring password to create key (for Linux only)"
     echo "  -n    Network (default: devnet)"
     echo "  -c    Chain ID (default: \"zgtendermint_16600-1\")"
+    echo "  -v    schedule end time (unix epoch) for vesting accounts"
     echo ""
 }
 
@@ -24,6 +25,7 @@ KEYRING_PASSWORD=""
 NETWORK="devnet"
 TAG_OR_BRANCH="testnet/v0.2.x"
 INIT_GENESIS_ENV=""
+VESTING_ACCOUNT_END_TIME=0
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -44,6 +46,10 @@ while [[ $# -gt 0 ]]; do
         INIT_GENESIS_ENV="$INIT_GENESIS_ENV export CHAIN_ID=$2;"
         shift; shift
         ;;
+    -v)
+        export VESTING_ACCOUNT_END_TIME=$2
+        shift; shift
+        ;;        
     *)
         help
         echo "Unknown flag passed: \"$1\""
@@ -51,6 +57,12 @@ while [[ $# -gt 0 ]]; do
         ;;
     esac
 done
+
+if [[ $VESTING_ACCOUNT_END_TIME -eq 0 ]]; then
+    help
+    echo "schedule end time (unix epoch) for vesting accounts should be set!"
+    exit 1
+fi
 
 IFS=","; declare -a IPS=($IP_LIST); unset IFS
 NUM_NODES=${#IPS[@]}

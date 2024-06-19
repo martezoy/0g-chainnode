@@ -38,6 +38,8 @@ FAUCET_BALANCE=500000000000000ua0gi
 STAKING=5000000000000ua0gi
 VESTING_BALANCE=400000000000000ua0gi
 
+VESTING_ACCOUNT_START_TIME=$(date -u +%s)
+
 # Init configs
 for ((i=0; i<$NUM_NODES; i++)) do
     HOMEDIR="$ROOT_DIR"/node$i
@@ -153,7 +155,7 @@ for ((i=0; i<$NUM_NODES; i++)) do
         fi
     done
     0gchaind add-genesis-account 0g1zyvrkyr8pmczkguxztxpp3qcd0uhkt0tfxjupt $FAUCET_BALANCE --home "$ROOT_DIR/node$i"
-    0gchaind add-genesis-account 0g1jwuhghh6qrln4tthhqrdt3qrmjn9zm05xns46u $VESTING_BALANCE --home "$ROOT_DIR/node$i"
+    0gchaind add-genesis-account 0g1jwuhghh6qrln4tthhqrdt3qrmjn9zm05xns46u $VESTING_BALANCE --vesting-amount $VESTING_BALANCE --vesting-start-time $VESTING_ACCOUNT_START_TIME --vesting-end-time $VESTING_ACCOUNT_END_TIME --home "$ROOT_DIR/node$i"
 done
 
 # Prepare genesis txs
