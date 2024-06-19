@@ -58,12 +58,6 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if [[ $VESTING_ACCOUNT_END_TIME -eq 0 ]]; then
-    help
-    echo "schedule end time (unix epoch) for vesting accounts should be set!"
-    exit 1
-fi
-
 IFS=","; declare -a IPS=($IP_LIST); unset IFS
 NUM_NODES=${#IPS[@]}
 
