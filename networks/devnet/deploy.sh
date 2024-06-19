@@ -47,7 +47,7 @@ while [[ $# -gt 0 ]]; do
         shift; shift
         ;;
     -v)
-        export VESTING_ACCOUNT_END_TIME=$2
+        INIT_GENESIS_ENV="$INIT_GENESIS_ENV export VESTING_ACCOUNT_END_TIME=$2;"
         shift; shift
         ;;        
     *)
