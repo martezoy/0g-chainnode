@@ -62,7 +62,7 @@ NUM_NODES=${#IPS[@]}
 
 # Install dependent libraries and binary
 for ((i=0; i<$NUM_NODES; i++)) do
-    ssh $PEM_FLAG ubuntu@${IPS[$i]} "rm -rf 0g-chain; git clone https://github.com/0glabs/0g-chain.git; cd 0g-chain; git checkout v0.2.2; ./networks/testnet/install.sh"
+    ssh $PEM_FLAG ubuntu@${IPS[$i]} "rm -rf 0g-chain; git clone https://github.com/0glabs/0g-chain.git; cd 0g-chain; git checkout v0.2.3; ./networks/testnet/install.sh"
 done
 
 # Create genesis config on node0

@@ -88,7 +88,7 @@ for ((i=0; i<$NUM_NODES; i++)) do
     sed -i '/\[json-rpc\]/,/^\[/ s/address = "127.0.0.1:8545"/address = "0.0.0.0:8545"/' "$APP_TOML"
 
     # Set evm tracer to json
-    sed -in-place='' 's/tracer = ""/tracer = "json"/g' "$APP_TOML"
+    # sed -in-place='' 's/tracer = ""/tracer = "json"/g' "$APP_TOML"
 
     # Enable full error trace to be returned on tx failure
     sed -in-place='' '/iavl-cache-size/a\
