@@ -137,21 +137,23 @@ elif [[ "$OS_NAME" = "GNU/Linux" ]]; then
     for ((i=0; i<3; i++)) do
         yes $PASSWORD | 0gchaind keys add "0gchain_mst_$i" --keyring-backend os --home "$ROOT_DIR"/node0 --eth
     done
-    echo "before msa"
+
     yes $PASSWORD | 0gchaind keys add msa --multisig-threshold 2 --multisig=0gchain_mst_0,0gchain_mst_1,0gchain_mst_2 --keyring-backend os --home "$ROOT_DIR"/node0 --eth
-    echo "after msa"
+
     # Copy validators to other nodes
     for ((i=1; i<$NUM_NODES; i++)) do
         cp "$ROOT_DIR"/node0/keyhash "$ROOT_DIR"/node$i
         cp "$ROOT_DIR"/node0/*.address "$ROOT_DIR"/node$i
         cp "$ROOT_DIR"/node0/*.info "$ROOT_DIR"/node$i
     done
-    echo "after cp"
 else
     echo -e "\n\nOS: $OS_NAME"
     echo "Unsupported OS to generate keys for validators!!!"
     exit 1
 fi
+
+
+MSA_ADDR=$(yes $PASSWORD | 0gchaind keys show -a msa --home "$ROOT_DIR/node$i")
 
 # Add all validators in genesis
 for ((i=0; i<$NUM_NODES; i++)) do
@@ -163,9 +165,10 @@ for ((i=0; i<$NUM_NODES; i++)) do
         fi
     done
     0gchaind add-genesis-account 0g1zyvrkyr8pmczkguxztxpp3qcd0uhkt0tfxjupt $FAUCET_BALANCE --home "$ROOT_DIR/node$i"
-    0gchaind add-genesis-account $(0gchaind keys show -a msa --home "$ROOT_DIR/node$i") $VESTING_BALANCE --vesting-amount $VESTING_BALANCE --vesting-start-time $VESTING_ACCOUNT_START_TIME --vesting-end-time $VESTING_ACCOUNT_END_TIME --home "$ROOT_DIR/node$i"
+    echo "msa address: $MSA_ADDR"
+    0gchaind add-genesis-account $MSA_ADDR $VESTING_BALANCE --vesting-amount $VESTING_BALANCE --vesting-start-time $VESTING_ACCOUNT_START_TIME --vesting-end-time $VESTING_ACCOUNT_END_TIME --home "$ROOT_DIR/node$i"
 done
-
+echo "genesis txs"
 # Prepare genesis txs
 mkdir -p "$ROOT_DIR"/gentxs
 for ((i=0; i<$NUM_NODES; i++)) do
