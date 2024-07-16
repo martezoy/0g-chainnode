@@ -153,7 +153,7 @@ else
 fi
 
 
-MSA_ADDR=$(yes $PASSWORD | 0gchaind keys show -a msa --home "$ROOT_DIR/node$i")
+MSA_ADDR=$(yes $PASSWORD | 0gchaind keys show -a msa --home "$ROOT_DIR/node0")
 
 # Add all validators in genesis
 for ((i=0; i<$NUM_NODES; i++)) do
