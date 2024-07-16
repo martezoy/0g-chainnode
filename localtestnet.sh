@@ -20,6 +20,12 @@ vestingMnemonic="never reject sniff east arctic funny twin feed upper series sta
 # 0xa2F728F997f62F47D4262a70947F6c36885dF9fa
 # kava15tmj37vh7ch504px9fcfglmvx6y9m70646ev8t
 
+multiSignAccoutAMnemonic="else sentence behave gift dignity auction bonus half exist kiwi enforce latin poet stand hand begin employ rice iron melody open wrist fade amateur"
+
+multiSignAccoutBMnemonic="rifle damage sense borrow business donor detail easy dynamic weapon brass carry screen board erode knee regular armor day powder method vocal destroy outdoor"
+
+multiSignAccoutCMnemonic="car solar void champion play world talent toast what arrow screen rule cinnamon moon endless benefit snake average rich salt uphold glance bracket razor"
+
 DATA=~/.0gchain
 # remove any old state and config
 rm -rf $DATA
@@ -66,11 +72,27 @@ userKeyName="user"
 printf "$userMnemonic\n" | $BINARY keys add $userKeyName --eth --recover
 $BINARY add-genesis-account $userKeyName 1000000000000000000000ua0gi
 
+multiSignAccoutAKeyName="multi-sign-account-a"
+printf "$multiSignAccoutAMnemonic\n" | $BINARY keys add $multiSignAccoutAKeyName --eth --recover
+$BINARY add-genesis-account $multiSignAccoutAKeyName 100000000000000000ua0gi
+
+multiSignAccoutBKeyName="multi-sign-account-b"
+printf "$multiSignAccoutBMnemonic\n" | $BINARY keys add $multiSignAccoutBKeyName --eth --recover
+$BINARY add-genesis-account $multiSignAccoutBKeyName 100000000000000000ua0gi
+
+multiSignAccoutCKeyName="multi-sign-account-c"
+printf "$multiSignAccoutCMnemonic\n" | $BINARY keys add $multiSignAccoutCKeyName --eth --recover
+$BINARY add-genesis-account $multiSignAccoutCKeyName 100000000000000000ua0gi
+
+multiSignAccoutKeyName="multi-sign-account"
+$BINARY keys add $multiSignAccoutKeyName --multisig-threshold 2 --multisig=$multiSignAccoutAKeyName,$multiSignAccoutBKeyName,$multiSignAccoutCKeyName
+# $BINARY add-genesis-account $multiSignAccoutKeyName 500000000000000000ua0gi
+
 VESTING_ACCOUNT_START_TIME=$(date -u +%s)
 VESTING_ACCOUNT_END_TIME=$((VESTING_ACCOUNT_START_TIME + 30 * 60))
 
-vestingKeyName="vesting"
-printf "$vestingMnemonic\n" | $BINARY keys add $vestingKeyName --eth --recover
+vestingKeyName="multi-sign-account"
+# printf "$vestingMnemonic\n" | $BINARY keys add $vestingKeyName --eth --recover
 $BINARY add-genesis-account $vestingKeyName 1000000000000000000000ua0gi --vesting-amount 1000000000000000000000ua0gi --vesting-start-time $VESTING_ACCOUNT_START_TIME --vesting-end-time $VESTING_ACCOUNT_END_TIME
 
 storageContractAcc="0g1vsjpjgw8p5f4x0nwp8ernl9lkszewcqqss7r5d"

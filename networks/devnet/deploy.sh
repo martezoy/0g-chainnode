@@ -23,7 +23,7 @@ shift
 PEM_FLAG=""
 KEYRING_PASSWORD=""
 NETWORK="devnet"
-TAG_OR_BRANCH="testnet/v0.2.x"
+TAG_OR_BRANCH="devnet/test-multi-sign-vesting-account"
 INIT_GENESIS_ENV=""
 VESTING_ACCOUNT_END_TIME=0
 

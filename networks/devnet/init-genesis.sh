@@ -133,6 +133,13 @@ elif [[ "$OS_NAME" = "GNU/Linux" ]]; then
         yes $PASSWORD | 0gchaind keys add "0gchain_validator_$i" --keyring-backend os --home "$ROOT_DIR"/node0 --eth
     done
 
+    # create multi-sign account
+    for ((i=0; i<3; i++)) do
+        yes $PASSWORD | 0gchaind keys add "0gchain_mst_$i" --keyring-backend os --home "$ROOT_DIR"/node0 --eth
+    done
+
+    0gchaind keys add msa --multisig-threshold 2 --multisig=0gchain_mst_1,0gchain_mst_2,0gchain_mst_3
+
     # Copy validators to other nodes
     for ((i=1; i<$NUM_NODES; i++)) do
         cp "$ROOT_DIR"/node0/keyhash "$ROOT_DIR"/node$i
@@ -155,7 +162,7 @@ for ((i=0; i<$NUM_NODES; i++)) do
         fi
     done
     0gchaind add-genesis-account 0g1zyvrkyr8pmczkguxztxpp3qcd0uhkt0tfxjupt $FAUCET_BALANCE --home "$ROOT_DIR/node$i"
-    0gchaind add-genesis-account 0g1jwuhghh6qrln4tthhqrdt3qrmjn9zm05xns46u $VESTING_BALANCE --vesting-amount $VESTING_BALANCE --vesting-start-time $VESTING_ACCOUNT_START_TIME --vesting-end-time $VESTING_ACCOUNT_END_TIME --home "$ROOT_DIR/node$i"
+    0gchaind add-genesis-account $(0gchaind keys show -a msa) $VESTING_BALANCE --vesting-amount $VESTING_BALANCE --vesting-start-time $VESTING_ACCOUNT_START_TIME --vesting-end-time $VESTING_ACCOUNT_END_TIME --home "$ROOT_DIR/node$i"
 done
 
 # Prepare genesis txs
