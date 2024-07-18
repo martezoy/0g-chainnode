@@ -206,6 +206,8 @@ github.com/0glabs/cometbft v0.34.27-0glabs.0 h1:jErty8aVtp2RiU/59QTEhUCi3xCoc67N
 github.com/0glabs/cometbft v0.34.27-0glabs.0/go.mod h1:BcCbhKv7ieM0KEddnYXvQZR+pZykTKReJJYf7YC7qhw=
 github.com/0glabs/cosmos-sdk v0.46.11-0glabs.5 h1:/7zqU8Az6n3UpKnypKQ92Yw8AgrE1v1AfatrL8elajs=
 github.com/0glabs/cosmos-sdk v0.46.11-0glabs.5/go.mod h1:jwgWoeAWxqMF5pZUZ4N+G4rD3q6oOLulq3/dGCFLEX4=
+github.com/0glabs/cosmos-sdk v0.46.11-0glabs.7 h1:xX0ZeQu8yJCy+6wFf/PWjwvHt0dqEifhLmw2ydAXZ1A=
+github.com/0glabs/cosmos-sdk v0.46.11-0glabs.7/go.mod h1:4uTpR8WwpNKawdsPj5uyUS8DvKilc2OyFKe4RBm4oso=
 github.com/0glabs/ethermint v0.21.0-0g.v2.0.2 h1:mFVOMra9lmeNk+CgL0UsBxqiXHx5JWVeiURJFgQmHzY=
 github.com/0glabs/ethermint v0.21.0-0g.v2.0.2/go.mod h1:KPLRino6lVDPV/cZCbQf7dZdR1nsVgptr0Htf6ZxZe8=
 github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 h1:/vQbFIOMbk2FiG/kXiLl8BRyzTWDw7gX/Hz7Dd5eDMs=
@@ -1898,6 +1900,8 @@ gopkg.in/fsnotify.v1 v1.4.7/go.mod h1:Tz8NjZHkW78fSQdbUxIjBTcgA1z1m8ZHf0WmKUhAMy
 gopkg.in/gcfg.v1 v1.2.3/go.mod h1:yesOnuUOFQAhST5vPY4nbZsb/huCgGGXlipJsBn0b3o=
 gopkg.in/ini.v1 v1.67.0 h1:Dgnx+6+nfE+IfzjUEISNeydPJh9AXNNsWbGP9KzCsOA=
 gopkg.in/ini.v1 v1.67.0/go.mod h1:pNLf8WUiyNEtQjuu5G5vTm06TEv9tsIgeAvK8hOrP4k=
+gopkg.in/natefinch/lumberjack.v2 v2.2.1 h1:bBRl1b0OH9s/DuPhuXpNl+VtCaJXFZ5/uEFST95x9zc=
+gopkg.in/natefinch/lumberjack.v2 v2.2.1/go.mod h1:YD8tP3GAjkrDg1eZH7EGmyESg/lsYskCTPBJVb9jqSc=
 gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce h1:+JknDZhAj8YMt7GC73Ei8pv4MzjDUNPHgQWJdtMAaDU=
 gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce/go.mod h1:5AcXVHNjg+BDxry382+8OKon8SEWiKktQR07RKPsv1c=
 gopkg.in/resty.v1 v1.12.0/go.mod h1:mDo4pnntr5jdWRML875a/NmxYqAlA73dVijT2AXvQQo=
