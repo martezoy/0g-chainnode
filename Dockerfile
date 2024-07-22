@@ -19,6 +19,15 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
     go version && go mod download
 
+# Cosmwasm - Download correct libwasmvm version
+RUN ARCH=$(uname -m) && WASMVM_VERSION=$(go list -m github.com/CosmWasm/wasmvm | sed 's/.* //') && \
+    wget https://github.com/CosmWasm/wasmvm/releases/download/$WASMVM_VERSION/libwasmvm_muslc.$ARCH.a \
+    -O /lib/libwasmvm.$ARCH.a && \
+    # verify checksum
+    wget https://github.com/CosmWasm/wasmvm/releases/download/$WASMVM_VERSION/checksums.txt -O /tmp/checksums.txt && \
+    sha256sum /lib/libwasmvm.$ARCH.a | grep $(cat /tmp/checksums.txt | grep libwasmvm_muslc.$ARCH | cut -d ' ' -f 1)
+
+
 # Add source files
 COPY . .
 
@@ -27,6 +36,7 @@ COPY . .
 # Mount go build and mod caches as container caches, persisted between builder invocations
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
+    LINK_STATICALLY=true \
     make install
 
 FROM alpine:3.15

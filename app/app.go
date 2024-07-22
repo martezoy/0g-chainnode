@@ -78,6 +78,9 @@ import (
 	"github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/packetforward"
 	packetforwardkeeper "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/packetforward/keeper"
 	packetforwardtypes "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/packetforward/types"
+	ibcwasm "github.com/cosmos/ibc-go/modules/light-clients/08-wasm"
+	ibcwasmkeeper "github.com/cosmos/ibc-go/modules/light-clients/08-wasm/keeper"
+	ibcwasmtypes "github.com/cosmos/ibc-go/modules/light-clients/08-wasm/types"
 	transfer "github.com/cosmos/ibc-go/v7/modules/apps/transfer"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
@@ -88,6 +91,7 @@ import (
 	ibcporttypes "github.com/cosmos/ibc-go/v7/modules/core/05-port/types"
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
+
 	solomachine "github.com/cosmos/ibc-go/v7/modules/light-clients/06-solomachine"
 	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
 	evmante "github.com/evmos/ethermint/app/ante"
@@ -173,6 +177,7 @@ var (
 		committee.AppModuleBasic{},
 		council.AppModuleBasic{},
 		das.AppModuleBasic{},
+		ibcwasm.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -241,6 +246,7 @@ type App struct {
 	authzKeeper           authzkeeper.Keeper
 	crisisKeeper          crisiskeeper.Keeper
 	slashingKeeper        slashingkeeper.Keeper
+	ibcWasmClientKeeper   ibcwasmkeeper.Keeper
 	ibcKeeper             *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
 	packetForwardKeeper   *packetforwardkeeper.Keeper
 	evmKeeper             *evmkeeper.Keeper
@@ -318,6 +324,7 @@ func NewApp(
 		bep3types.StoreKey,
 		pricefeedtypes.StoreKey,
 		committeetypes.StoreKey,
+		ibcwasmtypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey, feemarkettypes.TransientKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -445,6 +452,19 @@ func NewApp(
 		app.stakingKeeper,
 		app.upgradeKeeper,
 		scopedIBCKeeper,
+	)
+
+	app.ibcWasmClientKeeper = ibcwasmkeeper.NewKeeperWithConfig(
+		appCodec,
+		keys[ibcwasmtypes.StoreKey],
+		app.ibcKeeper.ClientKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+		ibcwasmtypes.WasmConfig{
+			DataDir:               "ibc_08-wasm",
+			SupportedCapabilities: "iterator,stargate",
+			ContractDebugMode:     false,
+		},
+		app.GRPCQueryRouter(),
 	)
 
 	// Create Ethermint keepers
@@ -629,6 +649,7 @@ func NewApp(
 		mint.NewAppModule(appCodec, app.mintKeeper, app.accountKeeper, nil, mintSubspace),
 		council.NewAppModule(app.CouncilKeeper, app.stakingKeeper),
 		das.NewAppModule(app.DasKeeper),
+		ibcwasm.NewAppModule(app.ibcWasmClientKeeper),
 	)
 
 	// Warning: Some begin blockers must run before others. Ensure the dependencies are understood before modifying this list.
@@ -671,6 +692,7 @@ func NewApp(
 
 		counciltypes.ModuleName,
 		dastypes.ModuleName,
+		ibcwasmtypes.ModuleName,
 	)
 
 	// Warning: Some end blockers must run before others. Ensure the dependencies are understood before modifying this list.
@@ -706,6 +728,7 @@ func NewApp(
 		packetforwardtypes.ModuleName,
 		counciltypes.ModuleName,
 		dastypes.ModuleName,
+		ibcwasmtypes.ModuleName,
 	)
 
 	// Warning: Some init genesis methods must run before others. Ensure the dependencies are understood before modifying this list
@@ -740,6 +763,7 @@ func NewApp(
 		crisistypes.ModuleName, // runs the invariants at genesis, should run after other modules
 		counciltypes.ModuleName,
 		dastypes.ModuleName,
+		ibcwasmtypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.crisisKeeper)
@@ -811,6 +835,15 @@ func NewApp(
 	if !options.SkipLoadLatest {
 		if err := app.LoadLatestVersion(); err != nil {
 			panic(fmt.Sprintf("failed to load latest version: %s", err))
+		}
+	}
+
+	if manager := app.SnapshotManager(); manager != nil {
+		err := manager.RegisterExtensions(
+			ibcwasmkeeper.NewWasmSnapshotter(app.CommitMultiStore(), &app.ibcWasmClientKeeper),
+		)
+		if err != nil {
+			panic(fmt.Errorf("failed to register snapshot extension: %s", err))
 		}
 	}
 
