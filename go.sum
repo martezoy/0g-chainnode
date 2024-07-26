@@ -204,10 +204,10 @@ git.sr.ht/~sircmpwn/getopt v0.0.0-20191230200459-23622cc906b3/go.mod h1:wMEGFFFN
 git.sr.ht/~sircmpwn/go-bare v0.0.0-20210406120253-ab86bc2846d9/go.mod h1:BVJwbDfVjCjoFiKrhkei6NdGcZYpkDkdyCdg1ukytRA=
 github.com/0glabs/cometbft v0.34.27-0glabs.0 h1:jErty8aVtp2RiU/59QTEhUCi3xCoc67NHHsmIqd7Xz4=
 github.com/0glabs/cometbft v0.34.27-0glabs.0/go.mod h1:BcCbhKv7ieM0KEddnYXvQZR+pZykTKReJJYf7YC7qhw=
-github.com/0glabs/cosmos-sdk v0.46.11-0glabs.6 h1:U+whpn3TWZlTX13/meTgkOrqDtVnlhXu/qqcKT72Mkc=
-github.com/0glabs/cosmos-sdk v0.46.11-0glabs.6/go.mod h1:zMvZI0GzsY3zuWA5rGJmSjB0/SYpoZJQY1zyCS/ns3g=
-github.com/0glabs/ethermint v0.21.0-0g.v2.0.3 h1:4mjVDj2ZDodwc6dPAahTGIkzzb0rZgr9SbzfBGYpndI=
-github.com/0glabs/ethermint v0.21.0-0g.v2.0.3/go.mod h1:ME4cvUjHoprs2UEMNdUzvqjA/epLbEWnsxzdLHU4NqA=
+github.com/0glabs/cosmos-sdk v0.46.11-0glabs.6.2 h1:Wi/ET8qXFp2GSy2lCr+szIBbN+tG3vPjzWzTt8VgAgg=
+github.com/0glabs/cosmos-sdk v0.46.11-0glabs.6.2/go.mod h1:zMvZI0GzsY3zuWA5rGJmSjB0/SYpoZJQY1zyCS/ns3g=
+github.com/0glabs/ethermint v0.21.0-0g.v2.0.4 h1:UFQflLvLk7uvJcKLvpKY6U3n5WU3Osphrf9VUSPgfBY=
+github.com/0glabs/ethermint v0.21.0-0g.v2.0.4/go.mod h1:o5lh9adPdMNNAweyDYleu3FRAJyRIy1drdMcSpo1qy8=
 github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 h1:/vQbFIOMbk2FiG/kXiLl8BRyzTWDw7gX/Hz7Dd5eDMs=
 github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4/go.mod h1:hN7oaIRCjzsZ2dE+yG5k+rsdt3qcwykqK6HVGcKwsw4=
 github.com/Azure/azure-sdk-for-go/sdk/azcore v0.21.1/go.mod h1:fBF9PQNqB8scdgpZ3ufzaLntG0AG7C1WjPMsiFOmfHM=
