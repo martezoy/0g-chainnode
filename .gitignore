@@ -39,7 +39,6 @@ build/darwin
 build/linux
 
 # Ignore deploy outputs
-networks/devnet
 networks/testnet
 
 # Go workspace files

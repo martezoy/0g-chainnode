@@ -80,6 +80,7 @@ for ((i=0; i<$NUM_NODES; i++)) do
     cat "$GENESIS" | jq '.app_state["slashing"]["params"]["signed_blocks_window"]="1000"' >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
     cat "$GENESIS" | jq '.app_state["consensus_params"]["block"]["time_iota_ms"]="3000"' >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+    cat "$GENESIS" | jq '.app_state.gov.voting_params.voting_period = "300s"' >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
     # Change app.toml
     APP_TOML="$HOMEDIR"/config/app.toml
