@@ -38,9 +38,6 @@ build/bin
 build/darwin
 build/linux
 
-# Ignore deploy outputs
-networks/testnet
-
 # Go workspace files
 go.work
 go.work.sum
