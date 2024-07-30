@@ -7,6 +7,7 @@ function help() {
     echo "  -k    Keyring password to create key (for Linux only)"
     echo "  -n    Network (default: testnet)"
     echo "  -c    Chain ID (default: \"zgtendermint_16600-1\")"
+    echo "  -v    schedule end time (unix epoch) for vesting accounts"
     echo ""
 }
 
@@ -23,6 +24,7 @@ PEM_FLAG=""
 KEYRING_PASSWORD=""
 NETWORK="testnet"
 INIT_GENESIS_ENV=""
+VESTING_ACCOUNT_END_TIME=0
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -43,6 +45,10 @@ while [[ $# -gt 0 ]]; do
         INIT_GENESIS_ENV="$INIT_GENESIS_ENV export CHAIN_ID=$2;"
         shift; shift
         ;;
+    -v)
+        INIT_GENESIS_ENV="$INIT_GENESIS_ENV export VESTING_ACCOUNT_END_TIME=$2;"
+        shift; shift
+        ;;        
     *)
         help
         echo "Unknown flag passed: \"$1\""
@@ -56,7 +62,7 @@ NUM_NODES=${#IPS[@]}
 
 # Install dependent libraries and binary
 for ((i=0; i<$NUM_NODES; i++)) do
-    ssh $PEM_FLAG ubuntu@${IPS[$i]} "rm -rf 0g-chain; git clone https://github.com/0glabs/0g-chain.git; cd 0g-chain; git checkout v0.1.0; ./networks/testnet/install.sh"
+    ssh $PEM_FLAG ubuntu@${IPS[$i]} "rm -rf 0g-chain; git clone https://github.com/0glabs/0g-chain.git; cd 0g-chain; git checkout v0.2.3; ./networks/testnet/install.sh"
 done
 
 # Create genesis config on node0

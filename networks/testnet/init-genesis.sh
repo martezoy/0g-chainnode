@@ -33,9 +33,12 @@ set -e
 IFS=","; declare -a IPS=($1); unset IFS
 
 NUM_NODES=${#IPS[@]}
-VLIDATOR_BALANCE=15000000000000000000ua0gi
-FAUCET_BALANCE=40000000000000000000ua0gi
-STAKING=10000000000000000000ua0gi
+VALIDATOR_BALANCE=25000000000000ua0gi
+FAUCET_BALANCE=500000000000000ua0gi
+STAKING=5000000000000ua0gi
+VESTING_BALANCE=400000000000000ua0gi
+
+VESTING_ACCOUNT_START_TIME=$(date -u +%s)
 
 # Init configs
 for ((i=0; i<$NUM_NODES; i++)) do
@@ -85,7 +88,7 @@ for ((i=0; i<$NUM_NODES; i++)) do
     sed -i '/\[json-rpc\]/,/^\[/ s/address = "127.0.0.1:8545"/address = "0.0.0.0:8545"/' "$APP_TOML"
 
     # Set evm tracer to json
-    sed -in-place='' 's/tracer = ""/tracer = "json"/g' "$APP_TOML"
+    # sed -in-place='' 's/tracer = ""/tracer = "json"/g' "$APP_TOML"
 
     # Enable full error trace to be returned on tx failure
     sed -in-place='' '/iavl-cache-size/a\
@@ -146,12 +149,13 @@ fi
 for ((i=0; i<$NUM_NODES; i++)) do
     for ((j=0; j<$NUM_NODES; j++)) do
         if [[ "$OS_NAME" = "GNU/Linux" ]]; then
-            yes $PASSWORD | 0gchaind add-genesis-account "0gchain_validator_$j" $VLIDATOR_BALANCE --home "$ROOT_DIR/node$i"
+            yes $PASSWORD | 0gchaind add-genesis-account "0gchain_validator_$j" $VALIDATOR_BALANCE --home "$ROOT_DIR/node$i"
         else
-            0gchaind add-genesis-account "0gchain_validator_$j" $VLIDATOR_BALANCE --home "$ROOT_DIR/node$i"
+            0gchaind add-genesis-account "0gchain_validator_$j" $VALIDATOR_BALANCE --home "$ROOT_DIR/node$i"
         fi
     done
-    0gchaind add-genesis-account 0g17n8707c20e8gge2tk2gestetjcs4536p4fhqcs $FAUCET_BALANCE --home "$ROOT_DIR/node$i"
+    0gchaind add-genesis-account 0g1e4t48fq42tqxpapvpnuc9n9k998eex9rnyqzwm $FAUCET_BALANCE --home "$ROOT_DIR/node$i"
+    0gchaind add-genesis-account 0g16yvxafe63uzuxu6xpvpxdz9agdvnh0zn8vnuj6 $VESTING_BALANCE --vesting-amount $VESTING_BALANCE --vesting-start-time $VESTING_ACCOUNT_START_TIME --vesting-end-time $VESTING_ACCOUNT_END_TIME --home "$ROOT_DIR/node$i"
 done
 
 # Prepare genesis txs
