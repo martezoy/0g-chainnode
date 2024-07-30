@@ -213,7 +213,7 @@ replace (
 	// Use rocksdb 7.9.2
 	github.com/cometbft/cometbft-db => github.com/kava-labs/cometbft-db v0.7.0-rocksdb-v7.9.2-kava.1
 	// Use cosmos-sdk fork with backported fix for unsafe-reset-all, staking transfer events, and custom tally handler support
-	github.com/cosmos/cosmos-sdk => github.com/0glabs/cosmos-sdk v0.46.11-0glabs.6.2
+	github.com/cosmos/cosmos-sdk => github.com/0glabs/cosmos-sdk v0.46.11-0glabs.8
 	// See https://github.com/cosmos/cosmos-sdk/pull/13093
 	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v4 v4.4.2
 	// Use go-ethereum fork with precompiles

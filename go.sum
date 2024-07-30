@@ -204,8 +204,8 @@ git.sr.ht/~sircmpwn/getopt v0.0.0-20191230200459-23622cc906b3/go.mod h1:wMEGFFFN
 git.sr.ht/~sircmpwn/go-bare v0.0.0-20210406120253-ab86bc2846d9/go.mod h1:BVJwbDfVjCjoFiKrhkei6NdGcZYpkDkdyCdg1ukytRA=
 github.com/0glabs/cometbft v0.34.27-0glabs.0 h1:jErty8aVtp2RiU/59QTEhUCi3xCoc67NHHsmIqd7Xz4=
 github.com/0glabs/cometbft v0.34.27-0glabs.0/go.mod h1:BcCbhKv7ieM0KEddnYXvQZR+pZykTKReJJYf7YC7qhw=
-github.com/0glabs/cosmos-sdk v0.46.11-0glabs.6.2 h1:Wi/ET8qXFp2GSy2lCr+szIBbN+tG3vPjzWzTt8VgAgg=
-github.com/0glabs/cosmos-sdk v0.46.11-0glabs.6.2/go.mod h1:zMvZI0GzsY3zuWA5rGJmSjB0/SYpoZJQY1zyCS/ns3g=
+github.com/0glabs/cosmos-sdk v0.46.11-0glabs.8 h1:zYkr1AaeyxIxrGyt/B/Xc4l/xWsdk71yo1CniPmrvuo=
+github.com/0glabs/cosmos-sdk v0.46.11-0glabs.8/go.mod h1:4uTpR8WwpNKawdsPj5uyUS8DvKilc2OyFKe4RBm4oso=
 github.com/0glabs/ethermint v0.21.0-0g.v2.0.4 h1:UFQflLvLk7uvJcKLvpKY6U3n5WU3Osphrf9VUSPgfBY=
 github.com/0glabs/ethermint v0.21.0-0g.v2.0.4/go.mod h1:o5lh9adPdMNNAweyDYleu3FRAJyRIy1drdMcSpo1qy8=
 github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 h1:/vQbFIOMbk2FiG/kXiLl8BRyzTWDw7gX/Hz7Dd5eDMs=
