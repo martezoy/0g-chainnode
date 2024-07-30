@@ -13,6 +13,7 @@ if [[ $? -ne 0 ]]; then
     # Make under root dir
     SCRIPT_DIR=`dirname "${BASH_SOURCE[0]}"`
     cd $SCRIPT_DIR/../..
+    rm -rf $(go env GOPATH)/bin/0gchaind
     make install
 
     # Add gopath to path

@@ -66,9 +66,12 @@ userKeyName="user"
 printf "$userMnemonic\n" | $BINARY keys add $userKeyName --eth --recover
 $BINARY add-genesis-account $userKeyName 1000000000000000000000ua0gi
 
+VESTING_ACCOUNT_START_TIME=$(date -u +%s)
+VESTING_ACCOUNT_END_TIME=$((VESTING_ACCOUNT_START_TIME + 30 * 60))
+
 vestingKeyName="vesting"
 printf "$vestingMnemonic\n" | $BINARY keys add $vestingKeyName --eth --recover
-$BINARY add-genesis-account $vestingKeyName 1000000000000000000000ua0gi --vesting-amount 1000000000000000000000ua0gi --vesting-start-time 1717200000 --vesting-end-time 1719791999
+$BINARY add-genesis-account $vestingKeyName 1000000000000000000000ua0gi --vesting-amount 1000000000000000000000ua0gi --vesting-start-time $VESTING_ACCOUNT_START_TIME --vesting-end-time $VESTING_ACCOUNT_END_TIME
 
 storageContractAcc="0g1vsjpjgw8p5f4x0nwp8ernl9lkszewcqqss7r5d"
 $BINARY add-genesis-account $storageContractAcc 1000000000000000000000ua0gi
