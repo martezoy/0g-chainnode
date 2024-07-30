@@ -1,36 +1,29 @@
+<!---
 <p align="center">
-  <img src="./kava-logo.svg" width="300">
+  <img src="./0g-logo.svg" width="300">
 </p>
+--->
+
+# 0G Chain
 
 <div align="center">
 
-[![version](https://img.shields.io/github/tag/kava-labs/kava.svg)](https://github.com/kava-labs/kava/releases/latest)
-[![CircleCI](https://circleci.com/gh/Kava-Labs/kava/tree/master.svg?style=shield)](https://circleci.com/gh/Kava-Labs/kava/tree/master)
-[![Go Report Card](https://goreportcard.com/badge/github.com/kava-labs/kava)](https://goreportcard.com/report/github.com/kava-labs/kava)
-[![API Reference](https://godoc.org/github.com/Kava-Labs/kava?status.svg)](https://godoc.org/github.com/Kava-Labs/kava)
-[![GitHub](https://img.shields.io/github/license/kava-labs/kava.svg)](https://github.com/Kava-Labs/kava/blob/master/LICENSE.md)
-[![Twitter Follow](https://img.shields.io/twitter/follow/KAVA_CHAIN.svg?label=Follow&style=social)](https://twitter.com/KAVA_CHAIN)
-[![Discord Chat](https://img.shields.io/discord/704389840614981673.svg)](https://discord.com/invite/kQzh3Uv)
+### [Telegram](https://t.me/web3_0glabs) | [Discord](https://discord.com/invite/0glabs)
 
 </div>
 
-<div align="center">
+Reference implementation of 0G Chain, the first modular AI chain. Built using the [cosmos-sdk](https://github.com/cosmos/cosmos-sdk).
 
-### [Telegram](https://t.me/kavalabs) | [Medium](https://medium.com/kava-labs) | [Discord](https://discord.gg/JJYnuCx)
-
-</div>
-
-Reference implementation of Kava, a blockchain for cross-chain DeFi. Built using the [cosmos-sdk](https://github.com/cosmos/cosmos-sdk).
-
+<!---
 ## Mainnet
 
-The current recommended version of the software for mainnet is [v0.24.1](https://github.com/Kava-Labs/kava/releases/tag/v0.24.1). The master branch of this repository often contains considerable development work since the last mainnet release and is __not__ runnable on mainnet.
+The current recommended version of the software for mainnet is [v0.25.0](https://github.com/Kava-Labs/kava/releases/tag/v0.25.0) The master branch of this repository often contains considerable development work since the last mainnet release and is __not__ runnable on mainnet.
 
 ### Installation and Setup
 For detailed instructions see [the Kava docs](https://docs.kava.io/docs/participate/validator-node).
 
 ```bash
-git checkout v0.24.1
+git checkout v0.25.0
 make install
 ```
 
@@ -63,3 +56,4 @@ If you find a security issue, please report it to security [at] kava.io. Dependi
 Copyright © Kava Labs, Inc. All rights reserved.
 
 Licensed under the [Apache v2 License](LICENSE.md).
+--->
