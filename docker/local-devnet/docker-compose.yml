@@ -1,0 +1,43 @@
+services:
+  node0:
+    build:
+      context: .
+    image: server_image
+    networks:
+      my_custom_network:
+        ipv4_address: 192.168.1.3
+    command: ["0gchaind", "start", "--home", "/root/devnet/node0"]
+
+  node1:
+    image: server_image
+    depends_on:
+      - node0
+    networks:
+      my_custom_network:
+        ipv4_address: 192.168.1.4
+    command: ["0gchaind", "start", "--home", "/root/devnet/node1"]
+
+  node2:
+    image: server_image
+    depends_on:
+      - node0
+    networks:
+      my_custom_network:
+        ipv4_address: 192.168.1.5
+    command: ["0gchaind", "start", "--home", "/root/devnet/node2"]
+
+  node3:
+    image: server_image
+    depends_on:
+      - node0
+    networks:
+      my_custom_network:
+        ipv4_address: 192.168.1.6
+    command: ["0gchaind", "start", "--home", "/root/devnet/node3"]
+
+networks:
+  my_custom_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24
